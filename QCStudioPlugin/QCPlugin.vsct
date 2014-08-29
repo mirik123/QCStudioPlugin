@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+
+  <Commands package="guidQCPluginPkg">
+    <!-- Inside this section we have different sub-sections: one for the menus, another  
+    for the menu groups, one for the buttons (the actual commands), one for the combos 
+    and the last one for the bitmaps used. Each element is identified by a command id that  
+    is a unique pair of guid and numeric identifier; the guid part of the identifier is usually  
+    called "command set" and is used to group different command inside a logically related  
+    group; your package should define its own command set in order to avoid collisions  
+    with command ids defined by other packages. -->
+
+    <Menus>
+      <Menu guid="guidQCPluginCmdSet" id="TopLevelMenu" priority="0x100" type="Menu">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_MM_TOOLSADDINS"/>
+        <Strings>
+          <MenuText>QuantConnect</MenuText>
+          <ButtonText>QuantConnect</ButtonText>
+          <CommandName>QuantConnect</CommandName>
+        </Strings>
+      </Menu>
+    </Menus>
+    
+    
+    <!-- In this section you can define new menu groups. A menu group is a container for 
+         other menus or buttons (commands); from a visual point of view you can see the 
+         group as the part of a menu contained between two lines. The parent of a group 
+         must be a menu. -->
+    <Groups>
+      
+      <Group guid="guidQCPluginCmdSet" id="TopLevelMenuGroup" priority="0x0600">
+        <Parent guid="guidQCPluginCmdSet" id="TopLevelMenu"/>
+      </Group>
+
+      <Group guid="guidQCPluginCmdSet" id="MiddleLevelMenuGroup" priority="0x0700">
+        <Parent guid="guidQCPluginCmdSet" id="TopLevelMenu"/>
+      </Group>
+
+      <Group guid="guidQCPluginCmdSet" id="BottomLevelMenuGroup" priority="0x0800">
+        <Parent guid="guidQCPluginCmdSet" id="TopLevelMenu"/>
+      </Group>
+    </Groups>
+    
+    <!--Buttons section. -->
+    <!--This section defines the elements the user can interact with, like a menu command or a button 
+        or combo box in a toolbar. -->
+    <Buttons>
+      <!--To define a menu group you have to specify its ID, the parent menu and its display priority. 
+          The command is visible and enabled by default. If you need to change the visibility, status, etc, you can use
+          the CommandFlag node.
+          You can add more than one CommandFlag node e.g.:
+              <CommandFlag>DefaultInvisible</CommandFlag>
+              <CommandFlag>DynamicVisibility</CommandFlag>
+          If you do not want an image next to your command, remove the Icon node /> -->
+      
+      <!--
+      <Button guid="guidQCPluginCmdSet" id="setCredentials" priority="0x0100" type="Button">
+        <Parent guid="guidQCPluginCmdSet" id="TopLevelMenuGroup" />
+        <Icon guid="encrypt.bmpGuid" id="encrypt.bmpId"/>
+        <Strings>
+          <ButtonText>Set Credentials</ButtonText>
+          <CommandName>SetCredentials</CommandName>
+          <ToolTipText>Login to your QuantConnect Account</ToolTipText>
+        </Strings>
+      </Button>
+      -->
+
+      <Button guid="guidQCPluginCmdSet" id="backtest" priority="0x0300" type="Button">
+        <Parent guid="guidQCPluginCmdSet" id="TopLevelMenuGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>DefaultDisabled</CommandFlag>
+        <Icon guid="play.bmpGuid" id="play.bmpId"/>
+        <Strings>
+          <ButtonText>Backtest</ButtonText>
+          <CommandName>Backtest</CommandName>
+          <ToolTipText>Backtest current project</ToolTipText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidQCPluginCmdSet" id="newProject" priority="0x0200" type="Button">
+        <Parent guid="guidQCPluginCmdSet" id="MiddleLevelMenuGroup" />
+        <Icon guid="new.bmpGuid" id="new.bmpId"/>
+        <Strings>
+          <ButtonText>New Project</ButtonText>
+          <CommandName>NewProject</CommandName>
+          <ToolTipText>Start a new projects</ToolTipText>
+        </Strings>
+      </Button>
+      
+      <Button guid="guidQCPluginCmdSet" id="openProject" priority="0x0300" type="Button">
+        <Parent guid="guidQCPluginCmdSet" id="MiddleLevelMenuGroup" />
+        <Icon guid="openFile.bmpGuid" id="openFile.bmpId"/>
+        <Strings>
+          <ButtonText>Open Project</ButtonText>
+          <CommandName>OpenProject</CommandName>
+          <ToolTipText>Load and open your projects</ToolTipText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidQCPluginCmdSet" id="save" priority="0x0400" type="Button">
+        <Parent guid="guidQCPluginCmdSet" id="MiddleLevelMenuGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>DefaultDisabled</CommandFlag>
+        <Icon guid="save.bmpGuid" id="save.bmpId"/>
+        <Strings>
+          <ButtonText>Save Project to Server</ButtonText>
+          <CommandName>Save</CommandName>
+          <ToolTipText>Save your files to QuantConnect</ToolTipText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidQCPluginCmdSet" id="delete" priority="0x0500" type="Button">
+        <Parent guid="guidQCPluginCmdSet" id="MiddleLevelMenuGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>DefaultDisabled</CommandFlag>
+        <Icon guid="delete.bmpGuid" id="delete.bmpId"/>
+        <Strings>
+          <ButtonText>Delete Project from Server</ButtonText>
+          <CommandName>Delete</CommandName>
+          <ToolTipText>Delete the entire project from QuantConnect</ToolTipText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidQCPluginCmdSet" id="logout" priority="0x0600" type="Button">
+        <Parent guid="guidQCPluginCmdSet" id="BottomLevelMenuGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>DefaultDisabled</CommandFlag>
+        <Icon guid="logout.bmpGuid" id="logout.bmpId"/>
+        <Strings>
+          <ButtonText>Logout</ButtonText>
+          <CommandName>Logout</CommandName>
+          <ToolTipText>Logout and delete credentials from your computer</ToolTipText>
+        </Strings>
+      </Button>
+
+    </Buttons>
+    
+    <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
+    <Bitmaps>
+
+      
+      <Bitmap guid="key.bmpGuid" href="Resources\vsIcons\Login.png" usedList="key.bmpId" />
+      <Bitmap guid="openFile.bmpGuid" href="Resources\vsIcons\Open.png" usedList="openFile.bmpId" />
+      <Bitmap guid="play.bmpGuid" href="Resources\vsIcons\Play.png" usedList="play.bmpId" />
+      <Bitmap guid="new.bmpGuid" href="Resources\vsIcons\New.png" usedList="new.bmpId" />
+      <Bitmap guid="logout.bmpGuid" href="Resources\vsIcons\Logout.png" usedList="logout.bmpId" />
+      <Bitmap guid="delete.bmpGuid" href="Resources\vsIcons\Delete.png" usedList="delete.bmpId" />
+      <Bitmap guid="save.bmpGuid" href="Resources\vsIcons\Save.png" usedList="save.bmpId" />
+      
+    </Bitmaps>
+ 
+  </Commands>
+
+
+  <Symbols>
+    <!-- This is the package guid. -->
+    <GuidSymbol name="guidQCPluginPkg" value="{93f79150-258a-449e-a380-599b5928a20b}" />
+    
+    <!-- This is the guid used to group the menu commands together -->
+    <GuidSymbol name="guidQCPluginCmdSet" value="{e2ba1c58-e0a7-43b3-8974-89170ab0b932}">
+      <IDSymbol name="TopLevelMenu" value="0x0100" />
+      <IDSymbol name="TopLevelMenuGroup" value="0x0200" />
+      <IDSymbol name="MiddleLevelMenuGroup" value="0x0300" />
+      <IDSymbol name="BottomLevelMenuGroup" value="0x0400" />
+      <IDSymbol name="setCredentials" value="0x0500" />
+      <IDSymbol name="newProject" value="0x0600" />
+      <IDSymbol name="openProject" value="0x0700" />
+      <IDSymbol name="backtest" value="0x0800" />
+      <IDSymbol name="logout" value="0x0900" />
+      <IDSymbol name="delete" value="0x1000" />
+      <IDSymbol name="save" value="0x1100" />
+    </GuidSymbol>
+    
+    <!-- My custom icons -->
+    <GuidSymbol name="key.bmpGuid" value="{91A7B47A-5256-4A62-A45F-26E358A79071}">
+      <IDSymbol name="key.bmpId" value="1" />
+    </GuidSymbol>
+    <GuidSymbol name="openFile.bmpGuid" value="{38C2FD6F-F2AB-4FD3-9B00-0C1979225F17}">
+      <IDSymbol name="openFile.bmpId" value="1" />
+    </GuidSymbol>
+    <GuidSymbol name="play.bmpGuid" value="{41473D53-38F7-4BE5-AA6E-CDB0E2BF3E37}">
+      <IDSymbol name="play.bmpId" value="1" />
+    </GuidSymbol>
+    <GuidSymbol name="new.bmpGuid" value="{628A805D-C3F0-490D-A394-F2A4CD7F8952}">
+      <IDSymbol name="new.bmpId" value="1" />
+    </GuidSymbol>
+    <GuidSymbol name="logout.bmpGuid" value="{11F70269-F79A-4636-ABEE-4BCA681E73B5}">
+      <IDSymbol name="logout.bmpId" value="1" />  
+    </GuidSymbol>
+    <GuidSymbol name="delete.bmpGuid" value="{6BF29221-D058-4EFD-AE2A-26E0D76C5BBC}">
+      <IDSymbol name="delete.bmpId" value="1" />
+    </GuidSymbol>
+    <GuidSymbol name="save.bmpGuid" value="{ABD5A9E3-C7CD-4D98-95B6-4B2FADDE2BF3}">
+      <IDSymbol name="save.bmpId" value="1" />
+    </GuidSymbol>
+    
+  </Symbols>
+
+</CommandTable>
