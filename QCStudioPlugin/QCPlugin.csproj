@@ -72,18 +72,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\QuantConnect.Algorithm.Interface.dll</HintPath>
     </Reference>
-    <Reference Include="QuantConnect.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\QuantConnect.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="QuantConnect.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\QuantConnect.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="QuantConnect.RestAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\QuantConnect.RestAPI.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -169,11 +157,11 @@
     </Compile>
     <Compile Include="QuantConnectPlugin\DateTimePointsList.cs" />
     <Compile Include="QuantConnectPlugin\Extensions.cs" />
-    <Compile Include="Forms\Backtest.cs">
+    <Compile Include="Forms\LoadBacktest.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Backtest.Designer.cs">
-      <DependentUpon>Backtest.cs</DependentUpon>
+    <Compile Include="Forms\LoadBacktest.Designer.cs">
+      <DependentUpon>LoadBacktest.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Logout.cs">
       <SubType>Form</SubType>
@@ -215,8 +203,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\Backtest.resx">
-      <DependentUpon>Backtest.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\LoadBacktest.resx">
+      <DependentUpon>LoadBacktest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BacktestChartForm.resx">
       <DependentUpon>BacktestChartForm.cs</DependentUpon>
@@ -362,6 +350,20 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\vsIcons\New.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\QCo\QuantConnect.Common\QuantConnect.Common.csproj">
+      <Project>{2545c0b4-fabb-49c9-8dd1-9ad7ee23f86b}</Project>
+      <Name>QuantConnect.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QCo\QuantConnect.Logging\QuantConnect.Logging.csproj">
+      <Project>{01911409-86be-4e7d-9947-df714138610d}</Project>
+      <Name>QuantConnect.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QCo\QuantConnect.RestAPI\QuantConnect.RestAPI.csproj">
+      <Project>{70d2cc00-502f-49d2-afff-d65472de87d5}</Project>
+      <Name>QuantConnect.RestAPI</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

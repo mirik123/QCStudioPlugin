@@ -1,6 +1,6 @@
 ﻿namespace QuantConnect.QCPlugin
 {
-    partial class BacktestChartForm
+    partial class FormBacktestChart
     {
         /// <summary>
         /// Required designer variable.
@@ -31,23 +31,22 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BacktestChartForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBacktestChart));
             this.timerDownloadResults = new System.Windows.Forms.Timer(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupChart = new System.Windows.Forms.GroupBox();
             this.tabCharts = new System.Windows.Forms.TabControl();
             this.groupChartOptions = new System.Windows.Forms.GroupBox();
             this.dataGridViewStats = new System.Windows.Forms.DataGridView();
+            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabFooter = new System.Windows.Forms.TabControl();
             this.tabTrades = new System.Windows.Forms.TabPage();
             this.dataGridViewTrades = new System.Windows.Forms.DataGridView();
-            this.timerDrawChart = new System.Windows.Forms.Timer(this.components);
-            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.statusProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Price = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -55,6 +54,7 @@
             this.Quantity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Operation = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timerDrawChart = new System.Windows.Forms.Timer(this.components);
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -83,11 +83,22 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel,
             this.statusProgress});
-            this.statusStrip.Location = new System.Drawing.Point(0, 519);
+            this.statusStrip.Location = new System.Drawing.Point(0, 659);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(958, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1264, 22);
             this.statusStrip.TabIndex = 0;
             this.statusStrip.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(147, 17);
+            this.statusLabel.Text = "Downloading first results...";
+            // 
+            // statusProgress
+            // 
+            this.statusProgress.Name = "statusProgress";
+            this.statusProgress.Size = new System.Drawing.Size(100, 16);
             // 
             // splitContainer2
             // 
@@ -105,8 +116,8 @@
             this.splitContainer2.Panel2.AutoScroll = true;
             this.splitContainer2.Panel2.Controls.Add(this.tabFooter);
             this.splitContainer2.Panel2MinSize = 250;
-            this.splitContainer2.Size = new System.Drawing.Size(958, 519);
-            this.splitContainer2.SplitterDistance = 391;
+            this.splitContainer2.Size = new System.Drawing.Size(1264, 659);
+            this.splitContainer2.SplitterDistance = 405;
             this.splitContainer2.TabIndex = 2;
             // 
             // splitContainer1
@@ -122,8 +133,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.groupChartOptions);
-            this.splitContainer1.Size = new System.Drawing.Size(958, 391);
-            this.splitContainer1.SplitterDistance = 758;
+            this.splitContainer1.Size = new System.Drawing.Size(1264, 405);
+            this.splitContainer1.SplitterDistance = 999;
             this.splitContainer1.TabIndex = 2;
             // 
             // groupChart
@@ -132,7 +143,7 @@
             this.groupChart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupChart.Location = new System.Drawing.Point(0, 0);
             this.groupChart.Name = "groupChart";
-            this.groupChart.Size = new System.Drawing.Size(758, 391);
+            this.groupChart.Size = new System.Drawing.Size(999, 405);
             this.groupChart.TabIndex = 0;
             this.groupChart.TabStop = false;
             this.groupChart.Text = "Backtest Results";
@@ -143,7 +154,7 @@
             this.tabCharts.Location = new System.Drawing.Point(3, 16);
             this.tabCharts.Name = "tabCharts";
             this.tabCharts.SelectedIndex = 0;
-            this.tabCharts.Size = new System.Drawing.Size(752, 372);
+            this.tabCharts.Size = new System.Drawing.Size(993, 386);
             this.tabCharts.TabIndex = 0;
             // 
             // groupChartOptions
@@ -152,7 +163,7 @@
             this.groupChartOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupChartOptions.Location = new System.Drawing.Point(0, 0);
             this.groupChartOptions.Name = "groupChartOptions";
-            this.groupChartOptions.Size = new System.Drawing.Size(196, 391);
+            this.groupChartOptions.Size = new System.Drawing.Size(261, 405);
             this.groupChartOptions.TabIndex = 0;
             this.groupChartOptions.TabStop = false;
             this.groupChartOptions.Text = "Statistics";
@@ -176,8 +187,22 @@
             this.dataGridViewStats.Name = "dataGridViewStats";
             this.dataGridViewStats.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGridViewStats.RowHeadersVisible = false;
-            this.dataGridViewStats.Size = new System.Drawing.Size(190, 372);
+            this.dataGridViewStats.Size = new System.Drawing.Size(255, 386);
             this.dataGridViewStats.TabIndex = 0;
+            // 
+            // columnName
+            // 
+            this.columnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.columnName.DefaultCellStyle = dataGridViewCellStyle1;
+            this.columnName.HeaderText = "Name";
+            this.columnName.Name = "columnName";
+            // 
+            // columnValue
+            // 
+            this.columnValue.HeaderText = "Value";
+            this.columnValue.Name = "columnValue";
+            this.columnValue.Width = 90;
             // 
             // tabFooter
             // 
@@ -186,7 +211,7 @@
             this.tabFooter.Location = new System.Drawing.Point(0, 0);
             this.tabFooter.Name = "tabFooter";
             this.tabFooter.SelectedIndex = 0;
-            this.tabFooter.Size = new System.Drawing.Size(958, 250);
+            this.tabFooter.Size = new System.Drawing.Size(1264, 250);
             this.tabFooter.TabIndex = 0;
             // 
             // tabTrades
@@ -195,7 +220,7 @@
             this.tabTrades.Location = new System.Drawing.Point(4, 22);
             this.tabTrades.Name = "tabTrades";
             this.tabTrades.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTrades.Size = new System.Drawing.Size(950, 224);
+            this.tabTrades.Size = new System.Drawing.Size(1256, 224);
             this.tabTrades.TabIndex = 0;
             this.tabTrades.Text = "Trades";
             this.tabTrades.ToolTipText = "Backtest Trades";
@@ -225,39 +250,8 @@
             this.dataGridViewTrades.Name = "dataGridViewTrades";
             this.dataGridViewTrades.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGridViewTrades.RowHeadersVisible = false;
-            this.dataGridViewTrades.Size = new System.Drawing.Size(944, 218);
+            this.dataGridViewTrades.Size = new System.Drawing.Size(1250, 218);
             this.dataGridViewTrades.TabIndex = 1;
-            // 
-            // timerDrawChart
-            // 
-            this.timerDrawChart.Enabled = true;
-            this.timerDrawChart.Interval = 50;
-            this.timerDrawChart.Tick += new System.EventHandler(this.timerDrawChart_Tick);
-            // 
-            // columnName
-            // 
-            this.columnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.columnName.DefaultCellStyle = dataGridViewCellStyle1;
-            this.columnName.HeaderText = "Name";
-            this.columnName.Name = "columnName";
-            // 
-            // columnValue
-            // 
-            this.columnValue.HeaderText = "Value";
-            this.columnValue.Name = "columnValue";
-            this.columnValue.Width = 90;
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(147, 17);
-            this.statusLabel.Text = "Downloading first results...";
-            // 
-            // statusProgress
-            // 
-            this.statusProgress.Name = "statusProgress";
-            this.statusProgress.Size = new System.Drawing.Size(100, 16);
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -304,15 +298,21 @@
             this.Status.HeaderText = "Status";
             this.Status.Name = "Status";
             // 
-            // BacktestChartForm
+            // timerDrawChart
+            // 
+            this.timerDrawChart.Enabled = true;
+            this.timerDrawChart.Interval = 50;
+            this.timerDrawChart.Tick += new System.EventHandler(this.timerDrawChart_Tick);
+            // 
+            // FormBacktestChart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(958, 541);
+            this.ClientSize = new System.Drawing.Size(1264, 681);
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.statusStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "BacktestChartForm";
+            this.Name = "FormBacktestChart";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "QuantConnect Backtest Result";
             this.Load += new System.EventHandler(this.BacktestChart_Load);

@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,9 +19,12 @@ using System.Diagnostics;
 
 namespace QuantConnect.QCPlugin
 {
-    public partial class RateLimit : Form
+    /******************************************************** 
+    * CLASS DEFINITIONS
+    *********************************************************/
+    public partial class FormRateLimit : Form
     {
-        public RateLimit()
+        public FormRateLimit()
         {
             InitializeComponent();
         }
@@ -27,6 +38,11 @@ namespace QuantConnect.QCPlugin
         private void CancelBtn_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void RateLimit_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

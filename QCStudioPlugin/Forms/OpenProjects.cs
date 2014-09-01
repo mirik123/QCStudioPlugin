@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,18 +21,21 @@ using System.Configuration;
 
 namespace QuantConnect.QCPlugin
 {
-    public partial class OpenProjects : Form
+    /******************************************************** 
+    * CLASS DEFINITIONS
+    *********************************************************/
+    public partial class FormOpenProject : Form
     {      
         static string projectName = "";   
 
-        public OpenProjects()
+        public FormOpenProject()
         {
             InitializeComponent();
         }
 
         public void ShowLogin(Action callback)
         {
-            Login form = new Login();
+            FormLogin form = new FormLogin();
             form.SetCallBacks(callback);
             form.Show();
         }
@@ -45,7 +56,7 @@ namespace QuantConnect.QCPlugin
                     {
                         //Handle project specific actions with a login error:
                         case APIErrors.NotLoggedIn:
-                            this.SafeInvoke(d => d.ShowLogin(() => { OpenProjects form = new OpenProjects(); form.StartPosition = FormStartPosition.CenterScreen; form.Show(); }));
+                            this.SafeInvoke(d => d.ShowLogin(() => { FormOpenProject form = new FormOpenProject(); form.StartPosition = FormStartPosition.CenterScreen; form.Show(); }));
                             this.SafeInvoke(d => d.Close());
                             return;
                     }
@@ -71,7 +82,7 @@ namespace QuantConnect.QCPlugin
                     listViewProjects.SafeInvoke(d => d.EndUpdate());
                     buttonOpen.SafeInvoke(d => d.Enabled = true);
                     this.SafeInvoke(d => d.UseWaitCursor = false);
-                    
+                    this.SafeInvoke(d => d.SizeLastColumn(listViewProjects));
                 }));
             }
             catch
@@ -79,6 +90,16 @@ namespace QuantConnect.QCPlugin
                 MessageBox.Show("Connection timeout.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
                         
+        }
+
+
+        /// <summary>
+        /// Auto resize the columns
+        /// </summary>
+        /// <param name="lv"></param>
+        private void SizeLastColumn(ListView lv)
+        {
+            lv.Columns[lv.Columns.Count - 1].Width = -2;
         }
 
 
@@ -115,6 +136,15 @@ namespace QuantConnect.QCPlugin
                 this.UseWaitCursor = false;
                 QuantConnectPlugin.ProjectID = 0;
             }
+        }
+
+
+        /// <summary>
+        /// Handle a resize event of the project columns:
+        /// </summary>
+        private void listViewProjects_Resize(object sender, EventArgs e)
+        {
+            SizeLastColumn((ListView)sender);
         }
     }
 }

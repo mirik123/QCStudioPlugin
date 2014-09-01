@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,14 +23,16 @@ using ZedGraph;
 
 namespace QuantConnect.QCPlugin
 {
-    public partial class BacktestChartForm : Form
+    /******************************************************** 
+    * CLASS DEFINITIONS
+    *********************************************************/
+    public partial class FormBacktestChart : Form
     {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
         private string _backtestId = "";
         private bool _processing = false;
-        private IAlgorithm _algorithm;
         private DateTime _startDate = new DateTime();
         private DateTime _endDate = new DateTime();
         private PacketBacktestResult _results = new PacketBacktestResult();
@@ -37,14 +47,14 @@ namespace QuantConnect.QCPlugin
         /******************************************************** 
         * INITIALIZE CHARTS
         *********************************************************/
-        public BacktestChartForm()
+        public FormBacktestChart()
         {
             InitializeComponent();
         }
 
         public void ShowLogin(Action callback)
         {
-            Login form = new Login();
+            FormLogin form = new FormLogin();
             form.SetCallBacks(callback);
             form.Show();
         }
@@ -67,11 +77,19 @@ namespace QuantConnect.QCPlugin
             this._backtestResultUpdated = true;
         }
 
+        /// <summary>
+        /// Set the form state as processing to not download the data again.
+        /// </summary>
+        /// <param name="processing"></param>
         public void SetProcessing(bool processing)
         {
             this._processing = processing;
+            this.UseWaitCursor = processing;
         }
 
+        /// <summary>
+        /// Refresh the data source, polling the API.
+        /// </summary>
         private void timerRefresh_Tick(object sender, EventArgs e)
         {
             if (_processing) return;
@@ -86,7 +104,7 @@ namespace QuantConnect.QCPlugin
                 {
                     //Handle project specific actions with a login error:
                     case APIErrors.NotLoggedIn:
-                        this.SafeInvoke(d => d.ShowLogin(() => { OpenProjects form = new OpenProjects(); form.StartPosition = FormStartPosition.CenterScreen; form.Show(); }));
+                        this.SafeInvoke(d => d.ShowLogin(() => { FormOpenProject form = new FormOpenProject(); form.StartPosition = FormStartPosition.CenterScreen; form.Show(); }));
                         this.SafeInvoke(d => d.Close());
                         return;
                 }
@@ -94,9 +112,7 @@ namespace QuantConnect.QCPlugin
                 //Handle Results Packet:
                 PacketBacktestResult packet = (PacketBacktestResult)backtestResult;
 
-                //this.SafeInvoke(d => d.statusProgress.ProgressBar.Value = Convert.ToInt32(packet.Progress.Replace("%", "")));
                 this.SafeInvoke(d => d.SetBacktestResult(packet));
-                this.SafeInvoke(d => d.SetProcessing(false));
 
             }, _backtestId)); // End of Async
 
@@ -483,8 +499,9 @@ namespace QuantConnect.QCPlugin
                 this._backtestResultUpdated = false;
 
                 //Clear and draw all charts
-                if (this._results.Progress == "0%")
+                if (this._results.Progress == "0%" || this._results.Progress == "")
                 {
+                    SetProcessing(false);
                     return;
                 }
 
@@ -500,6 +517,9 @@ namespace QuantConnect.QCPlugin
                     this.timerDrawChart.Enabled = false;
                     this.timerDownloadResults.Enabled = false;
                 }
+
+                //Now charts updated, can set to not processing anymore.
+                SetProcessing(false);
             }
         }
 

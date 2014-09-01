@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +21,12 @@ namespace QuantConnect.QCPlugin
     *********************************************************************************/
     class Encrypter
     {
-        static byte[] entropy = System.Text.Encoding.Unicode.GetBytes("Salt Is Not A Password");
+        /// Salt:
+        static byte[] entropy = System.Text.Encoding.Unicode.GetBytes("rRMKPVmaVq3ZrwkZV63F8pqzDT2U7NNdzPchNNYG4NAfNpe9");
 
+        /// <summary>
+        /// Encrypt the string:
+        /// </summary>
         public static string EncryptString(string input)
         {
             byte[] encryptedData = System.Security.Cryptography.ProtectedData.Protect(
@@ -24,6 +36,9 @@ namespace QuantConnect.QCPlugin
             return Convert.ToBase64String(encryptedData);
         }
 
+        /// <summary>
+        /// Decrypt the string from config file.
+        /// </summary>
         public static string DecryptString(string encryptedData)
         {
             try
@@ -40,6 +55,9 @@ namespace QuantConnect.QCPlugin
             }
         }
 
+        /// <summary>
+        /// Convert the string to a secure one not stored in memory
+        /// </summary>
         public static SecureString ToSecureString(string input)
         {
             SecureString secure = new SecureString();
@@ -51,6 +69,9 @@ namespace QuantConnect.QCPlugin
             return secure;
         }
 
+        /// <summary>
+        /// Convert a secure string (nonmemory string) into a unsecure one:
+        /// </summary>
         public static string ToInsecureString(SecureString input)
         {
             string returnValue = string.Empty;

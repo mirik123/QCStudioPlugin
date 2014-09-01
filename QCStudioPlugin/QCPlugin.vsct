@@ -85,7 +85,7 @@
         <Strings>
           <ButtonText>New Project</ButtonText>
           <CommandName>NewProject</CommandName>
-          <ToolTipText>Start a new projects</ToolTipText>
+          <ToolTipText>Start a new project</ToolTipText>
         </Strings>
       </Button>
       

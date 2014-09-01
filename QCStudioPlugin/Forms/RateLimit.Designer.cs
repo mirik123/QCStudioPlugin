@@ -1,6 +1,6 @@
 ﻿namespace QuantConnect.QCPlugin
 {
-    partial class RateLimit
+    partial class FormRateLimit
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RateLimit));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRateLimit));
             this.labelThanks = new System.Windows.Forms.Label();
             this.labelMessage = new System.Windows.Forms.Label();
             this.buttonUpgrade = new System.Windows.Forms.Button();
@@ -111,6 +111,7 @@
             this.MinimizeBox = false;
             this.Name = "RateLimit";
             this.Text = "Rate Limit Reached";
+            this.Load += new System.EventHandler(this.RateLimit_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

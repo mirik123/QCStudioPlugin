@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
@@ -18,45 +26,27 @@ using EnvDTE;
 
 namespace QuantConnect.QCPlugin
 {
-    /// <summary>
-    /// This is the class that implements the package exposed by this assembly.
-    ///
-    /// The minimum requirement for a class to be considered a valid package for Visual Studio
-    /// is to implement the IVsPackage interface and register itself with the shell.
-    /// This package uses the helper classes defined inside the Managed Package Framework (MPF)
-    /// to do it: it derives from the Package class that provides the implementation of the 
-    /// IVsPackage interface and uses the registration attributes defined in the framework to 
-    /// register itself and its components with the shell.
-    /// </summary>
-    // This attribute tells the PkgDef creation utility (CreatePkgDef.exe) that this class is
-    // a package.
+
     [PackageRegistration(UseManagedResourcesOnly = true)]
-    // This attribute is used to register the information needed to show this package
-    // in the Help/About dialog of Visual Studio.
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
-    // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(GuidList.guidQCPluginPkgString)]
     public sealed class QCPluginPackage : Package
     {
-        /// <summary>
-        /// Default constructor of the package.
-        /// Inside this method you can place any initialization code that does not require 
-        /// any Visual Studio service because at this point the package object is created but 
-        /// not sited yet inside Visual Studio environment. The place to do all the other 
-        /// initialization is the Initialize method.
-        /// </summary>
-        /// 
+        /// Reference to Visual Studio
         public static DTE2 ApplicationObject;
 
+        /// Reference to our Menu Buton Objects
         public static Dictionary<string, MenuCommand> Commands;
 
+        /// <summary>
+        /// Plugin Constructor:
+        /// </summary>
         public QCPluginPackage()
         {
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
-
             Commands = new Dictionary<string, MenuCommand>();
-
+            // If the username and password files exist, login:
             QuantConnectPlugin.Initialize();
         }
 
@@ -92,6 +82,10 @@ namespace QuantConnect.QCPlugin
                 Commands.Add("SetCredentials", new MenuCommand(SetCredentialsItemCallback, setCredentialsID));
                 mcs.AddCommand(Commands["SetCredentials"]);
 
+                CommandID newProjectID = new CommandID(GuidList.guidQCPluginCmdSet, (int)PkgCmdIDList.newProject);
+                Commands.Add("NewProject", new MenuCommand(NewProjectCallback, newProjectID));
+                mcs.AddCommand(Commands["NewProject"]);
+
                 CommandID openProjectID = new CommandID(GuidList.guidQCPluginCmdSet, (int)PkgCmdIDList.openProject);
                 MenuCommand openProjectItem = new MenuCommand(OpenProjectItemCallback, openProjectID);
                 mcs.AddCommand(openProjectItem);
@@ -117,9 +111,7 @@ namespace QuantConnect.QCPlugin
         #endregion
 
         /// <summary>
-        /// This function is the callback used to execute a command when the a menu item is clicked.
-        /// See the Initialize method to see how the menu item is associated to this function using
-        /// the OleMenuCommandService service and the MenuCommand class.
+        /// Execute Menu Button Click:
         /// </summary>
         private void MenuItemCallback(object sender, EventArgs e)
         {
@@ -141,32 +133,57 @@ namespace QuantConnect.QCPlugin
                        out result));
         }
 
-        // Callback functions for each button
+        /// <summary>
+        /// Click on Set Credentials (Currently hidden).
+        /// </summary>
         private void SetCredentialsItemCallback(object sender, EventArgs e)
         {
             QuantConnectPlugin.ShowSaveCredentials();
         }
 
+        /// <summary>
+        /// Shwo the new project dialog:
+        /// </summary>
+        private void NewProjectCallback(object sender, EventArgs e)
+        {
+            QuantConnectPlugin.ShowNewProject();
+        }
+
+        /// <summary>
+        /// Click on Open Projects
+        /// </summary>
         private void OpenProjectItemCallback(object sender, EventArgs e)
         {
             QuantConnectPlugin.ShowProjects();
         }
 
+        /// <summary>
+        /// Click on Backtest.
+        /// </summary>
         private void BacktestItemCallback(object sender, EventArgs e)
         {
-            QuantConnectPlugin.ShowBacktest();
+            QuantConnectPlugin.ShowLoadBacktest();
         }
 
+        /// <summary>
+        /// Click on Save Project
+        /// </summary>
         private void SaveItemCallback(object sender, EventArgs e)
         {
             QuantConnectPlugin.SaveToQC(true);
         }
 
+        /// <summary>
+        /// Click on Delete Project
+        /// </summary>
         private void DeleteItemCallback(object sender, EventArgs e)
         {
             QuantConnectPlugin.DeleteProject();
         }
 
+        /// <summary>
+        /// Logout Menu Option
+        /// </summary>
         private void LogoutItemCallback(object sender, EventArgs e)
         {
             QuantConnectPlugin.ShowLogout();

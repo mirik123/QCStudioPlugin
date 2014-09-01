@@ -6,7 +6,7 @@ namespace QuantConnect.QCPlugin
 {
     static class PkgCmdIDList
     {
-        public const uint cmdIdQuantConnect =        0x100;
+        public const uint cmdIdQuantConnect = 0x100;
         public const int setCredentials = 0x0500;
         public const int newProject = 0x0600;
         public const int openProject = 0x0700;

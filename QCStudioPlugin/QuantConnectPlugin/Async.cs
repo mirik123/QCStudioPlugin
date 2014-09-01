@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -65,7 +73,7 @@ namespace QuantConnect.QCPlugin
                                 }
                                 job.Callback(compile, compile.Errors);
                                 break;
-                            case APICommand.CheckTemplate:
+                            case APICommand.UpdateTemplate:
                                 job.Callback(true, new List<string>());
                                 break;
                             case APICommand.BacktestResults:
@@ -116,7 +124,7 @@ namespace QuantConnect.QCPlugin
         OpenProject,
         CheckQCAlgoVersion,
         Compile,
-        CheckTemplate,
+        UpdateTemplate,
         BacktestResults
     }
 }

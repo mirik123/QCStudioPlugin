@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,13 +21,16 @@ using QuantConnect.RestAPI.Models;
 
 namespace QuantConnect.QCPlugin
 {
-    public partial class Login : Form
+    /******************************************************** 
+    * CLASS DEFINITIONS
+    *********************************************************/
+    public partial class FormLogin : Form
     {
         public Action SuccessCallback;
         public string Email = QuantConnectPlugin.Email;
         public string Password = QuantConnectPlugin.Password;
 
-        public Login()
+        public FormLogin()
         {
             InitializeComponent();
         }

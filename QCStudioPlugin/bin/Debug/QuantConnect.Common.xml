@@ -4,6 +4,28 @@
         <name>QuantConnect.Common</name>
     </assembly>
     <members>
+        <member name="T:QuantConnect.LimitedQueue`1">
+            <summary>
+            Limited Length Queue:
+            http://stackoverflow.com/questions/1292/limit-size-of-queuet-in-net
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:QuantConnect.LimitedQueue`1.#ctor(System.Int32)">
+            <summary>
+            Create a new fixed length queue:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.LimitedQueue`1.Enqueue(`0)">
+            <summary>
+            Enqueue a new item int the generic fixed length queue:
+            </summary>
+        </member>
+        <member name="P:QuantConnect.LimitedQueue`1.Limit">
+            <summary>
+            Max Length 
+            </summary>
+        </member>
         <member name="T:QuantConnect.Models.BaseData">
             <summary>
             Base Data Class: Type, Timestamp, Key -- Base Features.

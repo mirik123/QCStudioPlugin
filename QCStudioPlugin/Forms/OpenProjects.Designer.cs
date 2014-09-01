@@ -1,6 +1,6 @@
 ﻿namespace QuantConnect.QCPlugin
 {
-    partial class OpenProjects
+    partial class FormOpenProject
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OpenProjects));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOpenProject));
             this.listViewProjects = new System.Windows.Forms.ListView();
             this.idHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.projectNameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -54,6 +54,7 @@
             this.listViewProjects.UseCompatibleStateImageBehavior = false;
             this.listViewProjects.View = System.Windows.Forms.View.Details;
             this.listViewProjects.DoubleClick += new System.EventHandler(this.OpenBtn_Click);
+            this.listViewProjects.Resize += new System.EventHandler(this.listViewProjects_Resize);
             // 
             // idHeader
             // 
@@ -62,7 +63,7 @@
             // projectNameHeader
             // 
             this.projectNameHeader.Text = "Project Name";
-            this.projectNameHeader.Width = 310;
+            this.projectNameHeader.Width = 300;
             // 
             // dateModifiedHeader
             // 
@@ -101,6 +102,7 @@
             // buttonOpen
             // 
             this.buttonOpen.Image = ((System.Drawing.Image)(resources.GetObject("buttonOpen.Image")));
+            this.buttonOpen.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonOpen.Location = new System.Drawing.Point(435, 319);
             this.buttonOpen.Name = "buttonOpen";
             this.buttonOpen.Size = new System.Drawing.Size(90, 35);
@@ -110,7 +112,7 @@
             this.buttonOpen.UseVisualStyleBackColor = true;
             this.buttonOpen.Click += new System.EventHandler(this.OpenBtn_Click);
             // 
-            // OpenProjects
+            // FormOpenProject
             // 
             this.AcceptButton = this.buttonOpen;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -124,7 +126,7 @@
             this.MaximumSize = new System.Drawing.Size(551, 403);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(551, 403);
-            this.Name = "OpenProjects";
+            this.Name = "FormOpenProject";
             this.Text = "QuantConnect Projects";
             this.Load += new System.EventHandler(this.OpenProjects_Load);
             this.ResumeLayout(false);

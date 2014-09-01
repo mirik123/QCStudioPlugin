@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +19,7 @@ namespace QuantConnect.QCPlugin
     /// <summary>
     /// Struct, enum iterator for the customised PairPointList input variables
     /// </summary>
-    public struct dtPlot
+    public struct DateTimePlotPoint
     {
         public DateTime Time;
         public double Value;
@@ -19,7 +27,7 @@ namespace QuantConnect.QCPlugin
         public string Tag;
     }
 
-    public enum dtType
+    public enum DateTimePointType
     {
         Time,
         Value,
@@ -32,14 +40,14 @@ namespace QuantConnect.QCPlugin
     public class DateTimePointList : IPointListEdit
     {
         // Determines what data type gets plotted for the X values
-        public dtType XType;
+        public DateTimePointType XType;
         // Determines what data type gets plotted for the Y values
-        public dtType YType;
+        public DateTimePointType YType;
         // Tag to store additional data about the point:
-        public dtType TType;
+        public DateTimePointType TType;
 
         // Stores the collection of samples
-        private List<dtPlot> aList;
+        private List<DateTimePlotPoint> aList;
 
         // Indexer: get the Sample instance at the specified ordinal position in the list
         public PointPair this[int index]
@@ -47,7 +55,7 @@ namespace QuantConnect.QCPlugin
             get
             {
                 PointPair pt = new PointPair();
-                dtPlot aPoint = aList[index];
+                DateTimePlotPoint aPoint = aList[index];
                 pt.X = GetValue(aPoint, XType);
                 pt.Y = GetValue(aPoint, YType);
                 pt.Tag = aPoint.Tag;
@@ -65,15 +73,15 @@ namespace QuantConnect.QCPlugin
         }
 
         // Get the specified data type from the specified sample
-        public double GetValue(dtPlot Point, dtType Type)
+        public double GetValue(DateTimePlotPoint Point, DateTimePointType Type)
         {
             switch (Type)
             {
-                case dtType.Time:
+                case DateTimePointType.Time:
                     return Point.Time.ToOADate();
-                case dtType.Value:
+                case DateTimePointType.Value:
                     return Point.Value;
-                case dtType.ID:
+                case DateTimePointType.ID:
                     return Point.ID;
                 default:
                     return PointPair.Missing;
@@ -81,13 +89,13 @@ namespace QuantConnect.QCPlugin
         }
 
         // Add a sample to the collection
-        public void Add(dtPlot dtPoint)
+        public void Add(DateTimePlotPoint dtPoint)
         {
             aList.Add(dtPoint);
         }
         public void Add(DateTime dtTime, double dValue, int iID = 0, string sTag = "")
         {
-            dtPlot dtPoint = new dtPlot();
+            DateTimePlotPoint dtPoint = new DateTimePlotPoint();
             dtPoint.Time = dtTime;
             dtPoint.Value = dValue;
             dtPoint.ID = iID;
@@ -133,10 +141,10 @@ namespace QuantConnect.QCPlugin
         // Default constructor
         public DateTimePointList()
         {
-            XType = dtType.Time;
-            YType = dtType.Value;
-            TType = dtType.ID;
-            aList = new List<dtPlot>();
+            XType = DateTimePointType.Time;
+            YType = DateTimePointType.Value;
+            TType = DateTimePointType.ID;
+            aList = new List<DateTimePlotPoint>();
         }
 
         // Copy constructor

@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -57,17 +65,13 @@ namespace QuantConnect.QCPlugin
             string[] credentials = LoadCredentials();
             Email = credentials[0];
             Password = credentials[1];
+
+            //Create API Object
             API = new API(Email, Password);
 
-            if (Email == "" || Password == "")
-            {
-                QuantConnectPlugin.Logged = false;
-            }
-            else
-            {
-                QuantConnectPlugin.Logged = true;
-            }
-            
+            //Attempt Login:
+            QuantConnectPlugin.Logged = API.Authenticate(Email, Password);
+
             //Check if QCAlgorithm is saved to its last version
             try
             {
@@ -87,7 +91,7 @@ namespace QuantConnect.QCPlugin
             //Check if QCTemplate exists
             try
             {
-                Async.Add(new APIJob(APICommand.CheckTemplate, (a, b) =>
+                Async.Add(new APIJob(APICommand.UpdateTemplate, (a, b) =>
                 {
                     var finished = false;
                     var baseDirectory = Directory + "QCTemplate";
@@ -159,7 +163,7 @@ namespace QuantConnect.QCPlugin
         /// </summary>
         public static void ShowSaveCredentials()
         {
-            Login setCredentials = new Login();
+            FormLogin setCredentials = new FormLogin();
             setCredentials.StartPosition = FormStartPosition.CenterScreen;
             setCredentials.Show();
         }
@@ -176,7 +180,7 @@ namespace QuantConnect.QCPlugin
             }
             else
             {
-                Login setCredentials = new Login();
+                FormLogin setCredentials = new FormLogin();
                 setCredentials.SetCallBacks(success);
                 setCredentials.StartPosition = FormStartPosition.CenterScreen;
                 setCredentials.Show();
@@ -184,23 +188,27 @@ namespace QuantConnect.QCPlugin
         }
 
         /// <summary>
+        /// Show the new project dialog:
+        /// </summary>
+        public static void ShowNewProject()
+        {
+            Login(() =>
+            {
+                MessageBox.Show("New Project");
+                //FormNewProject projectList = new FormOpenProject();
+                //projectList.StartPosition = FormStartPosition.CenterScreen;
+                //projectList.Show();
+            });  
+        }
+
+        /// <summary>
         /// Show Open Projects form, save credentials to file
         /// </summary>
         public static void ShowProjects()
         {
-            //BacktestChartForm chart = new BacktestChartForm();
-            //chart.SetBacktestId("618546a600fb73990ba601488805a391");
-            //chart.SetBacktestId("37f0f6bbe9ae7ea28b1d96bd2fc07e5a");
-            //chart.Show();
-
-            //PacketBacktest backtestResult = API.Backtest(14875, "f3685586d20bc4a3fa7d38deb80e953a", "test");
-            //BacktestChartForm chart = new BacktestChartForm();
-            //chart.SetBacktestId(backtestResult.BacktestId);
-            //chart.Show();
-
             Login(() =>
             {
-                OpenProjects projectList = new OpenProjects();
+                FormOpenProject projectList = new FormOpenProject();
                 projectList.StartPosition = FormStartPosition.CenterScreen;
                 projectList.Show();
             });            
@@ -211,7 +219,7 @@ namespace QuantConnect.QCPlugin
         /// </summary>
         public static void ShowLogout()
         {
-            Logout logout = new Logout();
+            FormLogout logout = new FormLogout();
             logout.StartPosition = FormStartPosition.CenterScreen;
             logout.Show();
         }
@@ -221,27 +229,24 @@ namespace QuantConnect.QCPlugin
         /// </summary>
         public static void ShowRateLimit()
         {
-            RateLimit rateLimit = new RateLimit();
+            FormRateLimit rateLimit = new FormRateLimit();
             rateLimit.StartPosition = FormStartPosition.CenterScreen;
             rateLimit.Show();
         }
 
-        public static void ShowBacktest()
+        /// <summary>
+        /// Open the BacktestLoader Form:
+        /// </summary>
+        public static void ShowLoadBacktest()
         {
-            StartBacktest backtest = new StartBacktest();
-            backtest.StartPosition = FormStartPosition.CenterScreen;
-            backtest.Show();
-
-            
-
+            FormLoadBacktest loadBacktest = new FormLoadBacktest();
+            loadBacktest.StartPosition = FormStartPosition.CenterScreen;
+            loadBacktest.Show();
         }
-
 
         /// <summary>
         /// Save encrypted username and password to the config
         /// </summary>
-        /// <param name="email"></param>
-        /// <param name="password"></param>
         public static void SaveCredentials(string email, string password)
         {
             var user = new User { Email = Encrypter.EncryptString(email), Password = Encrypter.EncryptString(password) };
@@ -262,7 +267,14 @@ namespace QuantConnect.QCPlugin
             try
             {
                 var user = new User { Email = "", Password = "" };
-                var userData = System.IO.File.ReadAllText(Directory + "credentials.config");
+                var credentialFile = Directory + "credentials.config";
+
+                if (!System.IO.File.Exists(credentialFile))
+                {
+                    System.IO.File.WriteAllText(credentialFile, JsonConvert.SerializeObject(user));
+                }
+
+                var userData = System.IO.File.ReadAllText(credentialFile);
                 var jsonUser = JsonConvert.DeserializeAnonymousType(userData, user);
                 
                 Email = Encrypter.DecryptString(jsonUser.Email);
@@ -381,7 +393,16 @@ namespace QuantConnect.QCPlugin
 
                     //Add References
                     VSProject vsProject = (VSLangProj.VSProject)proj.Object;
-                    vsProject.References.Add(Directory + @"QCAlgorithm-master\QuantConnect.Algorithm\bin\Debug\QuantConnect.Common.dll");
+
+                    var commonDLL = Directory + @"QCAlgorithm-master\QuantConnect.Algorithm\bin\Debug\QuantConnect.Common.dll";
+                    if (!System.IO.File.Exists(commonDLL))
+                    { 
+                        //Download and unzip:
+                        API.DownloadQCAlgorithm(Directory);
+                    }
+
+                    //Safe to add reference:
+                    vsProject.References.Add(commonDLL);
                     vsProject.References.Add(Directory + @"QCAlgorithm-master\QuantConnect.Algorithm\bin\Debug\MathNet.Numerics.dll");
                     vsProject.References.Add(Directory + @"QCAlgorithm-master\QuantConnect.Algorithm\bin\Debug\QuantConnect.Algorithm.dll");
                     vsProject.References.Add(Directory + @"QCAlgorithm-master\QuantConnect.Algorithm\bin\Debug\QuantConnect.Algorithm.Interface.dll");
