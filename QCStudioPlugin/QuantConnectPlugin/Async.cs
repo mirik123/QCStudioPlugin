@@ -48,6 +48,13 @@ namespace QuantConnect.QCPlugin
                                 job.Callback(projectList, packet.Errors);
                                 break;
 
+                            case APICommand.NewProject:
+                                var projectCreate = QuantConnectPlugin.API.ProjectCreate(job.Parameters[0].ToString());
+                                var newProject = 0;
+                                if (projectCreate.ProjectId != null) newProject = projectCreate.ProjectId;
+                                job.Callback(newProject, projectCreate.Errors);
+                                break;
+
                             case APICommand.OpenProject:
                                 var files = new PacketProjectFiles();
                                 List<File> projectFiles = new List<File>();
@@ -65,7 +72,7 @@ namespace QuantConnect.QCPlugin
                                 break;
 
                             case APICommand.Compile:
-                                QuantConnectPlugin.SaveToQC(false);
+                                QuantConnectPlugin.SaveToCloud(false);
                                 var compile = new PacketCompile();
                                 if (job.Parameters.Length == 1)
                                 {
@@ -119,6 +126,7 @@ namespace QuantConnect.QCPlugin
 
     public enum APICommand
     {
+        NewProject,
         Authenticate, 
         ProjectList, 
         OpenProject,

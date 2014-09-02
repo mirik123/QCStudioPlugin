@@ -83,8 +83,8 @@ namespace QuantConnect.QCPlugin
                 mcs.AddCommand(Commands["SetCredentials"]);
 
                 CommandID newProjectID = new CommandID(GuidList.guidQCPluginCmdSet, (int)PkgCmdIDList.newProject);
-                Commands.Add("NewProject", new MenuCommand(NewProjectCallback, newProjectID));
-                mcs.AddCommand(Commands["NewProject"]);
+                MenuCommand newProjectItem = new MenuCommand(NewProjectCallback, newProjectID);
+                mcs.AddCommand(newProjectItem);
 
                 CommandID openProjectID = new CommandID(GuidList.guidQCPluginCmdSet, (int)PkgCmdIDList.openProject);
                 MenuCommand openProjectItem = new MenuCommand(OpenProjectItemCallback, openProjectID);
@@ -170,7 +170,7 @@ namespace QuantConnect.QCPlugin
         /// </summary>
         private void SaveItemCallback(object sender, EventArgs e)
         {
-            QuantConnectPlugin.SaveToQC(true);
+            QuantConnectPlugin.SaveToCloud(true);
         }
 
         /// <summary>

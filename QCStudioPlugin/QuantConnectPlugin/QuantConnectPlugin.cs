@@ -194,12 +194,28 @@ namespace QuantConnect.QCPlugin
         {
             Login(() =>
             {
-                MessageBox.Show("New Project");
-                //FormNewProject projectList = new FormOpenProject();
-                //projectList.StartPosition = FormStartPosition.CenterScreen;
-                //projectList.Show();
+                ShowInputBox("Create New Project", "Please enter the project name:", (projectName) => {
+
+                    FormCreateProject form = new FormCreateProject();
+                    form.ProjectName = projectName;
+                    form.Show();
+
+                }, null);
             });  
         }
+
+
+        /// <summary>
+        /// Show a generic input box and callbacks 
+        /// </summary>
+        public static void ShowInputBox(string title, string prompt, Action<string> okCallback, Action cancelCallback)
+        {
+            FormInputBox form = new FormInputBox();
+            form.Set(title, prompt, okCallback, cancelCallback);
+            form.StartPosition = FormStartPosition.CenterScreen;
+            form.Show();
+        }
+
 
         /// <summary>
         /// Show Open Projects form, save credentials to file
@@ -336,7 +352,7 @@ namespace QuantConnect.QCPlugin
         /// <param name="selectedProject"></param>
         /// <param name="api"></param>
         /// <param name="projectName"></param>
-        public static bool OpenProject(int selectedProject, string project, Action enableForm)
+        public static bool OpenProject(int selectedProject, string projectName, Action enableForm)
         {
             // Don't let user open the same project he's working in
             if (selectedProject == ProjectID)
@@ -345,7 +361,7 @@ namespace QuantConnect.QCPlugin
             }
 
             ProjectID = selectedProject;
-            ProjectName = CleanInput(project);
+            ProjectName = CleanInput(projectName);
             // Check if file already exists
             if (!ExistingFileChecker(ProjectName, ProjectID))
             {
@@ -411,7 +427,7 @@ namespace QuantConnect.QCPlugin
                 //Save & open solution
                 soln.SaveAs(Directory + ProjectID + " - " + ProjectName + @"\" + ProjectName + ".sln");
                 ProjectLoaded = true;
-                enableForm();
+                if (enableForm != null) enableForm();
 
             }, selectedProject));
             return true;
@@ -464,7 +480,7 @@ namespace QuantConnect.QCPlugin
         /// <summary>
         /// Save your files to your QuantConnect account
         /// </summary>
-        public static void SaveToQC(bool message)
+        public static void SaveToCloud(bool message)
         {
             if (ProjectID == 0 && message)
             {
@@ -498,10 +514,25 @@ namespace QuantConnect.QCPlugin
                 return;
             }
 
-            DialogResult dialogResult2 = MessageBox.Show("Warning! This will delete your project from QuantConnect's servers. Are you sure you want to proceed?", "Delete Project From QC", MessageBoxButtons.YesNo);
+            DialogResult dialogResult2 = MessageBox.Show("Warning! This will delete your project locally and from QuantConnect's servers. Are you sure you want to proceed?", "Delete Project From QuantConnect", MessageBoxButtons.YesNo);
             if (dialogResult2 == DialogResult.Yes)
             {
+                //Close Visual Studio
+                Solution4 soln = (Solution4)QCPluginPackage.ApplicationObject.Solution;
+                soln.Close();
+
+                if (ProjectName != "")
+                {
+                    System.IO.Directory.Delete(Directory + ProjectID + " - " + ProjectName, true);
+                }
+
+                //Delete project
                 API.ProjectDelete(ProjectID);
+
+                //Reset Project Details:
+                ProjectName = "";
+                ProjectID = 0;
+                SetButtonsState(false);
             }
             else if (dialogResult2 == DialogResult.No)
             {
@@ -528,21 +559,15 @@ namespace QuantConnect.QCPlugin
             }
         }
 
-        public static void SetButtonsState(bool on)
+        /// <summary>
+        /// Enable each of the buttons.
+        /// </summary>
+        /// <param name="on"></param>
+        public static void SetButtonsState(bool state)
         {
-            if (on == true)
+            foreach (var command in QCPluginPackage.Commands.Values)
             {
-                foreach (var command in QCPluginPackage.Commands.Values)
-                {
-                    command.Enabled = true;
-                }
-            }
-            else
-            {
-                foreach (var command in QCPluginPackage.Commands.Values)
-                {
-                    command.Enabled = false;
-                }
+                command.Enabled = state;
             }
         }
     }

@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("QCPlugin")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("QuantConnect Backtesting Plugin")]
+[assembly: AssemblyDescription("Backtest directly from Visual Studio with QuantConnect's cloud.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("QuantConnect")]
-[assembly: AssemblyProduct("QCPlugin")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("QuantConnect Corporation")]
+[assembly: AssemblyProduct("QCStudioPlugin")]
+[assembly: AssemblyCopyright("2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]   
 [assembly: ComVisible(false)]     
