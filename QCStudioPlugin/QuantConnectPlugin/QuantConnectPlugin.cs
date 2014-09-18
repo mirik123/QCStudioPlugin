@@ -107,7 +107,10 @@ namespace QuantConnect.QCPlugin
                             {
                                 client.DownloadFile(new Uri("https://www.quantconnect.com/api/v1/QCTemplate.zip"), destination);
                                 finished = true;
-                            } catch { }
+                            } catch 
+                            {
+                                MessageBox.Show("Sorry there was an error downloading the QCTemplate Project. Please make sure your computer has access to the internet.");
+                            }
                         }
 
                         if (finished)
@@ -408,7 +411,8 @@ namespace QuantConnect.QCPlugin
                     }
 
                     //Add References
-                    VSProject vsProject = (VSLangProj.VSProject)proj.Object;
+                    var vsProject = proj.Object as VSProject;
+                    if (vsProject == null) continue;
 
                     var commonDLL = Directory + @"QCAlgorithm-master\QuantConnect.Algorithm\bin\Debug\QuantConnect.Common.dll";
                     if (!System.IO.File.Exists(commonDLL))
