@@ -117,7 +117,7 @@ namespace QuantConnect.QCPlugin
                 return;
             }
 
-            selectedProject = Convert.ToInt16(listViewProjects.SelectedItems[0].Text);
+            selectedProject = Convert.ToInt32(listViewProjects.SelectedItems[0].Text);
             projectName = listViewProjects.FocusedItem.SubItems[1].Text;
 
             buttonOpen.Enabled = false;
