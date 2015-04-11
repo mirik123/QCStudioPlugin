@@ -324,21 +324,20 @@ namespace QuantConnect.QCPlugin
         /// <summary>
         /// Check if project is already saved in the computer
         /// </summary>
-        /// <param name="projectName"></param>
-        /// <param name="projectID"></param>
-        public static bool ExistingFileChecker(string projectName, int projectID)
+        /// <param name="projectDir"></param>
+        private static bool ExistingFileChecker(string projectDir)
         {
             bool proceed = true;
-            if (!System.IO.Directory.Exists(Directory + projectID + " - " + projectName))
+            if (!System.IO.Directory.Exists(projectDir))
             {
-                System.IO.Directory.CreateDirectory(Directory + projectID+ " - " + projectName);
+                System.IO.Directory.CreateDirectory(projectDir);
             }
             else
             {
                 DialogResult dialogResult = MessageBox.Show("You already have this project saved in your computer. Are you sure you want to overwrite it?", "Overwrite Project", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    System.IO.Directory.Delete(Directory + projectID + " - " + projectName, true);
+                    System.IO.Directory.Delete(projectDir, true);
                     proceed = true;
                 }
                 else if (dialogResult == DialogResult.No)
@@ -348,6 +347,19 @@ namespace QuantConnect.QCPlugin
             }
             return proceed;
         }
+
+        
+        /// <summary>
+        /// Returns a ProjectDir based on projectID and projectName
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="projectID"></param>
+        private static String GetProjectDir(int projectID, string projectName)
+        {
+            String projectDir = System.IO.Path.Combine(Directory, projectID + " - " + projectName);
+            return projectDir;
+        }
+        
 
         /// <summary>
         /// Open your QuantConnect project in Visual Studio
@@ -365,8 +377,10 @@ namespace QuantConnect.QCPlugin
 
             ProjectID = selectedProject;
             ProjectName = CleanInput(projectName);
+
+            String projectDir = GetProjectDir(ProjectID, ProjectName);
             // Check if file already exists
-            if (!ExistingFileChecker(ProjectName, ProjectID))
+            if (!ExistingFileChecker(projectDir))
             {
                 return false;
             }
@@ -377,7 +391,7 @@ namespace QuantConnect.QCPlugin
                 
                 // Create Solution
                 Solution4 soln = (Solution4)QCPluginPackage.ApplicationObject.Solution;
-                soln.Create(Directory + ProjectID + " - " + ProjectName, ProjectName + ".sln");
+                soln.Create(projectDir, ProjectName + ".sln");
 
                 // Create Project
                 soln.AddFromTemplate(Directory + @"QCTemplate\csQCTemplate.vstemplate", Directory + ProjectID + " - " + ProjectName, ProjectName, false);
@@ -396,12 +410,21 @@ namespace QuantConnect.QCPlugin
 
                     foreach (var file in projectFiles)
                     {
-                        System.IO.File.WriteAllText(Directory + ProjectID + " - " + ProjectName + @"\" + file.Name, file.Code);
+                        // For some reason the rest sevice introduces leading / in front of folders... Should be removed... work around for now.
+                        string fileName = file.Name.Replace('/', '\\').Trim('\\');
+                        String filePath = System.IO.Path.Combine(projectDir, fileName);
+                        String fileDir = System.IO.Path.GetDirectoryName(filePath);
+
+                        if (!System.IO.Directory.Exists(fileDir))
+                        {
+                            System.IO.Directory.CreateDirectory(fileDir);
+                        }
+                        System.IO.File.WriteAllText(filePath, file.Code);
 
                         //Add files to project:
                         try
                         {
-                            proj.ProjectItems.AddFromFile(Directory + ProjectID + " - " + ProjectName + @"\" + file.Name);
+                            proj.ProjectItems.AddFromFile(filePath);
                         }
 
                         catch (SystemException ex)
@@ -480,6 +503,41 @@ namespace QuantConnect.QCPlugin
             return backtestID;
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="basePath"></param>
+        /// <param name="dirPath"></param>
+        /// <param name="fileList"></param>
+        private static void SavetoCloud_AddSubdirectoryToFileList(String basePath, String dirPath, List<File> fileList)
+        {
+
+            // TODO: Need to add directory prefix, get path relative to baseDir
+            string[] files = System.IO.Directory.GetFiles(dirPath, "*.cs");
+            foreach (string file in files)
+            {
+                string relBaseDir = dirPath.Substring(basePath.Length);
+                string fileName = System.IO.Path.Combine(relBaseDir, System.IO.Path.GetFileName(file));
+                fileName = fileName.Replace('\\', '/'); // Need to match the server, RESTAPI should accept different styles of directory delimiters
+                fileList.Add(new File(fileName, System.IO.File.ReadAllText(file)));
+            }
+
+            string[] dirs = System.IO.Directory.GetDirectories(dirPath);
+            foreach(string dir in dirs)
+            {
+                // We want to check the name of this directory, not the containing directory
+                string dirName = System.IO.Path.GetFileName(dir);
+                if ("bin".Equals(dirName, StringComparison.OrdinalIgnoreCase) || "obj".Equals(dirName, StringComparison.OrdinalIgnoreCase) || "properties".Equals(dirName, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Lets not add bin or obj directories.
+                    // a manifest approach would really be much cleaner...
+                }
+                else
+                {
+                    SavetoCloud_AddSubdirectoryToFileList(basePath, dir, fileList);
+                }
+            }
+        }
+
         
         /// <summary>
         /// Save your files to your QuantConnect account
@@ -492,18 +550,24 @@ namespace QuantConnect.QCPlugin
                 return;
             }
             List<File> fileList = new List<File>();
-            string directory2 = Directory + ProjectID + " - " + ProjectName;
-            string[] files = System.IO.Directory.GetFiles(directory2, "*.cs");
-            foreach (var file in files)
-            {
-                string fileName = System.IO.Path.GetFileName(file);
-                fileList.Add(new File(fileName, System.IO.File.ReadAllText(file)));
-            }
+
+            String projectDir = GetProjectDir(ProjectID, ProjectName);
+
+            SavetoCloud_AddSubdirectoryToFileList(projectDir, projectDir, fileList);
+
             //Upload Files
-            API.ProjectUpdate(ProjectID, fileList);
+            PacketBase response = API.ProjectUpdate(ProjectID, fileList);
+
             if (message)
             {
-                DialogResult dialogResult2 = MessageBox.Show("Project '" + ProjectName + "' Saved Successfully", "Saved on QuantConnect", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (response.Success)
+                {
+                    DialogResult dialogResult2 = MessageBox.Show("Project '" + ProjectName + "' Saved Successfully", "Saved on QuantConnect", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    DialogResult dialogResult2 = MessageBox.Show("Failed to save Project '" + ProjectName + "'", "Failed to Save on QuantConnect", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }            
         }
 
@@ -527,7 +591,7 @@ namespace QuantConnect.QCPlugin
 
                 if (ProjectName != "")
                 {
-                    System.IO.Directory.Delete(Directory + ProjectID + " - " + ProjectName, true);
+                    System.IO.Directory.Delete(GetProjectDir(ProjectID, ProjectName), true);
                 }
 
                 //Delete project
