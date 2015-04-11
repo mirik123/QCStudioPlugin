@@ -504,6 +504,7 @@ namespace QuantConnect.QCPlugin
         }
 
         /// <summary>
+        /// Worker function for adding subdirectories to the file list for saving projects to the cloud.
         /// </summary>
         /// <param name="basePath"></param>
         /// <param name="dirPath"></param>
