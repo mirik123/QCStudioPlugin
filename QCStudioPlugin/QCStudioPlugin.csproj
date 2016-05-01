@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -10,13 +10,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{646EC127-D987-47AA-976C-B535DE2DC5A9}</ProjectGuid>
+    <ProjectGuid>{D178E9E6-3A4C-4BF5-82D5-A6B1F2215963}</ProjectGuid>
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QuantConnect.QCStudioPlugin</RootNamespace>
+    <RootNamespace>Company.QCStudioPlugin</RootNamespace>
     <AssemblyName>QCStudioPlugin</AssemblyName>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -28,8 +28,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CopyVsixExtensionFiles>True</CopyVsixExtensionFiles>
-    <CopyVsixExtensionLocation>C:\Server\www\QCStudioPlugin\Deploy</CopyVsixExtensionLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,18 +39,16 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Build" />
-    <Reference Include="Microsoft.Build.Engine" />
-    <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualStudio.ExtensionManager, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.VisualStudio.ExtensionManager\v4.0_14.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.ExtensionManager.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0" />
@@ -61,37 +57,31 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.11.0">
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.Shell.Interop.12.0">
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop" />
-    <Reference Include="Microsoft.VisualStudio.Shell.12.0" />
+    <Reference Include="Microsoft.VisualStudio.Shell.11.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.11.0" />
-    <Reference Include="Microsoft.VisualStudio.Shell.Immutable.12.0" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
-    <Reference Include="QuantConnect.Algorithm.Interface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\QuantConnect.Algorithm.Interface.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="VSLangProj, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="System.Xaml" />
-    <Reference Include="ZedGraph">
-      <HintPath>..\packages\ZedGraph.5.1.6\lib\net35-Client\ZedGraph.dll</HintPath>
+    <Reference Include="ZedGraph, Version=5.1.7.430, Culture=neutral, PublicKeyToken=02a83cbd123fcd60, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZedGraph.5.1.7\lib\net35-Client\ZedGraph.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -151,49 +141,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\BacktestChartForm.cs">
+    <Compile Include="Forms\ConnectQCID.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\BacktestChartForm.Designer.cs">
-      <DependentUpon>BacktestChartForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormCreateProject.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormCreateProject.Designer.cs">
-      <DependentUpon>FormCreateProject.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\InputBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\InputBox.Designer.cs">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="QuantConnectPlugin\DateTimePointsList.cs" />
-    <Compile Include="QuantConnectPlugin\Extensions.cs" />
-    <Compile Include="Forms\LoadBacktest.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\LoadBacktest.Designer.cs">
-      <DependentUpon>LoadBacktest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Logout.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Logout.Designer.cs">
-      <DependentUpon>Logout.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\OpenProjects.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\OpenProjects.Designer.cs">
-      <DependentUpon>OpenProjects.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\RateLimit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\RateLimit.Designer.cs">
-      <DependentUpon>RateLimit.cs</DependentUpon>
+    <Compile Include="Forms\ConnectQCID.Designer.cs">
+      <DependentUpon>ConnectQCID.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Login.cs">
       <SubType>Form</SubType>
@@ -201,56 +153,70 @@
     <Compile Include="Forms\Login.Designer.cs">
       <DependentUpon>Login.cs</DependentUpon>
     </Compile>
-    <Compile Include="QuantConnectPlugin\Globals.cs" />
+    <Compile Include="Forms\QCClientControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\QCClientControl.Designer.cs">
+      <DependentUpon>QCClientControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\QCClientPane.cs" />
+    <Compile Include="RestAPI\Interfaces\Charting.cs" />
+    <Compile Include="RestAPI\Interfaces\Global.cs" />
+    <Compile Include="RestAPI\Interfaces\Market.cs" />
+    <Compile Include="RestAPI\Interfaces\Order.cs" />
+    <Compile Include="RestAPI\Interfaces\OrderTypes.cs" />
+    <Compile Include="RestAPI\Interfaces\SecurityIdentifier.cs" />
+    <Compile Include="RestAPI\Interfaces\SecurityIdentifierJsonConverter.cs" />
+    <Compile Include="RestAPI\Interfaces\Symbol.cs" />
+    <Compile Include="RestAPI\Interfaces\SymbolCache.cs" />
+    <Compile Include="RestAPI\Interfaces\SymbolJsonConverter.cs" />
+    <Compile Include="RestAPI\Interfaces\TypeChangeJsonConverter.cs" />
     <Compile Include="Guids.cs" />
-    <Compile Include="QuantConnectPlugin\Async.cs" />
-    <Compile Include="QuantConnectPlugin\Encrypter.cs" />
-    <Compile Include="QuantConnectPlugin\QuantConnectPlugin.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="QCPluginPackage.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PkgCmdID.cs" />
-    <Compile Include="VSPackage.Designer.cs">
+    <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>VSPackage.resx</DependentUpon>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="QCStudioPluginPackage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PkgCmdID.cs" />
+    <Compile Include="RestAPI\API.cs" />
+    <Compile Include="RestAPI\Models\Backtests.cs" />
+    <Compile Include="RestAPI\Models\Base.cs" />
+    <Compile Include="RestAPI\Models\Compiler.cs" />
+    <Compile Include="RestAPI\Models\Projects.cs" />
+    <Compile Include="Utilities\DateTimePointsList.cs" />
+    <Compile Include="Utilities\DrawChartsFactory.cs" />
+    <Compile Include="Utilities\Encrypter.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\QCPluginActions.cs" />
+    <Compile Include="Utilities\QCPluginUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\FormCreateProject.resx">
-      <DependentUpon>FormCreateProject.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\InputBox.resx">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LoadBacktest.resx">
-      <DependentUpon>LoadBacktest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BacktestChartForm.resx">
-      <DependentUpon>BacktestChartForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Logout.resx">
-      <DependentUpon>Logout.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\OpenProjects.resx">
-      <DependentUpon>OpenProjects.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\RateLimit.resx">
-      <DependentUpon>RateLimit.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ConnectQCID.resx">
+      <DependentUpon>ConnectQCID.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\QCClientControl.resx">
+      <DependentUpon>QCClientControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>VSPackage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="RestAPI\Models\LICENSE" />
+    <None Include="RestAPI\Models\README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -259,132 +225,37 @@
     <None Include="Key.snk" />
   </ItemGroup>
   <ItemGroup>
-    <VSCTCompile Include="QCPlugin.vsct">
+    <VSCTCompile Include="QCStudioPlugin.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
-      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Garbage-Closed.png" />
-    <Resource Include="Resources\Key.png" />
-    <Resource Include="Resources\Logout.png" />
-    <Resource Include="Resources\Media-Pause.png" />
-    <Resource Include="Resources\Media-Play.png" />
-    <Resource Include="Resources\Media-Stop.png" />
-    <Resource Include="Resources\Open.png" />
-    <Resource Include="Resources\Reload.png" />
-    <Resource Include="Resources\Save.png" />
-    <Resource Include="Resources\User-Login.png" />
+    <None Include="Resources\Images.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\QuantConnectLogo.ico" />
+    <Resource Include="Icons\fork.png" />
+    <Resource Include="Icons\Garbage-Closed.png" />
+    <Resource Include="Icons\Graph-03.png" />
+    <Resource Include="Icons\Key.png" />
+    <Resource Include="Icons\Logout.png" />
+    <Resource Include="Icons\Media-Pause.png" />
+    <Resource Include="Icons\Media-Play.png" />
+    <Resource Include="Icons\Media-Stop.png" />
+    <Resource Include="Icons\Open.png" />
+    <Content Include="Icons\QuantConnectLogo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Resource Include="Icons\Reload.png" />
+    <Resource Include="Icons\Save.png" />
+    <Resource Include="Icons\User-Login.png" />
+    <Content Include="License-LGPL.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\Package.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Graph-03.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\fork.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\16x16\Garbage.png" />
-    <Resource Include="Resources\16x16\Graph-03.png" />
-    <Resource Include="Resources\16x16\Login-02.png" />
-    <Resource Include="Resources\16x16\Logout.png" />
-    <Resource Include="Resources\16x16\Media-Play.png" />
-    <Resource Include="Resources\16x16\Open.png" />
-    <Resource Include="Resources\16x16\Reload.png" />
-    <Resource Include="Resources\16x16\Save.png" />
-    <Resource Include="Resources\16x16\User-Login.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="License-LGPL.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Save.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Login.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\LineSeries_12630.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\CounterSetnode_8712_24.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\eventlogFailureAudit.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\OpenComparisonResult_9697_32.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Open_6529_24.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\ProcedureWarning_8938_24.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\startwithoutdebugging_6556.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Open.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Graph.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Guage_16xLG.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Logout.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Play.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Security_Shields_Alert_16xLG_color.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Security_Shields_Alert_32xLG_color.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Security_Shields_Complete_and_ok_32xLG_color.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\Security_Shields_Critical_16xLG_color.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\StatusAnnotationRed_No_16xLG.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\StatusAnnotations_Play_16xLG_color.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\PlugOff.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\FileGroup_10135_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\vsIcons\New.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\QCo\QuantConnect.Common\QuantConnect.Common.csproj">
-      <Project>{2545c0b4-fabb-49c9-8dd1-9ad7ee23f86b}</Project>
-      <Name>QuantConnect.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QCo\QuantConnect.Logging\QuantConnect.Logging.csproj">
-      <Project>{01911409-86be-4e7d-9947-df714138610d}</Project>
-      <Name>QuantConnect.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QCo\QuantConnect.RestAPI\QuantConnect.RestAPI.csproj">
-      <Project>{70d2cc00-502f-49d2-afff-d65472de87d5}</Project>
-      <Name>QuantConnect.RestAPI</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

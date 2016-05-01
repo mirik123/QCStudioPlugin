@@ -2,14 +2,14 @@
 // MUST match guids.h
 using System;
 
-namespace QuantConnect.QCPlugin
+namespace Company.QCStudioPlugin
 {
     static class GuidList
     {
-        public const string guidQCPluginPkgString = "93f79150-258a-449e-a380-599b5928a20b";
-        public const string guidQCPluginCmdSetString = "e2ba1c58-e0a7-43b3-8974-89170ab0b932";
-        public const string guidToolWindowPersistanceString = "119a53f6-a3f1-4931-8cd2-849419698c15";
+        public const string guidQCStudioPluginPkgString = "c061f3cd-9fd7-4e6f-af9f-f925e05a4aab";
+        public const string guidQCStudioPluginCmdSetString = "fd160a50-c872-44f1-a621-45ef6a900972";
+        public const string guidToolWindowPersistanceString = "5c3c4aae-8a85-47dc-919b-f840dbb485a4";
 
-        public static readonly Guid guidQCPluginCmdSet = new Guid(guidQCPluginCmdSetString);
+        public static readonly Guid guidQCStudioPluginCmdSet = new Guid(guidQCStudioPluginCmdSetString);
     };
 }
