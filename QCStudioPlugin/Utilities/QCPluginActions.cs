@@ -63,11 +63,13 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString("Authentication error: " + ex.ToString());
                     QCPluginUtilities.OutputCommandString("Failed to authenticate. Enter credentials manually.");
 
+                    bool remember = false;
                     var win = new FormLogin(user.Email, user.Password);
-                    win.SuccessCallback = (email2, pass2) =>
+                    win.SuccessCallback = (email2, pass2, remember2) =>
                     {
                         user.Email = Encrypter.EncryptString(email2);
                         user.Password = Encrypter.EncryptString(pass2);
+                        remember = remember2;
                         
                         return api.Authenticate(email2, pass2);
                     };
@@ -76,7 +78,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                     if (!api.IsAuthenticated)
                         throw new Exception("User authentication failed");
-                    else
+                    else if (remember)
                     {
                         var jsonUser = JsonConvert.SerializeObject(user);
 

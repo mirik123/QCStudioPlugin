@@ -48,7 +48,7 @@ namespace QuantConnect.RestAPI.Models
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
         [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+        public string Name;
         [JsonProperty(PropertyName = "modified")]
         public DateTime Modified { get; set; }
 

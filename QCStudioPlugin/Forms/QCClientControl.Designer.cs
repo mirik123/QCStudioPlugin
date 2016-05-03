@@ -29,23 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabOutput = new System.Windows.Forms.TabPage();
             this.rchOutputWnd = new System.Windows.Forms.RichTextBox();
-            this.Processing = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Requested = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SparkLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.mnBacktest = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnRefreshBacktests = new System.Windows.Forms.ToolStripMenuItem();
             this.mnLoadBacktest = new System.Windows.Forms.ToolStripMenuItem();
             this.mnDeleteBacktest = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabProjects = new System.Windows.Forms.TabPage();
-            this.dgrProjects = new System.Windows.Forms.DataGridView();
-            this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.CloudProjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Modified = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LocalProjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.mnProjects = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnRefreshProjects = new System.Windows.Forms.ToolStripMenuItem();
             this.mnCreateProject = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,13 +47,7 @@
             this.mnUseProjectID = new System.Windows.Forms.ToolStripMenuItem();
             this.mnLogin = new System.Windows.Forms.ToolStripMenuItem();
             this.mnLogout = new System.Windows.Forms.ToolStripMenuItem();
-            this.Progress = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.refreshBacktest = new System.Windows.Forms.Timer(this.components);
-            this.EndDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgrBacktests = new System.Windows.Forms.DataGridView();
-            this.BacktestId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.BacktestName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.StartDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusProgress = new System.Windows.Forms.ToolStripProgressBar();
@@ -84,13 +69,15 @@
             this.Quantity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Operation = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabBacktests = new System.Windows.Forms.TabPage();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.dgrProjects = new System.Windows.Forms.DataGridView();
+            this.dgrBacktests = new System.Windows.Forms.DataGridView();
             this.tabOutput.SuspendLayout();
             this.mnBacktest.SuspendLayout();
-            this.tabProjects.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgrProjects)).BeginInit();
             this.mnProjects.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgrBacktests)).BeginInit();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -106,7 +93,15 @@
             this.tabFooter.SuspendLayout();
             this.tabTrades.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTrades)).BeginInit();
-            this.tabBacktests.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgrProjects)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgrBacktests)).BeginInit();
             this.SuspendLayout();
             // 
             // tabOutput
@@ -128,27 +123,6 @@
             this.rchOutputWnd.Size = new System.Drawing.Size(1145, 231);
             this.rchOutputWnd.TabIndex = 0;
             this.rchOutputWnd.Text = "";
-            // 
-            // Processing
-            // 
-            this.Processing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Processing.HeaderText = "Processing Time";
-            this.Processing.Name = "Processing";
-            this.Processing.ReadOnly = true;
-            // 
-            // Requested
-            // 
-            this.Requested.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Requested.HeaderText = "Last Requested";
-            this.Requested.Name = "Requested";
-            this.Requested.ReadOnly = true;
-            // 
-            // SparkLine
-            // 
-            this.SparkLine.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.SparkLine.HeaderText = "Spark Line";
-            this.SparkLine.Name = "SparkLine";
-            this.SparkLine.ReadOnly = true;
             // 
             // mnBacktest
             // 
@@ -178,74 +152,6 @@
             this.mnDeleteBacktest.Size = new System.Drawing.Size(154, 22);
             this.mnDeleteBacktest.Text = "Delete Backtest";
             // 
-            // tabProjects
-            // 
-            this.tabProjects.Controls.Add(this.dgrProjects);
-            this.tabProjects.Location = new System.Drawing.Point(4, 22);
-            this.tabProjects.Name = "tabProjects";
-            this.tabProjects.Padding = new System.Windows.Forms.Padding(3);
-            this.tabProjects.Size = new System.Drawing.Size(1151, 237);
-            this.tabProjects.TabIndex = 2;
-            this.tabProjects.Text = "Projects";
-            this.tabProjects.UseVisualStyleBackColor = true;
-            // 
-            // dgrProjects
-            // 
-            this.dgrProjects.AllowUserToAddRows = false;
-            this.dgrProjects.AllowUserToDeleteRows = false;
-            this.dgrProjects.AllowUserToOrderColumns = true;
-            this.dgrProjects.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
-            this.dgrProjects.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dgrProjects.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
-            this.dgrProjects.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.dgrProjects.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgrProjects.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Id,
-            this.CloudProjectName,
-            this.Modified,
-            this.LocalProjectName});
-            this.dgrProjects.ContextMenuStrip = this.mnProjects;
-            this.dgrProjects.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgrProjects.GridColor = System.Drawing.SystemColors.ScrollBar;
-            this.dgrProjects.Location = new System.Drawing.Point(3, 3);
-            this.dgrProjects.MultiSelect = false;
-            this.dgrProjects.Name = "dgrProjects";
-            this.dgrProjects.ReadOnly = true;
-            this.dgrProjects.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.dgrProjects.RowHeadersVisible = false;
-            this.dgrProjects.RowTemplate.ContextMenuStrip = this.mnProjects;
-            this.dgrProjects.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgrProjects.Size = new System.Drawing.Size(1145, 231);
-            this.dgrProjects.TabIndex = 4;
-            this.dgrProjects.DoubleClick += new System.EventHandler(this.dgrProjects_DoubleClick);
-            // 
-            // Id
-            // 
-            this.Id.HeaderText = "Id";
-            this.Id.Name = "Id";
-            this.Id.ReadOnly = true;
-            this.Id.Visible = false;
-            // 
-            // CloudProjectName
-            // 
-            this.CloudProjectName.HeaderText = "Cloud Project Name";
-            this.CloudProjectName.Name = "CloudProjectName";
-            this.CloudProjectName.ReadOnly = true;
-            this.CloudProjectName.Width = 200;
-            // 
-            // Modified
-            // 
-            this.Modified.HeaderText = "Modified";
-            this.Modified.Name = "Modified";
-            this.Modified.ReadOnly = true;
-            // 
-            // LocalProjectName
-            // 
-            this.LocalProjectName.HeaderText = "Local Project Name";
-            this.LocalProjectName.Name = "LocalProjectName";
-            this.LocalProjectName.ReadOnly = true;
-            this.LocalProjectName.Width = 200;
-            // 
             // mnProjects
             // 
             this.mnProjects.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -259,7 +165,7 @@
             this.mnLogin,
             this.mnLogout});
             this.mnProjects.Name = "mnProjects";
-            this.mnProjects.Size = new System.Drawing.Size(169, 224);
+            this.mnProjects.Size = new System.Drawing.Size(169, 202);
             this.mnProjects.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.mnProjects_Click);
             // 
             // mnRefreshProjects
@@ -316,80 +222,10 @@
             this.mnLogout.Size = new System.Drawing.Size(168, 22);
             this.mnLogout.Text = "Logout";
             // 
-            // Progress
-            // 
-            this.Progress.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Progress.HeaderText = "Progress";
-            this.Progress.Name = "Progress";
-            this.Progress.ReadOnly = true;
-            // 
             // refreshBacktest
             // 
             this.refreshBacktest.Interval = 2000;
             this.refreshBacktest.Tick += new System.EventHandler(this.refreshBacktest_Tick);
-            // 
-            // EndDate
-            // 
-            this.EndDate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.EndDate.HeaderText = "End Date";
-            this.EndDate.Name = "EndDate";
-            this.EndDate.ReadOnly = true;
-            // 
-            // dgrBacktests
-            // 
-            this.dgrBacktests.AllowUserToAddRows = false;
-            this.dgrBacktests.AllowUserToDeleteRows = false;
-            this.dgrBacktests.AllowUserToOrderColumns = true;
-            this.dgrBacktests.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
-            this.dgrBacktests.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dgrBacktests.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
-            this.dgrBacktests.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.dgrBacktests.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgrBacktests.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.BacktestId,
-            this.BacktestName,
-            this.StartDate,
-            this.EndDate,
-            this.Progress,
-            this.Processing,
-            this.Requested,
-            this.SparkLine});
-            this.dgrBacktests.ContextMenuStrip = this.mnBacktest;
-            this.dgrBacktests.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgrBacktests.GridColor = System.Drawing.SystemColors.ScrollBar;
-            this.dgrBacktests.Location = new System.Drawing.Point(3, 3);
-            this.dgrBacktests.MultiSelect = false;
-            this.dgrBacktests.Name = "dgrBacktests";
-            this.dgrBacktests.ReadOnly = true;
-            this.dgrBacktests.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.dgrBacktests.RowHeadersVisible = false;
-            this.dgrBacktests.RowTemplate.ContextMenuStrip = this.mnBacktest;
-            this.dgrBacktests.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgrBacktests.Size = new System.Drawing.Size(1145, 231);
-            this.dgrBacktests.TabIndex = 3;
-            this.dgrBacktests.DoubleClick += new System.EventHandler(this.dgrBacktests_DoubleClick);
-            // 
-            // BacktestId
-            // 
-            this.BacktestId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.BacktestId.HeaderText = "BacktestId";
-            this.BacktestId.Name = "BacktestId";
-            this.BacktestId.ReadOnly = true;
-            this.BacktestId.Visible = false;
-            // 
-            // BacktestName
-            // 
-            this.BacktestName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.BacktestName.HeaderText = "Name";
-            this.BacktestName.Name = "BacktestName";
-            this.BacktestName.ReadOnly = true;
-            // 
-            // StartDate
-            // 
-            this.StartDate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.StartDate.HeaderText = "Start Date";
-            this.StartDate.Name = "StartDate";
-            this.StartDate.ReadOnly = true;
             // 
             // statusStrip
             // 
@@ -505,8 +341,8 @@
             // columnName
             // 
             this.columnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.columnName.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.columnName.DefaultCellStyle = dataGridViewCellStyle7;
             this.columnName.HeaderText = "Name";
             this.columnName.Name = "columnName";
             // 
@@ -519,8 +355,7 @@
             // tabFooter
             // 
             this.tabFooter.Controls.Add(this.tabTrades);
-            this.tabFooter.Controls.Add(this.tabBacktests);
-            this.tabFooter.Controls.Add(this.tabProjects);
+            this.tabFooter.Controls.Add(this.tabPage1);
             this.tabFooter.Controls.Add(this.tabOutput);
             this.tabFooter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabFooter.Location = new System.Drawing.Point(0, 0);
@@ -571,8 +406,8 @@
             // dataGridViewTextBoxColumn1
             // 
             this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn1.HeaderText = "DateTime";
             this.dataGridViewTextBoxColumn1.MinimumWidth = 110;
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
@@ -613,16 +448,109 @@
             this.Status.HeaderText = "Status";
             this.Status.Name = "Status";
             // 
-            // tabBacktests
+            // tabPage1
             // 
-            this.tabBacktests.Controls.Add(this.dgrBacktests);
-            this.tabBacktests.Location = new System.Drawing.Point(4, 22);
-            this.tabBacktests.Name = "tabBacktests";
-            this.tabBacktests.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBacktests.Size = new System.Drawing.Size(1151, 237);
-            this.tabBacktests.TabIndex = 1;
-            this.tabBacktests.Text = "Backtests";
-            this.tabBacktests.UseVisualStyleBackColor = true;
+            this.tabPage1.Controls.Add(this.splitContainer3);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1151, 237);
+            this.tabPage1.TabIndex = 4;
+            this.tabPage1.Text = "Projects/Backtests";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.groupBox1);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.groupBox2);
+            this.splitContainer3.Size = new System.Drawing.Size(1145, 231);
+            this.splitContainer3.SplitterDistance = 633;
+            this.splitContainer3.TabIndex = 0;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Controls.Add(this.dgrBacktests);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(633, 231);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Backtests";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.AutoSize = true;
+            this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox2.Controls.Add(this.dgrProjects);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Location = new System.Drawing.Point(0, 0);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(508, 231);
+            this.groupBox2.TabIndex = 0;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Projects";
+            // 
+            // dgrProjects
+            // 
+            this.dgrProjects.AllowUserToAddRows = false;
+            this.dgrProjects.AllowUserToDeleteRows = false;
+            this.dgrProjects.AllowUserToOrderColumns = true;
+            this.dgrProjects.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
+            this.dgrProjects.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgrProjects.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
+            this.dgrProjects.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dgrProjects.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgrProjects.ContextMenuStrip = this.mnProjects;
+            this.dgrProjects.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgrProjects.GridColor = System.Drawing.SystemColors.ScrollBar;
+            this.dgrProjects.Location = new System.Drawing.Point(3, 16);
+            this.dgrProjects.MultiSelect = false;
+            this.dgrProjects.Name = "dgrProjects";
+            this.dgrProjects.ReadOnly = true;
+            this.dgrProjects.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dgrProjects.RowHeadersVisible = false;
+            this.dgrProjects.RowTemplate.ContextMenuStrip = this.mnProjects;
+            this.dgrProjects.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgrProjects.Size = new System.Drawing.Size(502, 212);
+            this.dgrProjects.TabIndex = 7;
+            this.dgrProjects.DoubleClick += new System.EventHandler(this.dgrProjects_DoubleClick);
+            // 
+            // dgrBacktests
+            // 
+            this.dgrBacktests.AllowUserToAddRows = false;
+            this.dgrBacktests.AllowUserToDeleteRows = false;
+            this.dgrBacktests.AllowUserToOrderColumns = true;
+            this.dgrBacktests.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
+            this.dgrBacktests.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgrBacktests.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
+            this.dgrBacktests.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dgrBacktests.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgrBacktests.ContextMenuStrip = this.mnBacktest;
+            this.dgrBacktests.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgrBacktests.GridColor = System.Drawing.SystemColors.ScrollBar;
+            this.dgrBacktests.Location = new System.Drawing.Point(3, 16);
+            this.dgrBacktests.MultiSelect = false;
+            this.dgrBacktests.Name = "dgrBacktests";
+            this.dgrBacktests.ReadOnly = true;
+            this.dgrBacktests.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dgrBacktests.RowHeadersVisible = false;
+            this.dgrBacktests.RowTemplate.ContextMenuStrip = this.mnBacktest;
+            this.dgrBacktests.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgrBacktests.Size = new System.Drawing.Size(627, 212);
+            this.dgrBacktests.TabIndex = 4;
+            this.dgrBacktests.DoubleClick += new System.EventHandler(this.dgrBacktests_DoubleClick);
             // 
             // QCClientControl
             // 
@@ -634,10 +562,7 @@
             this.Size = new System.Drawing.Size(1159, 692);
             this.tabOutput.ResumeLayout(false);
             this.mnBacktest.ResumeLayout(false);
-            this.tabProjects.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgrProjects)).EndInit();
             this.mnProjects.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgrBacktests)).EndInit();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
@@ -654,7 +579,17 @@
             this.tabFooter.ResumeLayout(false);
             this.tabTrades.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTrades)).EndInit();
-            this.tabBacktests.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel1.PerformLayout();
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            this.splitContainer3.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgrProjects)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgrBacktests)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -663,15 +598,10 @@
         #endregion
 
         private System.Windows.Forms.TabPage tabOutput;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Processing;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Requested;
-        private System.Windows.Forms.DataGridViewTextBoxColumn SparkLine;
         private System.Windows.Forms.ContextMenuStrip mnBacktest;
         private System.Windows.Forms.ToolStripMenuItem mnRefreshBacktests;
         private System.Windows.Forms.ToolStripMenuItem mnLoadBacktest;
         private System.Windows.Forms.ToolStripMenuItem mnDeleteBacktest;
-        private System.Windows.Forms.TabPage tabProjects;
-        private System.Windows.Forms.DataGridView dgrProjects;
         private System.Windows.Forms.DataGridViewTextBoxColumn ProjectName;
         private System.Windows.Forms.ContextMenuStrip mnProjects;
         private System.Windows.Forms.ToolStripMenuItem mnRefreshProjects;
@@ -683,13 +613,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnUseProjectID;
         private System.Windows.Forms.ToolStripMenuItem mnLogin;
         private System.Windows.Forms.ToolStripMenuItem mnLogout;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Progress;
         private System.Windows.Forms.Timer refreshBacktest;
-        private System.Windows.Forms.DataGridViewTextBoxColumn EndDate;
-        private System.Windows.Forms.DataGridView dgrBacktests;
-        private System.Windows.Forms.DataGridViewTextBoxColumn BacktestId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn BacktestName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn StartDate;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripProgressBar statusProgress;
@@ -711,11 +635,12 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Quantity;
         private System.Windows.Forms.DataGridViewTextBoxColumn Operation;
         private System.Windows.Forms.DataGridViewTextBoxColumn Status;
-        private System.Windows.Forms.TabPage tabBacktests;
         private System.Windows.Forms.RichTextBox rchOutputWnd;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Id;
-        private System.Windows.Forms.DataGridViewTextBoxColumn CloudProjectName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Modified;
-        private System.Windows.Forms.DataGridViewTextBoxColumn LocalProjectName;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.DataGridView dgrBacktests;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.DataGridView dgrProjects;
     }
 }

@@ -17,7 +17,7 @@ namespace QuantConnect.QCPlugin
     *********************************************************/
     public partial class FormLogin : Form
     {
-        public Func<string, string, Task> SuccessCallback;
+        public Func<string, string, bool, Task> SuccessCallback;
 
         public FormLogin(string email, string password)
         {
@@ -32,14 +32,11 @@ namespace QuantConnect.QCPlugin
             UseWaitCursor = true;
             progressBar1.Visible = true;
 
-            string Email = textBoxEmail.Text;
-            string Password = textBoxPassword.Text;
-
             if (SuccessCallback != null)
             {
                 try
                 {
-                    await SuccessCallback(textBoxEmail.Text, textBoxPassword.Text);
+                    await SuccessCallback(textBoxEmail.Text, textBoxPassword.Text, checkBoxRememberCredentials.Checked);
 
                     Close();
                 }
