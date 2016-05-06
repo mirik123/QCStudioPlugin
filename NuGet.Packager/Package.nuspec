@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>QuantConnect.Lean</id>
+    <version>2.2.0</version>
+    <title>QuantConnect.Lean</title>
+    <authors>Mark Babayev</authors>
+    <owners></owners>
+    <description>
+      Lean Engine is an open-source fully managed C# algorithmic trading engine built for desktop and cloud usage. It was designed in Mono and operates in Windows, Linux and Mac platforms. The community has contributed additional connectors to F#, Visual Basic and Java.
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <summary>
+      Lean Algorithmic Trading Engine by QuantConnect
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/QuantConnect/Lean</projectUrl>
+    <iconUrl>https://github.com/QuantConnect/Lean/blob/master/lean.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/QuantConnect/Lean/blob/master/LICENSE</licenseUrl>
+    <copyright>Copyright  2016</copyright>
+    <dependencies>
+        <group targetFramework="net40">
+          <dependency id="log4net" version="1.2.10" />
+        </group>
+    </dependencies>
+    <references></references>
+    <tags></tags>
+  </metadata>
+  <files>
+    <file src="lib\" target="lib" />
+    <file src="tools\" target="tools" />
+    <file src="content\" target="content" />
+  </files>
+</package>
