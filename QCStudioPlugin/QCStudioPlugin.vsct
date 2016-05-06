@@ -30,7 +30,6 @@
     <GuidSymbol name="guidQCStudioPluginPkg" value="{c061f3cd-9fd7-4e6f-af9f-f925e05a4aab}" />
     <GuidSymbol name="guidQCStudioPluginCmdSet" value="{fd160a50-c872-44f1-a621-45ef6a900972}">
       <IDSymbol name="MyMenuGroup" value="0x1020" />
-      <IDSymbol name="cmdidQCStart" value="0x0100" />
       <IDSymbol name="cmdidQCPane" value="0x0101" />
     </GuidSymbol>    
         

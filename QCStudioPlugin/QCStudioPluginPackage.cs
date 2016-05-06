@@ -1,4 +1,5 @@
-﻿using EnvDTE80;
+﻿using Company.QCStudioPlugin.Properties;
+using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ExtensionManager;
 using Microsoft.VisualStudio.Shell;

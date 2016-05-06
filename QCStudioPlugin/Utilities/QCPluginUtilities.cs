@@ -1,4 +1,8 @@
-﻿using Company.QCStudioPlugin;
+﻿/*
+* Mark Babayev (https://github.com/mirik123) - Visual Studio extension utilities
+*/
+
+using Company.QCStudioPlugin;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
@@ -8,6 +12,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -19,11 +24,19 @@ namespace QuantConnect.QCStudioPlugin
 {
     public static class QCPluginUtilities
     {
+        public enum Severity
+        {
+            Info,
+            Warning,
+            Error
+        }
+        
         static internal string AppTitle;
         static internal DTE2 dte;
         static internal IVsThreadedWaitDialogFactory dialogFactory;
         static internal IVsOutputWindow outputWindow;
         static internal string InstallPath;
+        static internal RichTextBox rchOutputWnd = null;
 
         public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow)
         {
@@ -62,24 +75,47 @@ namespace QuantConnect.QCStudioPlugin
             return System.IO.Path.GetDirectoryName(dte.Solution.FullName);
         }
 
-        public static void SetProjectID(int projectId, string projectName)
+        public static void SetProjectID(int projectId, string uniqueName)
         {
-            var proj = dte.Solution.Projects.Cast<Project>().FirstOrDefault(x => x.Name == projectName);
-            proj.Properties.Item("QCProjectID").Value = projectId;
-            proj.Save();
+            if (string.IsNullOrEmpty(uniqueName)) return;
+
+            IVsHierarchy hierarchy;
+            IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
+            solution.GetProjectOfUniqueName(uniqueName, out hierarchy);
+            IVsBuildPropertyStorage buildPropertyStorage = hierarchy as IVsBuildPropertyStorage;
+
+            buildPropertyStorage.SetPropertyValue("QCProjectID", String.Empty, (uint)_PersistStorageType.PST_PROJECT_FILE, projectId.ToString());
+
+        }
+
+        public static int GetProjectID(string uniqueName)
+        {
+            if (string.IsNullOrEmpty(uniqueName)) return 0;
+            
+            IVsHierarchy hierarchy;
+            IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
+            solution.GetProjectOfUniqueName(uniqueName, out hierarchy);
+            IVsBuildPropertyStorage buildPropertyStorage = hierarchy as IVsBuildPropertyStorage;
+
+            string projectId;
+            buildPropertyStorage.GetPropertyValue("QCProjectID", String.Empty, (uint)_PersistStorageType.PST_PROJECT_FILE, out projectId);
+
+            int iProjId = 0;
+            int.TryParse(projectId, out iProjId);
+
+            return iProjId;
         }
 
         public static IEnumerable<dynamic> GetAllProjects()
         {
             foreach(Project prj in dte.Solution.Projects)
             {
-                var projectId = prj.Properties.Item("QCProjectID").Value as string;
-
                 yield return new {
-                    Id = projectId,
+                    Id = GetProjectID(prj.UniqueName),
                     name = prj.Name,
-                    path = Path.GetDirectoryName(prj.FullName),
-                    binpath = GetProjectOutputBuildFolder(prj)
+                    uniqueName = prj.UniqueName,
+                    path = Path.GetDirectoryName(prj.FullName)
+                    //binpath = GetProjectOutputBuildFolder(prj)
                 };
             }
         }
@@ -146,8 +182,16 @@ namespace QuantConnect.QCStudioPlugin
             windowPane.Activate();
         }
 
-        static internal void OutputCommandString(string text)
+        static internal void OutputCommandString(string text, Severity severity = Severity.Error)
         {
+            if (rchOutputWnd != null)
+            {
+                rchOutputWnd.DeselectAll();
+                rchOutputWnd.SelectionColor = severity == Severity.Error ? Color.Red : severity == Severity.Warning ? Color.Orange : SystemColors.WindowText;
+                rchOutputWnd.AppendText(Environment.NewLine + text);
+                rchOutputWnd.SelectionColor = SystemColors.WindowText;
+            }
+
             OutputCommandString(text, AppTitle);
         }
 
@@ -174,9 +218,38 @@ namespace QuantConnect.QCStudioPlugin
             return dlg;
         }
 
-        public static int GetCloudIdForActiveProject()
+        public static void UpdateLocalProject(List<QuantConnect.RestAPI.Models.QCFile> projectFiles, string ProjectName)
         {
-            throw new NotImplementedException();
+            var proj = dte.Solution.Projects.Cast<Project>().FirstOrDefault(x => x.Name == ProjectName);
+            if (proj == null)
+                throw new Exception("Loacal project not found for name: " + ProjectName);
+
+            var projectDir = Path.GetDirectoryName(proj.FullName);
+            foreach (var file in projectFiles)
+            {
+                // For some reason the rest sevice introduces leading / in front of folders... Should be removed... work around for now.
+                string fileName = file.Name.Replace('/', '\\').Trim('\\');
+                string filePath = System.IO.Path.Combine(projectDir, fileName);
+                string fileDir = System.IO.Path.GetDirectoryName(filePath);
+
+                if (!System.IO.Directory.Exists(fileDir))
+                {
+                    System.IO.Directory.CreateDirectory(fileDir);
+                }
+                System.IO.File.WriteAllText(filePath, file.Code);
+
+                //Add files to project:
+                try
+                {
+                    proj.ProjectItems.AddFromFile(filePath);
+                }
+                catch (SystemException ex)
+                {
+                    OutputCommandString("Error adding files to local project: " + ex.ToString());
+                }
+            }
+
+            proj.Save();
         }
 
         public static string GetProjectOutputBuildFolder(EnvDTE.Project proj)
@@ -235,6 +308,6 @@ namespace QuantConnect.QCStudioPlugin
             }
 
             return absoluteOutputPath;
-        }
+        }       
     }
 }

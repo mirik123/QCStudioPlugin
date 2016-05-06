@@ -95,7 +95,7 @@ namespace QuantConnect.QCPlugin
                     _cacheMax[chart.Name].Add(series.Name, 0);
                     _cache[chart.Name].Add(series.Name, null);
 
-                    Initialize(chart, series, startDate, endDate);
+                    Initialize(chart.Name, series, startDate, endDate);
                 }
 
                 switch (series.SeriesType)
@@ -136,10 +136,10 @@ namespace QuantConnect.QCPlugin
         /// <summary>
         /// Initialize the charts
         /// </summary>
-        private void Initialize(Chart resultChart, Series series, DateTime startDate, DateTime endDate)
+        private void Initialize(string chartName, Series series, DateTime startDate, DateTime endDate)
         {
             //Setup Chart:
-            var chart = _chartObjects[resultChart.Name];
+            var chart = _chartObjects[chartName];
             chart.Dock = DockStyle.Fill;
             chart.MasterPane.Border.IsVisible = false;
             chart.IsSynchronizeXAxes = true;
@@ -148,7 +148,7 @@ namespace QuantConnect.QCPlugin
             CurveItem stackedCurveItem = CreateCurveItem(series);
             stackedPane.CurveList.Add(stackedCurveItem);
             chart.MasterPane.Add(stackedPane);
-            _cache[resultChart.Name][series.Name] = stackedCurveItem;
+            _cache[chartName][series.Name] = stackedCurveItem;
 
             //Refresh it:
             RefreshChart(ref chart);

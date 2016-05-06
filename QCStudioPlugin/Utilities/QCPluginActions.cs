@@ -44,7 +44,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 var user = new User { Email = "", Password = "" };
                 var credentialFile = Path.Combine(QCPluginUtilities.InstallPath, "credentials.config");
 
-                QCPluginUtilities.OutputCommandString("Authenticating QC user...");
+                QCPluginUtilities.OutputCommandString("Authenticating QC user...", QCPluginUtilities.Severity.Info);
                 if (File.Exists(credentialFile))
                 {
                     var userData = File.ReadAllText(credentialFile);
@@ -61,7 +61,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 catch(Exception ex)
                 {
                     QCPluginUtilities.OutputCommandString("Authentication error: " + ex.ToString());
-                    QCPluginUtilities.OutputCommandString("Failed to authenticate. Enter credentials manually.");
+                    QCPluginUtilities.OutputCommandString("Failed to authenticate. Enter credentials manually.", QCPluginUtilities.Severity.Info);
 
                     bool remember = false;
                     var win = new FormLogin(user.Email, user.Password);
@@ -89,7 +89,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     }
                 }
 
-                QCPluginUtilities.OutputCommandString("User authenticated successfuly.");
+                QCPluginUtilities.OutputCommandString("User authenticated successfuly.", QCPluginUtilities.Severity.Info);
             }
         }
 
@@ -105,11 +105,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 var parsed_filesList = fileList.Select(x => new QCFile(x.Key, x.Value)).ToList();
 
                 //Upload Files
-                QCPluginUtilities.OutputCommandString("Saving project updates...");
+                QCPluginUtilities.OutputCommandString("Saving project updates...", QCPluginUtilities.Severity.Info);
 
                 await api.ProjectUpdate(ProjectID, parsed_filesList);
 
-                QCPluginUtilities.OutputCommandString("Project Saved Successfully");
+                QCPluginUtilities.OutputCommandString("Project Saved Successfully", QCPluginUtilities.Severity.Info);
             }
             catch(Exception ex)
             {
@@ -157,7 +157,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
         public static void Logout()
         {
-            QCPluginUtilities.OutputCommandString("Removed user credentials.");
+            QCPluginUtilities.OutputCommandString("Removed user credentials.", QCPluginUtilities.Severity.Info);
             api.RemoveAuthentication();
             var credentialFile = Path.Combine(QCPluginUtilities.InstallPath, "credentials.config");
 
@@ -171,27 +171,27 @@ namespace QuantConnect.QCStudioPlugin.Actions
             {
                 await Authenticate();
 
-                QCPluginUtilities.OutputCommandString("Building project...");
+                QCPluginUtilities.OutputCommandString("Building project...", QCPluginUtilities.Severity.Info);
                 var res = await api.Compile(ProjectID);
 
-                QCPluginUtilities.OutputCommandString("Running backtest...");
+                QCPluginUtilities.OutputCommandString("Running backtest...", QCPluginUtilities.Severity.Info);
                 var backtestResult = await api.Backtest(ProjectID, res.CompileId, backtestName);
                 if (string.IsNullOrEmpty(backtestResult.BacktestId) || backtestResult.BacktestId == "0")
                     throw new Exception("Failed to run backtest.");
 
-                QCPluginUtilities.OutputCommandString("Project Backtest created.");
+                QCPluginUtilities.OutputCommandString("Project Backtest created.", QCPluginUtilities.Severity.Info);
             }
             catch (Exception ex)
             {
                 var msg = ex.Message;
                 if (msg.Contains("Time out on build request"))
                 {
-                    QCPluginUtilities.OutputCommandString("Build timed out, retrying...");
+                    QCPluginUtilities.OutputCommandString("Build timed out, retrying...", QCPluginUtilities.Severity.Warning);
                     CreateBacktest(ProjectID, backtestName);
                 }
                 else if (msg.Contains("Please upgrade your account"))
                 {
-                    QCPluginUtilities.OutputCommandString("You have reached the limit of 5 backtests per day via API on a free account. Please upgrade your account to unlock unlimited backtests.");
+                    QCPluginUtilities.OutputCommandString("You have reached the limit of 5 backtests per day via API on a free account. Please upgrade your account to unlock unlimited backtests.", QCPluginUtilities.Severity.Info);
                 }
                 else
                 {
@@ -206,11 +206,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
             {
                 await Authenticate();
 
-                QCPluginUtilities.OutputCommandString("Deleting backtest...");
+                QCPluginUtilities.OutputCommandString("Deleting backtest...", QCPluginUtilities.Severity.Info);
 
                 await api.BacktestDelete(BacktestID);
 
-                QCPluginUtilities.OutputCommandString("Backtest deleted successfuly...");
+                QCPluginUtilities.OutputCommandString("Backtest deleted successfuly...", QCPluginUtilities.Severity.Info);
             }
             catch (Exception ex)
             {
@@ -224,11 +224,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
             {
                 await Authenticate();
 
-                QCPluginUtilities.OutputCommandString("Receiving backtests...");
+                QCPluginUtilities.OutputCommandString("Receiving backtests...", QCPluginUtilities.Severity.Info);
 
                 var backtests = await api.BacktestList(ProjectID);
 
-                QCPluginUtilities.OutputCommandString("Backtests received successfuly...");
+                QCPluginUtilities.OutputCommandString("Backtests received successfuly...", QCPluginUtilities.Severity.Info);
 
                 return backtests.Summary;
             }
@@ -246,11 +246,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
             {
                 await Authenticate();
 
-                QCPluginUtilities.OutputCommandString("Receiving projects...");
+                QCPluginUtilities.OutputCommandString("Receiving projects...", QCPluginUtilities.Severity.Info);
 
                 var projects = await api.ProjectList();
 
-                QCPluginUtilities.OutputCommandString("Projects received successfuly...");
+                QCPluginUtilities.OutputCommandString("Projects received successfuly...", QCPluginUtilities.Severity.Info);
 
                 //FULL OUTER JOIN !!!
                 var alookup = QCPluginUtilities.GetAllProjects().ToLookup(x => x.Id);
@@ -261,7 +261,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                 var combproj = 
                     from key in keys
-                    from xa in alookup[key].DefaultIfEmpty(new { name = "", path = "", Id = 0 })
+                    from xa in alookup[key].DefaultIfEmpty(new { name = "", path = "", Id = 0, uniqueName = "" })
                     from xb in blookup[key].DefaultIfEmpty(new Project())
                     select new CombinedProject
                     {
@@ -270,7 +270,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
                         CloudProjectName = xb.Name,
                         Modified = xb.Modified,
                         LocalProjectName = xa.name,
-                        LocalProjectPath = xa.path
+                        LocalProjectPath = xa.path,
+                        uniqueName = xa.uniqueName
                     };
 
                 return combproj.ToList();
@@ -289,11 +290,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
             {
                 await Authenticate();
 
-                QCPluginUtilities.OutputCommandString("Creating project...");
+                QCPluginUtilities.OutputCommandString("Creating project...", QCPluginUtilities.Severity.Info);
 
                 await api.ProjectCreate(projectName);
 
-                QCPluginUtilities.OutputCommandString("Project created successfuly...");
+                QCPluginUtilities.OutputCommandString("Project created successfuly...", QCPluginUtilities.Severity.Info);
             }
             catch (Exception ex)
             {
@@ -305,11 +306,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
         {
             try
             {
-                QCPluginUtilities.OutputCommandString("getting backtest results...");
+                QCPluginUtilities.OutputCommandString("getting backtest results...", QCPluginUtilities.Severity.Info);
 
                 return await api.BacktestResults(backtestId);
 
-                QCPluginUtilities.OutputCommandString("backtest results received...");
+                QCPluginUtilities.OutputCommandString("backtest results received...", QCPluginUtilities.Severity.Info);
             }
             catch (Exception ex)
             {
@@ -325,11 +326,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
             {
                 await Authenticate();
 
-                QCPluginUtilities.OutputCommandString("Deleting project...");
+                QCPluginUtilities.OutputCommandString("Deleting project...", QCPluginUtilities.Severity.Info);
 
                 await api.ProjectDelete(ProjectID);
 
-                QCPluginUtilities.OutputCommandString("Project deleted successfuly...");
+                QCPluginUtilities.OutputCommandString("Project deleted successfuly...", QCPluginUtilities.Severity.Info);
             }
             catch (Exception ex)
             {
@@ -337,17 +338,19 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        public async static Task DownloadProject(int ProjectID, string ProjectDir)
+        public async static Task DownloadProject(int ProjectID, string ProjectName)
         {
             try
             {
                 await Authenticate();
 
-                QCPluginUtilities.OutputCommandString("Creating project...");
+                QCPluginUtilities.OutputCommandString("Creating project...", QCPluginUtilities.Severity.Info);
 
                 var files = await api.ProjectFiles(ProjectID);
 
-                QCPluginUtilities.OutputCommandString("Project created successfuly...");
+                QCPluginUtilities.UpdateLocalProject(files.Files, ProjectName);
+
+                QCPluginUtilities.OutputCommandString("Project created successfuly...", QCPluginUtilities.Severity.Info);
             }
             catch (Exception ex)
             {
@@ -368,7 +371,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
     public class CombinedProject: Project
     {
         public string CloudProjectName { get; set; }
-        public string LocalProjectPath { get; set; }
         public string LocalProjectName { get; set; }
+        public string uniqueName;
+        public string LocalProjectPath;       
     }
 }

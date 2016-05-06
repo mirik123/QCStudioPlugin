@@ -1,8 +1,15 @@
-﻿using QuantConnect.QCPlugin;
+﻿/*
+* Mark Babayev (https://github.com/mirik123) - User Control for ToolWindowPane
+ * The desing and the idea are based on the original QuantConnect client plugin:
+ * https://github.com/QuantConnect/QCStudioPlugin
+*/
+
+using QuantConnect.QCPlugin;
 using QuantConnect.QCStudioPlugin.Actions;
 using QuantConnect.RestAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,6 +26,8 @@ namespace QuantConnect.QCStudioPlugin.Forms
         {
             _drawChartActions = new DrawChartsFactory();
             InitializeComponent();
+
+            QCPluginUtilities.rchOutputWnd = rchOutputWnd;
         }       
 
         /// <summary>
@@ -109,8 +118,8 @@ namespace QuantConnect.QCStudioPlugin.Forms
                         break;
                     case "mnDeleteBacktest":
                         await QCStudioPluginActions.DeleteBacktest(selbacktest.BacktestId);
-                        var delrow = dgrBacktests.Rows.Cast<DataGridViewRow>().FirstOrDefault(x => (x.DataBoundItem as BacktestSummary).BacktestId == selbacktest.BacktestId);
-                        if (delrow != null) dgrBacktests.Rows.Remove(delrow);
+
+                        mnRefreshBacktests.PerformClick();
 
                         break;
                 }
@@ -153,6 +162,39 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     mnRefreshBacktests.PerformClick();
 
                     break;
+                case "mnConnectProjectID":
+                        var projects = dgrProjects.DataSource as List<CombinedProject>;
+                        var cloudproj = projects.Where(x => string.IsNullOrEmpty(x.LocalProjectName)).ToArray();
+                        var localproj = projects.Where(x => x.Id == 0).ToArray();
+                        if (localproj.Length == 0 || cloudproj.Length == 0)
+                        {
+                            QCPluginUtilities.OutputCommandString("No orphaned projects found on both cloud and local side.");
+                            return;
+                        }
+
+                        var win = new ConnectQCID();
+                        win.cmbCloud.Items.AddRange(cloudproj);
+                        win.cmbLocal.Items.AddRange(localproj);
+
+                        if (dgrProjects.SelectedRows.Count > 0)
+                        {
+                            var selproj2 = dgrProjects.SelectedRows[0].DataBoundItem as CombinedProject;
+                            win.cmbCloud.SelectedItem = selproj2;
+                            win.cmbLocal.SelectedItem = selproj2;
+                        }
+
+                        var dlgres = win.ShowDialog();
+
+                        if (dlgres == DialogResult.OK)
+                        {
+                            var selID = win.cmbCloud.SelectedItem as CombinedProject;
+                            var selName = win.cmbLocal.SelectedItem as CombinedProject;
+
+                            QCPluginUtilities.SetProjectID(selID.Id, selName.uniqueName);
+                            mnRefreshProjects.PerformClick();
+                        }
+
+                        break;
                 default:
                     if (dgrProjects.SelectedRows.Count == 0) return;
                     var selproj = dgrProjects.SelectedRows[0].DataBoundItem as CombinedProject;
@@ -163,12 +205,9 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     {
                         case "mnDeleteProject":
                             await QCStudioPluginActions.DeleteProject(selproj.Id);
-                            var delrow = dgrProjects.Rows.Cast<DataGridViewRow>().FirstOrDefault(x => (x.DataBoundItem as CombinedProject).Id == selproj.Id);
-
-                            if (!string.IsNullOrEmpty(selproj.LocalProjectName))
-                                QCPluginUtilities.SetProjectID(0, selproj.LocalProjectName);
-                            else if (delrow != null)
-                                dgrProjects.Rows.Remove(delrow);
+                            
+                            QCPluginUtilities.SetProjectID(0, selproj.uniqueName);
+                            mnRefreshProjects.PerformClick();
 
                             break;
                         case "mnUploadProject":
@@ -176,32 +215,13 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                             break;
                         case "mnDownloadProject":
-                            await QCStudioPluginActions.DownloadProject(selproj.Id, selproj.LocalProjectPath);
+                            
+                            await QCStudioPluginActions.DownloadProject(selproj.Id, selproj.LocalProjectName);
 
-                            break;
-                        case "mnUseProjectID":
-                            var projects = dgrProjects.DataSource as List<CombinedProject>;
-                            var cloudproj = projects.Where(x => string.IsNullOrEmpty(x.LocalProjectName)).ToArray();
-                            var localproj = projects.Where(x => x.Id == 0).ToArray();
-                            if (localproj.Length == 0 || cloudproj.Length == 0)
-                            {
-                                QCPluginUtilities.OutputCommandString("No orphaned projects found on both cloud and local side.");
-                                return;
-                            }
-
-                            var win = new ConnectQCID();
-                            win.cmbCloud.Items.AddRange(cloudproj);
-                            win.cmbLocal.Items.AddRange(localproj);
-                            var dlgres = win.ShowDialog();
-
-                            if (dlgres == DialogResult.OK)
-                            {
-                                var selID = win.cmbCloud.SelectedItem as CombinedProject;
-                                var selName = win.cmbLocal.SelectedItem as CombinedProject;
-
-                                QCPluginUtilities.SetProjectID(selID.Id, selName.LocalProjectName);
-                                mnRefreshProjects.PerformClick();
-                            }
+                            break;                        
+                        case "mnDisconnectProjectID":
+                            QCPluginUtilities.SetProjectID(0, selproj.uniqueName);
+                            mnRefreshProjects.PerformClick();
 
                             break;
                         case "mnCompileProject":
@@ -232,6 +252,56 @@ namespace QuantConnect.QCStudioPlugin.Forms
         private void dgrBacktests_DoubleClick(object sender, EventArgs e)
         {
             mnLoadBacktest.PerformClick();
+        }
+
+        private void dgrBacktests_SelectionChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void dgrProjects_SelectionChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void mnBacktest_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var isProjSelected = false;
+            if (dgrProjects.SelectedRows.Count > 0)
+            {
+                var selproj = dgrProjects.SelectedRows[0].DataBoundItem as CombinedProject;
+                if (selproj.Id > 0)
+                    isProjSelected = true;
+            }
+
+            var isSelected = false;
+            if (dgrBacktests.SelectedRows.Count > 0)
+            {
+                var selbacktest = dgrBacktests.SelectedRows[0].DataBoundItem as BacktestSummary;
+                if (!string.IsNullOrEmpty(selbacktest.BacktestId) && selbacktest.BacktestId != "0")
+                    isSelected = true;
+            }
+
+            foreach (ToolStripMenuItem itm in mnBacktest.Items)
+            {
+                itm.Enabled = isProjSelected && (isSelected || itm.Tag.ToString() == "1");
+            }
+        }
+
+        private void mnProjects_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var isSelected = false;
+            if (dgrProjects.SelectedRows.Count > 0)
+            {
+                var selproj = dgrProjects.SelectedRows[0].DataBoundItem as CombinedProject;
+                if (selproj.Id > 0)
+                    isSelected = true;
+            }
+
+            foreach (ToolStripMenuItem itm in mnProjects.Items)
+            {
+                itm.Enabled = isSelected || itm.Tag.ToString() == "1";
+            }
         }
     }
 }

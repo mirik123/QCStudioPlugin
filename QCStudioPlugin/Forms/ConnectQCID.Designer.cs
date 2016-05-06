@@ -44,27 +44,27 @@
             this.groupBox1.Controls.Add(this.cmbCloud);
             this.groupBox1.Location = new System.Drawing.Point(6, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 60);
+            this.groupBox1.Size = new System.Drawing.Size(405, 60);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Cloud projects";
             // 
             // cmbCloud
             // 
-            this.cmbCloud.DisplayMember = "Name";
+            this.cmbCloud.DisplayMember = "CloudProjectName";
             this.cmbCloud.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbCloud.FormattingEnabled = true;
             this.cmbCloud.Location = new System.Drawing.Point(11, 20);
             this.cmbCloud.Name = "cmbCloud";
-            this.cmbCloud.Size = new System.Drawing.Size(183, 21);
+            this.cmbCloud.Size = new System.Drawing.Size(388, 21);
             this.cmbCloud.TabIndex = 0;
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.cmbLocal);
-            this.groupBox2.Location = new System.Drawing.Point(212, 3);
+            this.groupBox2.Location = new System.Drawing.Point(6, 67);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 59);
+            this.groupBox2.Size = new System.Drawing.Size(405, 59);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Local projects";
@@ -76,14 +76,14 @@
             this.cmbLocal.FormattingEnabled = true;
             this.cmbLocal.Location = new System.Drawing.Point(7, 20);
             this.cmbLocal.Name = "cmbLocal";
-            this.cmbLocal.Size = new System.Drawing.Size(174, 21);
+            this.cmbLocal.Size = new System.Drawing.Size(392, 21);
             this.cmbLocal.TabIndex = 0;
             // 
             // btnOK
             // 
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnOK.Location = new System.Drawing.Point(83, 69);
+            this.btnOK.Location = new System.Drawing.Point(83, 132);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(90, 30);
             this.btnOK.TabIndex = 5;
@@ -93,7 +93,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(245, 69);
+            this.btnCancel.Location = new System.Drawing.Point(245, 132);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 6;
@@ -104,7 +104,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(418, 108);
+            this.ClientSize = new System.Drawing.Size(418, 168);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.groupBox2);
