@@ -1,7 +1,6 @@
-[Obsolete] QCStudioPlugin
+New QCStudioPlugin
 ==============
 
-Visual Studio plugin utilizing the QuantConnect REST API to launch backtests and display results inside Visual Studio 2010-2014.
+This is a new completely rewritten Visual Studio plugin utilizing the QuantConnect REST API to launch backtests and display results inside Visual Studio 2012.
 
-The project has been obsoleted and a new revision is planned July-2015.
 
