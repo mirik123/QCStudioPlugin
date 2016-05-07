@@ -53,6 +53,26 @@
     <Reference Include="Microsoft.VisualStudio.CoreUtility">
       <Private>False</Private>
     </Reference>
+    <Reference Include="QuantConnect.Algorithm, Version=2.2.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuantConnect.Lean.2.2.0\lib\net45\QuantConnect.Algorithm.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="QuantConnect.Common">
+      <HintPath>..\packages\QuantConnect.Lean.2.2.0\lib\net45\QuantConnect.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="QuantConnect.Configuration, Version=2.2.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuantConnect.Lean.2.2.0\lib\net45\QuantConnect.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="QuantConnect.Indicators, Version=2.2.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuantConnect.Lean.2.2.0\lib\net45\QuantConnect.Indicators.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="QuantConnect.Logging, Version=2.2.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuantConnect.Lean.2.2.0\lib\net45\QuantConnect.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />

@@ -42,9 +42,6 @@
  		$endif$
 		<Reference Include="System.Data"/>
 		<Reference Include="System.Xml"/>
-    <Reference Include="QuantConnect.Algorithm"/>
-    <Reference Include="QuantConnect.Data.Market"/>
-    <Reference Include="QuantConnect.Securities"/>
   </ItemGroup>
 	<ItemGroup>
 		<Compile Include="Class1.cs" />
@@ -58,5 +55,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
  </Project>

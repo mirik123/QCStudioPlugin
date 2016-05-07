@@ -216,7 +216,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+    <Content Include="Packages\MathNet.Numerics.3.11.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\QuantConnect.Lean.2.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="RestAPI\Models\LICENSE" />
     <None Include="RestAPI\Models\README.md" />
     <None Include="source.extension.vsixmanifest">
@@ -237,7 +244,10 @@
   <ItemGroup>
     <Resource Include="Resources\BacktestsMenu.png" />
     <Resource Include="Resources\ProjectsMenu.png" />
-    <Resource Include="Resources\QCClient.png" />
+    <Content Include="Resources\QCClient.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="Icons\fork.png" />
     <Resource Include="Icons\Garbage-Closed.png" />
     <Resource Include="Icons\Graph-03.png" />
@@ -269,6 +279,7 @@
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

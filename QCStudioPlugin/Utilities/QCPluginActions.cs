@@ -309,8 +309,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 QCPluginUtilities.OutputCommandString("getting backtest results...", QCPluginUtilities.Severity.Info);
 
                 return await api.BacktestResults(backtestId);
-
-                QCPluginUtilities.OutputCommandString("backtest results received...", QCPluginUtilities.Severity.Info);
             }
             catch (Exception ex)
             {

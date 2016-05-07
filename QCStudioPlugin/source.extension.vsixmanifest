@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="c061f3cd-9fd7-4e6f-af9f-f925e05a4aab" Version="1.0" Language="en-US" Publisher="Company" />
-    <DisplayName>QCStudioPlugin</DisplayName>
-    <Description>Information about my package</Description>
+    <Identity Id="c061f3cd-9fd7-4e6f-af9f-f925e05a4aab" Version="1.0" Language="en-US" Publisher="Mark Babayev" />
+    <DisplayName>QuantConnect client plugin</DisplayName>
+    <Description>This is a new and a completely rewritten version of the original QuantConnect Visual Studio plugin. It utilizes the QuantConnect REST API to launch backtests and display results inside Visual Studio 2012.</Description>
+    <MoreInfo>https://www.quantconnect.com/terminal/</MoreInfo>
     <License>License-LGPL.txt</License>
     <Icon>Icons\QuantConnectLogo.ico</Icon>
+    <PreviewImage>Resources\QCClient.png</PreviewImage>
+    <Tags>quant, quantconnect, algo</Tags>
   </Metadata>
   <Installation InstalledByMsi="false">
     <InstallationTarget Version="[11.0,14.0)" Id="Microsoft.VisualStudio.Pro" />

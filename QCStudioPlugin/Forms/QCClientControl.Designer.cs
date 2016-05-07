@@ -640,7 +640,6 @@
         private System.Windows.Forms.ToolStripMenuItem mnRefreshBacktests;
         private System.Windows.Forms.ToolStripMenuItem mnLoadBacktest;
         private System.Windows.Forms.ToolStripMenuItem mnDeleteBacktest;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ProjectName;
         private System.Windows.Forms.ContextMenuStrip mnProjects;
         private System.Windows.Forms.ToolStripMenuItem mnRefreshProjects;
         private System.Windows.Forms.ToolStripMenuItem mnCreateProject;

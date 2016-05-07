@@ -1,4 +1,5 @@
 ﻿
+using QuantConnect;
 using QuantConnect.Algorithm;
 using QuantConnect.Data.Market;
 using QuantConnect.Securities;

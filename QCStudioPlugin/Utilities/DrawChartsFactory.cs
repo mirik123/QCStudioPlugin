@@ -324,7 +324,7 @@ namespace QuantConnect.QCPlugin
                 {
                     chart.AxisChange();
                 }
-                catch (Exception ex)
+                catch
                 {
 
                 }
