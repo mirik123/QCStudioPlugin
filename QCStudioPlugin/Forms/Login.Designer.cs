@@ -38,6 +38,7 @@
             this.textBoxEmail = new System.Windows.Forms.TextBox();
             this.textBoxPassword = new System.Windows.Forms.TextBox();
             this.groupBox = new System.Windows.Forms.GroupBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.groupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,8 +62,9 @@
             // 
             // buttonLogin
             // 
+            this.buttonLogin.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonLogin.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonLogin.Location = new System.Drawing.Point(12, 139);
+            this.buttonLogin.Location = new System.Drawing.Point(12, 171);
             this.buttonLogin.Name = "buttonLogin";
             this.buttonLogin.Size = new System.Drawing.Size(90, 30);
             this.buttonLogin.TabIndex = 3;
@@ -72,7 +74,8 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(174, 139);
+            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonCancel.Location = new System.Drawing.Point(174, 171);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(90, 30);
             this.buttonCancel.TabIndex = 4;
@@ -110,6 +113,7 @@
             // 
             this.textBoxPassword.Location = new System.Drawing.Point(108, 82);
             this.textBoxPassword.Name = "textBoxPassword";
+            this.textBoxPassword.PasswordChar = '*';
             this.textBoxPassword.Size = new System.Drawing.Size(150, 20);
             this.textBoxPassword.TabIndex = 1;
             this.textBoxPassword.UseSystemPasswordChar = true;
@@ -123,12 +127,24 @@
             this.groupBox.TabIndex = 8;
             this.groupBox.TabStop = false;
             // 
-            // Login
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(13, 140);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(251, 23);
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar1.TabIndex = 9;
+            this.progressBar1.Visible = false;
+            // 
+            // FormLogin
             // 
             this.AcceptButton = this.buttonLogin;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(277, 181);
+            this.ClientSize = new System.Drawing.Size(277, 214);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.buttonLogin);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.textBoxPassword);
@@ -137,12 +153,13 @@
             this.Controls.Add(this.labelEmail);
             this.Controls.Add(this.labelPassword);
             this.Controls.Add(this.groupBox);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "Login";
+            this.Name = "FormLogin";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Login to QuantConnect";
-            this.Load += new System.EventHandler(this.SetCredentials_Load);
             this.groupBox.ResumeLayout(false);
             this.groupBox.PerformLayout();
             this.ResumeLayout(false);
@@ -161,5 +178,6 @@
         private System.Windows.Forms.TextBox textBoxEmail;
         private System.Windows.Forms.TextBox textBoxPassword;
         private System.Windows.Forms.GroupBox groupBox;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

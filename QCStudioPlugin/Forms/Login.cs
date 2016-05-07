@@ -7,17 +7,8 @@
 * USING NAMESPACES
 **********************************************************/
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
-using QuantConnect.RestAPI;
-using QuantConnect.RestAPI.Models;
 
 namespace QuantConnect.QCPlugin
 {
@@ -26,70 +17,38 @@ namespace QuantConnect.QCPlugin
     *********************************************************/
     public partial class FormLogin : Form
     {
-        public Action SuccessCallback;
-        public string Email = QuantConnectPlugin.Email;
-        public string Password = QuantConnectPlugin.Password;
+        public Func<string, string, bool, Task> SuccessCallback;
 
-        public FormLogin()
+        public FormLogin(string email, string password)
         {
             InitializeComponent();
+            textBoxEmail.Text = email;
+            textBoxPassword.Text = password;
         }
 
-        public void SetCallBacks(Action success)
-        {
-            this.SuccessCallback = success;
-        }
-      
-        private void SetCredentials_Load(object sender, EventArgs e)
-        {
-            string[] credentials = QuantConnectPlugin.LoadCredentials();
-            textBoxEmail.Text = Email;
-            textBoxPassword.Text = Password;
-        }
-
-        private void ButtonSave_Click(object sender, EventArgs e)
+        private async void ButtonSave_Click(object sender, EventArgs e)
         {
             buttonLogin.Enabled = false;
-            this.UseWaitCursor = true;
-            Email = textBoxEmail.Text;
-            Password = textBoxPassword.Text;
+            UseWaitCursor = true;
+            progressBar1.Visible = true;
 
-            if (checkBoxRememberCredentials.Checked)
+            if (SuccessCallback != null)
             {
-                QuantConnectPlugin.SaveCredentials(Email, Password);
-            }
-
-            try
-            {
-                Async.Add(new APIJob(APICommand.Authenticate, (loggedIn, errors) =>
+                try
                 {
-                    buttonLogin.SafeInvoke(d => d.Enabled = true);
-                    this.SafeInvoke(d => d.UseWaitCursor = false);
+                    await SuccessCallback(textBoxEmail.Text, textBoxPassword.Text, checkBoxRememberCredentials.Checked);
 
-                    if (!(bool)loggedIn)
-                    {
-                        MessageBox.Show("Wrong user name or password", "QuantConnect Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        QuantConnectPlugin.Email = Email;
-                        QuantConnectPlugin.Password = Password;
-                        this.SafeInvoke(d =>
-                        {
-                            if (d.SuccessCallback != null)
-                            {
-                                d.SuccessCallback();
-                            }
-                        });
-                        this.SafeInvoke(d => d.Close());
-                    }
-                }, Email, Password));
+                    Close();
+                }
+                catch(Exception ex)
+                {
+                    progressBar1.Visible = false;
+                    buttonLogin.Enabled = true;
+                    MessageBox.Show(this, ex.ToString(), "Authentication Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            catch
-            {
-                MessageBox.Show("Connection timeout.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            
+            else
+                Close();
         }
 
         private void CloseWindow(object sender, EventArgs e)
