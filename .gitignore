@@ -185,7 +185,7 @@ publish/
 *.publishproj
 
 #README.md
-README.md
+!README.md
 
 # NuGet Packages
 *.nupkg

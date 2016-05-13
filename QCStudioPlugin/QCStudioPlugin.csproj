@@ -218,12 +218,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <Content Include="Packages\MathNet.Numerics.3.11.1.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\QuantConnect.Lean.2.2.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <None Include="RestAPI\Models\LICENSE" />
     <None Include="RestAPI\Models\README.md" />
     <None Include="source.extension.vsixmanifest">
@@ -269,15 +263,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\Package.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\QCAlgorithm\QCAlgorithmTemplate.csproj">
-      <Project>{D267A6CD-EBC4-4F8F-AF7E-84453E55E4D9}</Project>
-      <Name>QCAlgorithmTemplate</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
