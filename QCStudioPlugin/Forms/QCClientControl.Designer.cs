@@ -29,10 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.tabOutput = new System.Windows.Forms.TabPage();
-            this.rchOutputWnd = new System.Windows.Forms.RichTextBox();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mnBacktest = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnRefreshBacktests = new System.Windows.Forms.ToolStripMenuItem();
             this.mnLoadBacktest = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,7 +74,6 @@
             this.Quantity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Operation = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabOutput.SuspendLayout();
             this.mnBacktest.SuspendLayout();
             this.mnProjects.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -104,26 +101,6 @@
             this.tabTrades.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTrades)).BeginInit();
             this.SuspendLayout();
-            // 
-            // tabOutput
-            // 
-            this.tabOutput.Controls.Add(this.rchOutputWnd);
-            this.tabOutput.Location = new System.Drawing.Point(4, 22);
-            this.tabOutput.Name = "tabOutput";
-            this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(1386, 237);
-            this.tabOutput.TabIndex = 3;
-            this.tabOutput.Text = "Output Window";
-            this.tabOutput.UseVisualStyleBackColor = true;
-            // 
-            // rchOutputWnd
-            // 
-            this.rchOutputWnd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchOutputWnd.Location = new System.Drawing.Point(3, 3);
-            this.rchOutputWnd.Name = "rchOutputWnd";
-            this.rchOutputWnd.Size = new System.Drawing.Size(1380, 231);
-            this.rchOutputWnd.TabIndex = 0;
-            this.rchOutputWnd.Text = "";
             // 
             // mnBacktest
             // 
@@ -174,7 +151,7 @@
             this.mnLogin,
             this.mnLogout});
             this.mnProjects.Name = "mnProjects";
-            this.mnProjects.Size = new System.Drawing.Size(188, 246);
+            this.mnProjects.Size = new System.Drawing.Size(188, 224);
             this.mnProjects.Opening += new System.ComponentModel.CancelEventHandler(this.mnProjects_Opening);
             this.mnProjects.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.mnProjects_Click);
             // 
@@ -377,8 +354,8 @@
             // columnName
             // 
             this.columnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.columnName.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.columnName.DefaultCellStyle = dataGridViewCellStyle1;
             this.columnName.HeaderText = "Name";
             this.columnName.Name = "columnName";
             // 
@@ -392,7 +369,6 @@
             // 
             this.tabFooter.Controls.Add(this.tabPage1);
             this.tabFooter.Controls.Add(this.tabTrades);
-            this.tabFooter.Controls.Add(this.tabOutput);
             this.tabFooter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabFooter.Location = new System.Drawing.Point(0, 0);
             this.tabFooter.Name = "tabFooter";
@@ -548,8 +524,8 @@
             // dataGridViewTextBoxColumn1
             // 
             this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewTextBoxColumn1.HeaderText = "DateTime";
             this.dataGridViewTextBoxColumn1.MinimumWidth = 110;
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
@@ -598,7 +574,6 @@
             this.Controls.Add(this.splitContainer2);
             this.Name = "QCClientControl";
             this.Size = new System.Drawing.Size(1394, 692);
-            this.tabOutput.ResumeLayout(false);
             this.mnBacktest.ResumeLayout(false);
             this.mnProjects.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
@@ -635,7 +610,6 @@
 
         #endregion
 
-        private System.Windows.Forms.TabPage tabOutput;
         private System.Windows.Forms.ContextMenuStrip mnBacktest;
         private System.Windows.Forms.ToolStripMenuItem mnRefreshBacktests;
         private System.Windows.Forms.ToolStripMenuItem mnLoadBacktest;
@@ -662,7 +636,14 @@
         private System.Windows.Forms.DataGridView dataGridViewStats;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnValue;
+        private System.Windows.Forms.ToolStripMenuItem mnDisconnectProjectID;
         private System.Windows.Forms.TabControl tabFooter;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.DataGridView dgrBacktests;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.DataGridView dgrProjects;
         private System.Windows.Forms.TabPage tabTrades;
         private System.Windows.Forms.DataGridView dataGridViewTrades;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
@@ -672,13 +653,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Quantity;
         private System.Windows.Forms.DataGridViewTextBoxColumn Operation;
         private System.Windows.Forms.DataGridViewTextBoxColumn Status;
-        private System.Windows.Forms.RichTextBox rchOutputWnd;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.SplitContainer splitContainer3;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.DataGridView dgrBacktests;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.DataGridView dgrProjects;
-        private System.Windows.Forms.ToolStripMenuItem mnDisconnectProjectID;
     }
 }

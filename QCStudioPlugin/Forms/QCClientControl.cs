@@ -26,8 +26,6 @@ namespace QuantConnect.QCStudioPlugin.Forms
         {
             _drawChartActions = new DrawChartsFactory();
             InitializeComponent();
-
-            QCPluginUtilities.rchOutputWnd = rchOutputWnd;
         }       
 
         /// <summary>
@@ -211,12 +209,13 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                             break;
                         case "mnUploadProject":
-                            await QCStudioPluginActions.UploadProject(selproj.Id, selproj.LocalProjectPath);
+                            if (string.IsNullOrEmpty(selproj.LocalProjectPath)) return;
+                            await QCStudioPluginActions.UploadProject(selproj.Id, selproj.CloudProjectName, selproj.LocalProjectPath);
 
                             break;
                         case "mnDownloadProject":
-                            
-                            await QCStudioPluginActions.DownloadProject(selproj.Id, selproj.LocalProjectName);
+
+                            await QCStudioPluginActions.DownloadProject(selproj.Id, selproj.CloudProjectName, selproj.LocalProjectName, selproj.LocalProjectPath);
 
                             break;                        
                         case "mnDisconnectProjectID":
@@ -291,17 +290,25 @@ namespace QuantConnect.QCStudioPlugin.Forms
         private void mnProjects_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var isSelected = false;
+            var hasLocalProject = false;
+
             if (dgrProjects.SelectedRows.Count > 0)
             {
                 var selproj = dgrProjects.SelectedRows[0].DataBoundItem as CombinedProject;
                 if (selproj.Id > 0)
                     isSelected = true;
+
+                if(!string.IsNullOrEmpty(selproj.LocalProjectName))
+                    hasLocalProject = true;
             }
 
             foreach (ToolStripMenuItem itm in mnProjects.Items)
             {
                 itm.Enabled = isSelected || itm.Tag.ToString() == "1";
             }
+
+            if (!hasLocalProject)
+                mnUploadProject.Enabled = false;
         }
     }
 }

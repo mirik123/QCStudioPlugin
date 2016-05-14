@@ -36,7 +36,6 @@ namespace QuantConnect.QCStudioPlugin
         static internal IVsThreadedWaitDialogFactory dialogFactory;
         static internal IVsOutputWindow outputWindow;
         static internal string InstallPath;
-        static internal RichTextBox rchOutputWnd = null;
 
         public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow)
         {
@@ -178,20 +177,13 @@ namespace QuantConnect.QCStudioPlugin
             }
 
             // --- As the last step, write to the output window pane 
+            windowPane.SetName(AppTitle);
             windowPane.OutputString(outputText.ToString());
             windowPane.Activate();
         }
 
         static internal void OutputCommandString(string text, Severity severity = Severity.Error)
         {
-            if (rchOutputWnd != null)
-            {
-                rchOutputWnd.DeselectAll();
-                rchOutputWnd.SelectionColor = severity == Severity.Error ? Color.Red : severity == Severity.Warning ? Color.Orange : SystemColors.WindowText;
-                rchOutputWnd.AppendText(Environment.NewLine + text);
-                rchOutputWnd.SelectionColor = SystemColors.WindowText;
-            }
-
             OutputCommandString(text, AppTitle);
         }
 
@@ -308,6 +300,24 @@ namespace QuantConnect.QCStudioPlugin
             }
 
             return absoluteOutputPath;
-        }       
+        }
+
+        public static IEnumerable<Tuple<K, dynamic, dynamic>>
+            FullOuterJoin<K>(IEnumerable<KeyValuePair<K, dynamic>> coll1, IEnumerable<KeyValuePair<K, dynamic>> coll2)
+        {
+            var alookup = coll1.ToLookup(x => x.Key);
+            var blookup = coll2.ToLookup(y => y.Key);
+
+            var keys = new HashSet<K>(alookup.Select(p => p.Key));
+            keys.UnionWith(blookup.Select(p => p.Key));
+
+            var combproj = 
+                from key in keys
+                from xa in alookup[key].DefaultIfEmpty(new KeyValuePair<K, dynamic>())
+                from xb in blookup[key].DefaultIfEmpty(new KeyValuePair<K, dynamic>())
+                select new Tuple<K, dynamic, dynamic>(key, xa.Value, xb.Value);
+
+            return combproj.ToList();
+        }
     }
 }
