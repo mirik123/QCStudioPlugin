@@ -14,7 +14,7 @@
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Company.QCStudioPlugin</RootNamespace>
+    <RootNamespace>QuantConnect.QCStudioPlugin</RootNamespace>
     <AssemblyName>QCStudioPlugin</AssemblyName>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
@@ -137,12 +137,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\AdminControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\AdminControl.Designer.cs">
-      <DependentUpon>AdminControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\ChartControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -161,12 +155,20 @@
     <Compile Include="Forms\ConnectQCID.Designer.cs">
       <DependentUpon>ConnectQCID.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ChartPane.cs" />
     <Compile Include="Forms\Login.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Login.Designer.cs">
       <DependentUpon>Login.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\AdminControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\AdminControl.Designer.cs">
+      <DependentUpon>AdminControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AdminPane.cs" />
     <Compile Include="Forms\QCClientControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -200,6 +202,7 @@
     <Compile Include="RestAPI\Models\Base.cs" />
     <Compile Include="RestAPI\Models\Compiler.cs" />
     <Compile Include="RestAPI\Models\Projects.cs" />
+    <Compile Include="Utilities\Browser.cs" />
     <Compile Include="Utilities\DateTimePointsList.cs" />
     <Compile Include="Utilities\DrawChartsFactory.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
@@ -224,6 +227,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AdminControl.resx">
+      <DependentUpon>AdminControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\QCClientControl.resx">
       <DependentUpon>QCClientControl.cs</DependentUpon>
@@ -262,6 +268,7 @@
   <ItemGroup>
     <Resource Include="Resources\BacktestsMenu.png" />
     <Resource Include="Resources\ProjectsMenu.png" />
+    <Resource Include="License-LGPL.txt" />
     <Content Include="Resources\QCClient.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -282,10 +289,6 @@
     <Resource Include="Icons\Reload.png" />
     <Resource Include="Icons\Save.png" />
     <Resource Include="Icons\User-Login.png" />
-    <Content Include="License-LGPL.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup />

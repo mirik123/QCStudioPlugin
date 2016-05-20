@@ -2,7 +2,7 @@
 * Mark Babayev (https://github.com/mirik123) - QC internal actions
 */
 
-using Company.QCStudioPlugin.Forms;
+using QuantConnect.QCStudioPlugin.Forms;
 using Newtonsoft.Json;
 using QuantConnect.QCPlugin;
 using QuantConnect.RestAPI;
@@ -45,7 +45,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
         {
             if(!api.IsAuthenticated)
             {
-                var user = new User { Email = "", Password = "" };
+                var user = new User { Email = "", Password = "", AuthToken = "", UserID = "" };
                 var credentialFile = Path.Combine(QCPluginUtilities.InstallPath, "credentials.config");
 
                 QCPluginUtilities.OutputCommandString("Authenticating QC user...", QCPluginUtilities.Severity.Info);
@@ -56,11 +56,13 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                     user.Email = Encrypter.DecryptString(jsonUser.Email);
                     user.Password = Encrypter.DecryptString(jsonUser.Password);
+                    user.UserID = Encrypter.DecryptString(jsonUser.UserID);
+                    user.AuthToken = Encrypter.DecryptString(jsonUser.AuthToken);
                 }
 
                 try
                 {
-                    await api.Authenticate(user.Email, user.Password);
+                    await api.Authenticate(user.Email, user.Password, user.UserID, user.AuthToken);
                 }
                 catch(Exception ex)
                 {
@@ -68,14 +70,16 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString("Failed to authenticate. Enter credentials manually.", QCPluginUtilities.Severity.Info);
 
                     bool remember = false;
-                    var win = new FormLogin(user.Email, user.Password);
-                    win.SuccessCallback = (email2, pass2, remember2) =>
+                    var win = new FormLogin(user.Email, user.Password, user.UserID, user.AuthToken);
+                    win.SuccessCallback = (email2, pass2, uid2, authtoken2, remember2) =>
                     {
                         user.Email = Encrypter.EncryptString(email2);
                         user.Password = Encrypter.EncryptString(pass2);
+                        user.UserID = Encrypter.DecryptString(uid2);
+                        user.AuthToken = Encrypter.DecryptString(authtoken2);
                         remember = remember2;
-                        
-                        return api.Authenticate(email2, pass2);
+
+                        return api.Authenticate(email2, pass2, uid2, authtoken2);
                     };
 
                     win.ShowDialog();
@@ -236,6 +240,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString("Run backtest error: " + ex.ToString());
                 }               
             }            
+        }       
+
+        public static void ShowBacktest(string BacktestId) 
+        {
+            QCPluginUtilities.ShowBacktestWindow(BacktestId, api.UserID, api.AuthToken);
         }
 
         public async static Task DeleteBacktest(string BacktestID)
@@ -430,6 +439,12 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
         [JsonProperty(PropertyName = "password")]
         public string Password { get; set; }
+
+        [JsonProperty(PropertyName = "userid")]
+        public string UserID { get; set; }
+
+        [JsonProperty(PropertyName = "authtoken")]
+        public string AuthToken { get; set; }
     }
 
     public class CombinedProject: Project

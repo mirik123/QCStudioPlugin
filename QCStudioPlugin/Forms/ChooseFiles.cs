@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Company.QCStudioPlugin.Forms
+namespace QuantConnect.QCStudioPlugin.Forms
 {
     public partial class ChooseFiles : Form
     {

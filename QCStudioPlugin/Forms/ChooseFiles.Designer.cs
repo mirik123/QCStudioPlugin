@@ -1,4 +1,4 @@
-﻿namespace Company.QCStudioPlugin.Forms
+﻿namespace QuantConnect.QCStudioPlugin.Forms
 {
     partial class ChooseFiles
     {

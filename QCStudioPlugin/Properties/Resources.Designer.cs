@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Company.QCStudioPlugin.Properties {
+namespace QuantConnect.QCStudioPlugin.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Company.QCStudioPlugin.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Company.QCStudioPlugin.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("QuantConnect.QCStudioPlugin.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -166,6 +166,15 @@ namespace Company.QCStudioPlugin.Properties {
             get {
                 object obj = ResourceManager.GetObject("QuantConnectLogo", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2.2.0.2.
+        /// </summary>
+        internal static string QuantConnectVersion {
+            get {
+                return ResourceManager.GetString("QuantConnectVersion", resourceCulture);
             }
         }
         

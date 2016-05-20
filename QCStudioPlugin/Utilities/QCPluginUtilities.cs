@@ -2,7 +2,7 @@
 * Mark Babayev (https://github.com/mirik123) - Visual Studio extension utilities
 */
 
-using Company.QCStudioPlugin;
+using QuantConnect.QCStudioPlugin;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using QuantConnect.QCStudioPlugin.Forms;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -30,20 +31,47 @@ namespace QuantConnect.QCStudioPlugin
             Warning,
             Error
         }
-        
+
+        static internal string ChartTitle = "QuantConnect Lean Algorithmic Trading Engine";
         static internal string AppTitle;
+        static internal string AppVersion;
         static internal DTE2 dte;
         static internal IVsThreadedWaitDialogFactory dialogFactory;
         static internal IVsOutputWindow outputWindow;
         static internal string InstallPath;
+        static internal ChartPane chartWindowFrame;
 
-        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow)
+        public static void Initialize(string AppTitle, string AppVersion, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, ChartPane chartWindowFrame)
         {
             QCPluginUtilities.AppTitle = AppTitle;
+            QCPluginUtilities.AppVersion = AppVersion;
             QCPluginUtilities.dialogFactory = dialogFactory;
             QCPluginUtilities.dte = dte;
             QCPluginUtilities.outputWindow = outputWindow;
             QCPluginUtilities.InstallPath = RetrieveAssemblyDirectory();
+            QCPluginUtilities.chartWindowFrame = chartWindowFrame;
+        }
+
+        public static void ShowBacktestWindow(string backtestId, string UserId, string AuthToken)
+        {
+            string url = GetTerminalUrl(backtestId, UserId, AuthToken);
+            chartWindowFrame.control.InitBacktestResults(url, backtestId);
+
+            var frame = (IVsWindowFrame)chartWindowFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+        }
+
+        public static string GetTerminalUrl(string backtestId, string UserId, string AuthToken, int ProjectId = 0, bool liveMode = false, bool holdReady = true)
+        {
+            var url = "";
+            var hold = holdReady == false ? "0" : "1";
+            var embedPage = liveMode ? "embeddedLive" : "embedded";
+
+            url = string.Format(
+                "https://www.quantconnect.com/terminal/{0}?user={1}&token={2}&pid={3}&version={4}&holdReady={5}&bid={6}",
+                embedPage, UserId, AuthToken, ProjectId, AppVersion, hold, backtestId);
+
+            return url;
         }
 
         private static string RetrieveAssemblyDirectory()

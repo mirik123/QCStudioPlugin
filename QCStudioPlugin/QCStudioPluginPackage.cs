@@ -1,4 +1,4 @@
-﻿using Company.QCStudioPlugin.Properties;
+﻿using QuantConnect.QCStudioPlugin.Properties;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ExtensionManager;
@@ -13,12 +13,13 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Company.QCStudioPlugin
+namespace QuantConnect.QCStudioPlugin
 {
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideToolWindow(typeof(QCClientPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Left)]
+    [ProvideToolWindow(typeof(AdminPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Left)]
+    [ProvideToolWindow(typeof(ChartPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Left)]
     [Guid(GuidList.guidQCStudioPluginPkgString)]
     public sealed class QCStudioPluginPackage : Package
     {
@@ -29,16 +30,16 @@ namespace Company.QCStudioPlugin
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
         }
 
-        private void ShowToolWindow(object sender, EventArgs e)
+        private IVsWindowFrame GetToolWindowFrame<T>()
         {
-            ToolWindowPane window = this.FindToolWindow(typeof(QCClientPane), 0, true);
+            ToolWindowPane window = this.FindToolWindow(typeof(T), 0, true);
             if ((null == window) || (null == window.Frame))
             {
                 QCPluginUtilities.OutputCommandString("Failed to initialize " + Resources.ToolWindowTitle);
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
-            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
-            ErrorHandler.ThrowOnFailure(windowFrame.Show());
+            
+            return (IVsWindowFrame)window.Frame;            
         }
 
         private string GetVSIXInstalledLocation()
@@ -60,11 +61,13 @@ namespace Company.QCStudioPlugin
         private void CustomInitialize()
         {
             string AppTitle = Resources.ToolWindowTitle;
+            string AppVersion = Resources.QuantConnectVersion;
             var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
             var dialogFactory = GetService(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
             var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
+            var chartWindowFrame = (ChartPane)this.FindToolWindow(typeof(ChartPane), 0, true);
 
-            QCPluginUtilities.Initialize(AppTitle, dte, dialogFactory, outputWindow);
+            QCPluginUtilities.Initialize(AppTitle, AppVersion, dte, dialogFactory, outputWindow, chartWindowFrame);
             QCStudioPluginActions.Initialize();
         }
 
@@ -84,7 +87,10 @@ namespace Company.QCStudioPlugin
             {
                 // Create the command for the tool window
                 CommandID toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCPane);
-                MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
+                MenuCommand menuToolWin = new MenuCommand((sender,e) => {
+                    var windowFrame = GetToolWindowFrame<AdminPane>();
+                    ErrorHandler.ThrowOnFailure(windowFrame.Show());
+                }, toolwndCommandID);
                 mcs.AddCommand( menuToolWin );
             }
 

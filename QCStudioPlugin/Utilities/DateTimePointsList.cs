@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using ZedGraph;
 
+
 namespace QuantConnect.QCPlugin
 {
 
