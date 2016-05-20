@@ -18,8 +18,9 @@ namespace QuantConnect.QCStudioPlugin
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideToolWindow(typeof(AdminPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Left)]
-    [ProvideToolWindow(typeof(ChartPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Left)]
+    [ProvideToolWindow(typeof(AdminPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Bottom)]
+    [ProvideToolWindow(typeof(ChartPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Top)]
+    [ProvideToolWindow(typeof(QCClientPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Top)]
     [Guid(GuidList.guidQCStudioPluginPkgString)]
     public sealed class QCStudioPluginPackage : Package
     {
@@ -65,9 +66,10 @@ namespace QuantConnect.QCStudioPlugin
             var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
             var dialogFactory = GetService(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
             var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
-            var chartWindowFrame = (ChartPane)this.FindToolWindow(typeof(ChartPane), 0, true);
+            var chartWindowJSFrame = (ChartPane)this.FindToolWindow(typeof(ChartPane), 0, true);
+            var chartWindowZedFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
 
-            QCPluginUtilities.Initialize(AppTitle, AppVersion, dte, dialogFactory, outputWindow, chartWindowFrame);
+            QCPluginUtilities.Initialize(AppTitle, AppVersion, dte, dialogFactory, outputWindow, chartWindowJSFrame, chartWindowZedFrame);
             QCStudioPluginActions.Initialize();
         }
 

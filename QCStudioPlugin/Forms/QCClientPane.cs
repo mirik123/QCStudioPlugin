@@ -11,7 +11,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
     /// <summary>
     /// This class inherites form ToolWindowPane and adds to it <see cref="QCClientControl"/>.
     /// </summary>
-    [Guid("5c3c4aae-8a85-47dc-919b-f840dbb485a4")]
+    [Guid("CFA1BDE6-3695-4B39-BBDE-65224B17681A")]
     public class QCClientPane : ToolWindowPane
     {
         // Control that will be hosted in the tool window

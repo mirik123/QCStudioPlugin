@@ -82,7 +82,7 @@
             // FormToolStripStatusStringLabel
             // 
             this.FormToolStripStatusStringLabel.Name = "FormToolStripStatusStringLabel";
-            this.FormToolStripStatusStringLabel.Size = new System.Drawing.Size(708, 17);
+            this.FormToolStripStatusStringLabel.Size = new System.Drawing.Size(739, 17);
             this.FormToolStripStatusStringLabel.Spring = true;
             // 
             // StatisticsToolStripStatusLabel

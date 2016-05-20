@@ -39,9 +39,10 @@ namespace QuantConnect.QCStudioPlugin
         static internal IVsThreadedWaitDialogFactory dialogFactory;
         static internal IVsOutputWindow outputWindow;
         static internal string InstallPath;
-        static internal ChartPane chartWindowFrame;
+        static internal ChartPane chartWindowJSFrame;
+        static internal QCClientPane chartWindowZedFrame;
 
-        public static void Initialize(string AppTitle, string AppVersion, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, ChartPane chartWindowFrame)
+        public static void Initialize(string AppTitle, string AppVersion, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, ChartPane chartWindowJSFrame, QCClientPane chartWindowZedFrame)
         {
             QCPluginUtilities.AppTitle = AppTitle;
             QCPluginUtilities.AppVersion = AppVersion;
@@ -49,15 +50,24 @@ namespace QuantConnect.QCStudioPlugin
             QCPluginUtilities.dte = dte;
             QCPluginUtilities.outputWindow = outputWindow;
             QCPluginUtilities.InstallPath = RetrieveAssemblyDirectory();
-            QCPluginUtilities.chartWindowFrame = chartWindowFrame;
+            QCPluginUtilities.chartWindowJSFrame = chartWindowJSFrame;
+            QCPluginUtilities.chartWindowZedFrame = chartWindowZedFrame;
         }
 
-        public static void ShowBacktestWindow(string backtestId, string UserId, string AuthToken)
+        public static void ShowBacktestJSWindow(string backtestId, string UserId, string AuthToken)
         {
             string url = GetTerminalUrl(backtestId, UserId, AuthToken);
-            chartWindowFrame.control.InitBacktestResults(url, backtestId);
+            chartWindowJSFrame.control.InitBacktestResults(url, backtestId);
 
-            var frame = (IVsWindowFrame)chartWindowFrame.Frame;
+            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+        }
+
+        public static void ShowBacktestZEDWindow(string backtestId)
+        {
+            chartWindowZedFrame.control.InitBacktestResults(backtestId);
+
+            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
             ErrorHandler.ThrowOnFailure(frame.Show());
         }
 

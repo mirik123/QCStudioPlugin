@@ -242,14 +242,19 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }            
         }       
 
-        public static void ShowBacktest(string BacktestId) 
+        public static void ShowBacktestJS(string BacktestId) 
         {
             if(string.IsNullOrEmpty(api.UserID) || string.IsNullOrEmpty(api.AuthToken)) {
                 QCPluginUtilities.OutputCommandString("Becktest credentials are absent.", QCPluginUtilities.Severity.Info);
                 return;
             }
             
-            QCPluginUtilities.ShowBacktestWindow(BacktestId, api.UserID, api.AuthToken);
+            QCPluginUtilities.ShowBacktestJSWindow(BacktestId, api.UserID, api.AuthToken);
+        }
+
+        public static void ShowBacktestZED(string BacktestId)
+        {
+            QCPluginUtilities.ShowBacktestZEDWindow(BacktestId);
         }
 
         public async static Task DeleteBacktest(string BacktestID)

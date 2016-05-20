@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.mnBacktest = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnRefreshBacktests = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnLoadBacktest = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnLoadBacktestZED = new System.Windows.Forms.ToolStripMenuItem();
             this.mnDeleteBacktest = new System.Windows.Forms.ToolStripMenuItem();
             this.mnProjects = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnRefreshProjects = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,6 +49,7 @@
             this.dgrBacktests = new System.Windows.Forms.DataGridView();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dgrProjects = new System.Windows.Forms.DataGridView();
+            this.mnLoadBacktestJS = new System.Windows.Forms.ToolStripMenuItem();
             this.mnBacktest.SuspendLayout();
             this.mnProjects.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
@@ -65,10 +66,11 @@
             // 
             this.mnBacktest.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnRefreshBacktests,
-            this.mnLoadBacktest,
+            this.mnLoadBacktestJS,
+            this.mnLoadBacktestZED,
             this.mnDeleteBacktest});
             this.mnBacktest.Name = "mnBacktest";
-            this.mnBacktest.Size = new System.Drawing.Size(155, 70);
+            this.mnBacktest.Size = new System.Drawing.Size(172, 114);
             this.mnBacktest.Opening += new System.ComponentModel.CancelEventHandler(this.mnBacktest_Opening);
             this.mnBacktest.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.mnBacktest_Click);
             // 
@@ -76,23 +78,23 @@
             // 
             this.mnRefreshBacktests.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Reload;
             this.mnRefreshBacktests.Name = "mnRefreshBacktests";
-            this.mnRefreshBacktests.Size = new System.Drawing.Size(154, 22);
+            this.mnRefreshBacktests.Size = new System.Drawing.Size(171, 22);
             this.mnRefreshBacktests.Tag = "1";
             this.mnRefreshBacktests.Text = "Refresh";
             // 
-            // mnLoadBacktest
+            // mnLoadBacktestZED
             // 
-            this.mnLoadBacktest.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
-            this.mnLoadBacktest.Name = "mnLoadBacktest";
-            this.mnLoadBacktest.Size = new System.Drawing.Size(154, 22);
-            this.mnLoadBacktest.Tag = "0";
-            this.mnLoadBacktest.Text = "Load Backtest";
+            this.mnLoadBacktestZED.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
+            this.mnLoadBacktestZED.Name = "mnLoadBacktestZED";
+            this.mnLoadBacktestZED.Size = new System.Drawing.Size(171, 22);
+            this.mnLoadBacktestZED.Tag = "0";
+            this.mnLoadBacktestZED.Text = "Load Backtest ZED";
             // 
             // mnDeleteBacktest
             // 
             this.mnDeleteBacktest.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Garbage_Closed;
             this.mnDeleteBacktest.Name = "mnDeleteBacktest";
-            this.mnDeleteBacktest.Size = new System.Drawing.Size(154, 22);
+            this.mnDeleteBacktest.Size = new System.Drawing.Size(171, 22);
             this.mnDeleteBacktest.Tag = "0";
             this.mnDeleteBacktest.Text = "Delete Backtest";
             // 
@@ -287,6 +289,14 @@
             this.dgrProjects.TabIndex = 7;
             this.dgrProjects.DoubleClick += new System.EventHandler(this.dgrProjects_DoubleClick);
             // 
+            // mnLoadBacktestJS
+            // 
+            this.mnLoadBacktestJS.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
+            this.mnLoadBacktestJS.Name = "mnLoadBacktestJS";
+            this.mnLoadBacktestJS.Size = new System.Drawing.Size(171, 22);
+            this.mnLoadBacktestJS.Tag = "0";
+            this.mnLoadBacktestJS.Text = "Load Backtest JS";
+            // 
             // AdminControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -314,7 +324,7 @@
 
         private System.Windows.Forms.ContextMenuStrip mnBacktest;
         private System.Windows.Forms.ToolStripMenuItem mnRefreshBacktests;
-        private System.Windows.Forms.ToolStripMenuItem mnLoadBacktest;
+        private System.Windows.Forms.ToolStripMenuItem mnLoadBacktestZED;
         private System.Windows.Forms.ToolStripMenuItem mnDeleteBacktest;
         private System.Windows.Forms.ContextMenuStrip mnProjects;
         private System.Windows.Forms.ToolStripMenuItem mnRefreshProjects;
@@ -332,5 +342,6 @@
         private System.Windows.Forms.DataGridView dgrBacktests;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.DataGridView dgrProjects;
+        private System.Windows.Forms.ToolStripMenuItem mnLoadBacktestJS;
     }
 }

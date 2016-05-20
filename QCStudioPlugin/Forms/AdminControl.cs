@@ -63,8 +63,12 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                 switch (sourceControl.Name)
                 {
-                    case "mnLoadBacktest":
-                        QCStudioPluginActions.ShowBacktest(selbacktest.BacktestId);
+                    case "mnLoadBacktestJS":
+                        QCStudioPluginActions.ShowBacktestJS(selbacktest.BacktestId);
+
+                        break;
+                    case "mnLoadBacktestZED":
+                        QCStudioPluginActions.ShowBacktestZED(selbacktest.BacktestId);
 
                         break;
                     case "mnDeleteBacktest":
@@ -203,7 +207,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
         private void dgrBacktests_DoubleClick(object sender, EventArgs e)
         {
-            mnLoadBacktest.PerformClick();
+            mnLoadBacktestZED.PerformClick();
         }
 
         private void mnBacktest_Opening(object sender, System.ComponentModel.CancelEventArgs e)
