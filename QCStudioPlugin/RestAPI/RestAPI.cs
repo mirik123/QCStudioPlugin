@@ -119,7 +119,7 @@ namespace QuantConnect.RestAPI
         /// <param name="password">Quantconnect user password</param>
         public async Task Authenticate(string email, string password, string uid, string authtoken)
         {
-            if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(authtoken))
             {
                 lock (_accessToken)
                 {

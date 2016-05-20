@@ -30,7 +30,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
         public void InitBacktestResults(string backtestId)
         {
-            this.backtestId = backtestId;
+            _backtestId = backtestId;
 
             refreshBacktest.Enabled = true;
         }

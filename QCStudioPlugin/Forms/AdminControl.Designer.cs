@@ -247,6 +247,7 @@
             this.dgrBacktests.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgrBacktests.Size = new System.Drawing.Size(763, 273);
             this.dgrBacktests.TabIndex = 4;
+            this.dgrBacktests.DoubleClick += new System.EventHandler(this.dgrBacktests_DoubleClick);
             // 
             // groupBox2
             // 
@@ -284,6 +285,7 @@
             this.dgrProjects.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgrProjects.Size = new System.Drawing.Size(615, 273);
             this.dgrProjects.TabIndex = 7;
+            this.dgrProjects.DoubleClick += new System.EventHandler(this.dgrProjects_DoubleClick);
             // 
             // AdminControl
             // 

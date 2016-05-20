@@ -27,7 +27,8 @@ namespace QuantConnect.QCPlugin
             if (isi.InvokeRequired)
             {
                 IAsyncResult result = isi.BeginInvoke(call, new object[] { isi });
-                object endResult = isi.EndInvoke(result); return (TResult)endResult;
+                object endResult = isi.EndInvoke(result); 
+                return (TResult)endResult;
             }
             else
                 return call(isi);

@@ -75,8 +75,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     {
                         user.Email = Encrypter.EncryptString(email2);
                         user.Password = Encrypter.EncryptString(pass2);
-                        user.UserID = Encrypter.DecryptString(uid2);
-                        user.AuthToken = Encrypter.DecryptString(authtoken2);
+                        user.UserID = Encrypter.EncryptString(uid2);
+                        user.AuthToken = Encrypter.EncryptString(authtoken2);
                         remember = remember2;
 
                         return api.Authenticate(email2, pass2, uid2, authtoken2);
@@ -244,6 +244,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
         public static void ShowBacktest(string BacktestId) 
         {
+            if(string.IsNullOrEmpty(api.UserID) || string.IsNullOrEmpty(api.AuthToken)) {
+                QCPluginUtilities.OutputCommandString("Becktest credentials are absent.", QCPluginUtilities.Severity.Info);
+                return;
+            }
+            
             QCPluginUtilities.ShowBacktestWindow(BacktestId, api.UserID, api.AuthToken);
         }
 

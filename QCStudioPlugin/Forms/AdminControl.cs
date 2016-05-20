@@ -51,6 +51,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             var sourceControl = e.ClickedItem;
             if (sourceControl.Name == "mnRefreshBacktests")
             {
+                dgrBacktests.DataSource = null;
                 dgrBacktests.DataSource = await QCStudioPluginActions.GetBacktestList(selproj.Id);
             }
             else
@@ -186,7 +187,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                                 return;
                             }
 
-                            await QCStudioPluginActions.CreateBacktest(selproj.Id, "???");
+                            await QCStudioPluginActions.CreateBacktest(selproj.Id, backtestName);
 
                             break;
                     }
@@ -203,16 +204,6 @@ namespace QuantConnect.QCStudioPlugin.Forms
         private void dgrBacktests_DoubleClick(object sender, EventArgs e)
         {
             mnLoadBacktest.PerformClick();
-        }
-
-        private void dgrBacktests_SelectionChanged(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void dgrProjects_SelectionChanged(object sender, EventArgs e)
-        {
-            
         }
 
         private void mnBacktest_Opening(object sender, System.ComponentModel.CancelEventArgs e)
