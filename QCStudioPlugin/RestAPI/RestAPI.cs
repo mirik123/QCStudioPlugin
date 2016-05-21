@@ -34,8 +34,13 @@ namespace QuantConnect.RestAPI
         private string baseUrl = "https://www.quantconnect.com/api/v1/";
         /// Encoded token username password:
         private string _accessToken = "";
+        private string _uid = "";
+        private string _jschartToken = "";
 
         const string message = "Error retrieving response.  Check inner details for more info.";
+
+        public string UserID { get { return _uid; } }
+        public string AuthToken { get { return _jschartToken; } }
 
         /******************************************************** 
         * CLASS CONSTRUCTOR
@@ -102,6 +107,8 @@ namespace QuantConnect.RestAPI
             lock (_accessToken)
             {
                 _accessToken = "";
+                _jschartToken = "";
+                _uid = "";
             }
         }
 
@@ -110,13 +117,15 @@ namespace QuantConnect.RestAPI
         /// </summary>
         /// <param name="email">User email from quantconnect account</param>
         /// <param name="password">Quantconnect user password</param>
-        public async Task Authenticate(string email, string password)
+        public async Task Authenticate(string email, string password, string uid, string authtoken)
         {
-            if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(authtoken))
             {
                 lock (_accessToken)
                 {
                     _accessToken = "";
+                    _jschartToken = "";
+                    _uid = "";
                 }
 
                 throw new Exception("Username or Password are empty");
@@ -127,6 +136,8 @@ namespace QuantConnect.RestAPI
                 lock (_accessToken)
                 {
                     _accessToken = Base64Encode(email + ":" + password);
+                    _jschartToken = authtoken;
+                    _uid = uid;
                 }
 
                 await Execute<PacketProject>("projects/read");
@@ -136,6 +147,8 @@ namespace QuantConnect.RestAPI
                 lock (_accessToken)
                 {
                     _accessToken = "";
+                    _jschartToken = "";
+                    _uid = "";
                 }
 
                 throw ex;

@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Diagnostics;
@@ -9,13 +10,13 @@ using System.Windows.Forms;
 namespace QuantConnect.QCStudioPlugin.Forms
 {
     /// <summary>
-    /// This class inherites form ToolWindowPane and adds to it <see cref="QCClientControl"/>.
+    /// This class inherites form ToolWindowPane and adds to it <see cref="AdminControl"/>.
     /// </summary>
-    [Guid("CFA1BDE6-3695-4B39-BBDE-65224B17681A")]
-    public class QCClientPane : ToolWindowPane
+    [Guid("490891EA-609B-4FA1-8584-EB2A3C655591")]
+    public class ChartPane : ToolWindowPane
     {
         // Control that will be hosted in the tool window
-        private QCClientControl _control = null;
+        private ChartControl _control = null;
 
         // Caching our output window pane
         //private IVsOutputWindowPane outputWindowPane = null;
@@ -25,15 +26,15 @@ namespace QuantConnect.QCStudioPlugin.Forms
         /// Initialization that depends on the package or that requires access
         /// to VS services should be done in OnToolWindowCreated.
         /// </summary>
-        public QCClientPane()
+        public ChartPane()
             : base(null)
         {
             Trace.WriteLine(String.Format(CultureInfo.CurrentCulture, "Entering constructor for class {0}.", this.GetType().Name));
 
             // Creating the user control that will be displayed in the window
-            _control = new QCClientControl();
+            _control = new ChartControl();
 
-            this.Caption = QCPluginUtilities.AppTitle;
+            this.Caption = QCPluginUtilities.ChartTitle;
             this.BitmapResourceID = 700;
             this.BitmapIndex = 1;
         }
@@ -90,9 +91,9 @@ namespace QuantConnect.QCStudioPlugin.Forms
         /// Gets or sets the UserControl object.
         /// </summary>
         /// <value>
-        /// The <see cref="QCClientControl"/> control object.
+        /// The <see cref="AdminControl"/> control object.
         /// </value>
-        public QCClientControl control
+        public ChartControl control
         {
             get
             {

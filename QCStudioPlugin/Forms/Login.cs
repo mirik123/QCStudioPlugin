@@ -17,13 +17,15 @@ namespace QuantConnect.QCPlugin
     *********************************************************/
     public partial class FormLogin : Form
     {
-        public Func<string, string, bool, Task> SuccessCallback;
+        public Func<string, string, string, string, bool, Task> SuccessCallback;
 
-        public FormLogin(string email, string password)
+        public FormLogin(string email, string password, string uid, string authtoken)
         {
             InitializeComponent();
             textBoxEmail.Text = email;
             textBoxPassword.Text = password;
+            txtUID.Text = uid;
+            txtAuthToken.Text = authtoken;
         }
 
         private async void ButtonSave_Click(object sender, EventArgs e)
@@ -36,7 +38,7 @@ namespace QuantConnect.QCPlugin
             {
                 try
                 {
-                    await SuccessCallback(textBoxEmail.Text, textBoxPassword.Text, checkBoxRememberCredentials.Checked);
+                    await SuccessCallback(textBoxEmail.Text, textBoxPassword.Text, txtUID.Text, txtAuthToken.Text, checkBoxRememberCredentials.Checked);
 
                     Close();
                 }

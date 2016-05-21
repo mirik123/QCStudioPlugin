@@ -2,7 +2,7 @@
 * Mark Babayev (https://github.com/mirik123) - Visual Studio extension utilities
 */
 
-using Company.QCStudioPlugin;
+using QuantConnect.QCStudioPlugin;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using QuantConnect.QCStudioPlugin.Forms;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -30,21 +31,57 @@ namespace QuantConnect.QCStudioPlugin
             Warning,
             Error
         }
-        
+
+        static internal string ChartTitle = "QuantConnect Lean Algorithmic Trading Engine";
         static internal string AppTitle;
+        static internal string AppVersion;
         static internal DTE2 dte;
         static internal IVsThreadedWaitDialogFactory dialogFactory;
         static internal IVsOutputWindow outputWindow;
         static internal string InstallPath;
-        static internal RichTextBox rchOutputWnd = null;
+        static internal ChartPane chartWindowJSFrame;
+        static internal QCClientPane chartWindowZedFrame;
 
-        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow)
+        public static void Initialize(string AppTitle, string AppVersion, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, ChartPane chartWindowJSFrame, QCClientPane chartWindowZedFrame)
         {
             QCPluginUtilities.AppTitle = AppTitle;
+            QCPluginUtilities.AppVersion = AppVersion;
             QCPluginUtilities.dialogFactory = dialogFactory;
             QCPluginUtilities.dte = dte;
             QCPluginUtilities.outputWindow = outputWindow;
             QCPluginUtilities.InstallPath = RetrieveAssemblyDirectory();
+            QCPluginUtilities.chartWindowJSFrame = chartWindowJSFrame;
+            QCPluginUtilities.chartWindowZedFrame = chartWindowZedFrame;
+        }
+
+        public static void ShowBacktestJSWindow(string backtestId, string UserId, string AuthToken)
+        {
+            string url = GetTerminalUrl(backtestId, UserId, AuthToken);
+            chartWindowJSFrame.control.InitBacktestResults(url, backtestId);
+
+            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+        }
+
+        public static void ShowBacktestZEDWindow(string backtestId)
+        {
+            chartWindowZedFrame.control.InitBacktestResults(backtestId);
+
+            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+        }
+
+        public static string GetTerminalUrl(string backtestId, string UserId, string AuthToken, int ProjectId = 0, bool liveMode = false, bool holdReady = true)
+        {
+            var url = "";
+            var hold = holdReady == false ? "0" : "1";
+            var embedPage = liveMode ? "embeddedLive" : "embedded";
+
+            url = string.Format(
+                "https://www.quantconnect.com/terminal/{0}?user={1}&token={2}&pid={3}&version={4}&holdReady={5}&bid={6}",
+                embedPage, UserId, AuthToken, ProjectId, AppVersion, hold, backtestId);
+
+            return url;
         }
 
         private static string RetrieveAssemblyDirectory()
@@ -178,20 +215,13 @@ namespace QuantConnect.QCStudioPlugin
             }
 
             // --- As the last step, write to the output window pane 
+            windowPane.SetName(AppTitle);
             windowPane.OutputString(outputText.ToString());
             windowPane.Activate();
         }
 
         static internal void OutputCommandString(string text, Severity severity = Severity.Error)
         {
-            if (rchOutputWnd != null)
-            {
-                rchOutputWnd.DeselectAll();
-                rchOutputWnd.SelectionColor = severity == Severity.Error ? Color.Red : severity == Severity.Warning ? Color.Orange : SystemColors.WindowText;
-                rchOutputWnd.AppendText(Environment.NewLine + text);
-                rchOutputWnd.SelectionColor = SystemColors.WindowText;
-            }
-
             OutputCommandString(text, AppTitle);
         }
 
@@ -308,6 +338,24 @@ namespace QuantConnect.QCStudioPlugin
             }
 
             return absoluteOutputPath;
-        }       
+        }
+
+        public static IEnumerable<Tuple<K, dynamic, dynamic>>
+            FullOuterJoin<K>(IEnumerable<KeyValuePair<K, dynamic>> coll1, IEnumerable<KeyValuePair<K, dynamic>> coll2)
+        {
+            var alookup = coll1.ToLookup(x => x.Key);
+            var blookup = coll2.ToLookup(y => y.Key);
+
+            var keys = new HashSet<K>(alookup.Select(p => p.Key));
+            keys.UnionWith(blookup.Select(p => p.Key));
+
+            var combproj = 
+                from key in keys
+                from xa in alookup[key].DefaultIfEmpty(new KeyValuePair<K, dynamic>())
+                from xb in blookup[key].DefaultIfEmpty(new KeyValuePair<K, dynamic>())
+                select new Tuple<K, dynamic, dynamic>(key, xa.Value, xb.Value);
+
+            return combproj.ToList();
+        }
     }
 }

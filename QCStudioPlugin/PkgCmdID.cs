@@ -1,7 +1,7 @@
 ﻿// PkgCmdID.cs
 // MUST match PkgCmdID.h
 
-namespace Company.QCStudioPlugin
+namespace QuantConnect.QCStudioPlugin
 {
     static class PkgCmdIDList
     {

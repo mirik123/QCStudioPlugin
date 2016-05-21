@@ -13,6 +13,7 @@ using ZedGraph;
 
 namespace QuantConnect.QCPlugin
 {
+    [Obsolete]
     public class DrawChartsFactory
     {
         private Dictionary<string, ZedGraphControl> _chartObjects = new Dictionary<string, ZedGraphControl>();

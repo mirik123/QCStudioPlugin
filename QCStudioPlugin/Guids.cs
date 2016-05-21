@@ -2,7 +2,7 @@
 // MUST match guids.h
 using System;
 
-namespace Company.QCStudioPlugin
+namespace QuantConnect.QCStudioPlugin
 {
     static class GuidList
     {

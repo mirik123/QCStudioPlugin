@@ -9,13 +9,13 @@ using System.Windows.Forms;
 namespace QuantConnect.QCStudioPlugin.Forms
 {
     /// <summary>
-    /// This class inherites form ToolWindowPane and adds to it <see cref="QCClientControl"/>.
+    /// This class inherites form ToolWindowPane and adds to it <see cref="AdminControl"/>.
     /// </summary>
-    [Guid("CFA1BDE6-3695-4B39-BBDE-65224B17681A")]
-    public class QCClientPane : ToolWindowPane
+    [Guid("5c3c4aae-8a85-47dc-919b-f840dbb485a4")]
+    public class AdminPane : ToolWindowPane
     {
         // Control that will be hosted in the tool window
-        private QCClientControl _control = null;
+        private AdminControl _control = null;
 
         // Caching our output window pane
         //private IVsOutputWindowPane outputWindowPane = null;
@@ -25,13 +25,13 @@ namespace QuantConnect.QCStudioPlugin.Forms
         /// Initialization that depends on the package or that requires access
         /// to VS services should be done in OnToolWindowCreated.
         /// </summary>
-        public QCClientPane()
+        public AdminPane()
             : base(null)
         {
             Trace.WriteLine(String.Format(CultureInfo.CurrentCulture, "Entering constructor for class {0}.", this.GetType().Name));
 
             // Creating the user control that will be displayed in the window
-            _control = new QCClientControl();
+            _control = new AdminControl();
 
             this.Caption = QCPluginUtilities.AppTitle;
             this.BitmapResourceID = 700;
@@ -90,9 +90,9 @@ namespace QuantConnect.QCStudioPlugin.Forms
         /// Gets or sets the UserControl object.
         /// </summary>
         /// <value>
-        /// The <see cref="QCClientControl"/> control object.
+        /// The <see cref="AdminControl"/> control object.
         /// </value>
-        public QCClientControl control
+        public AdminControl control
         {
             get
             {

@@ -2,15 +2,19 @@
 * Mark Babayev (https://github.com/mirik123) - QC internal actions
 */
 
+using QuantConnect.QCStudioPlugin.Forms;
 using Newtonsoft.Json;
 using QuantConnect.QCPlugin;
 using QuantConnect.RestAPI;
 using QuantConnect.RestAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms;
 
 
 namespace QuantConnect.QCStudioPlugin.Actions
@@ -41,7 +45,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
         {
             if(!api.IsAuthenticated)
             {
-                var user = new User { Email = "", Password = "" };
+                var user = new User { Email = "", Password = "", AuthToken = "", UserID = "" };
                 var credentialFile = Path.Combine(QCPluginUtilities.InstallPath, "credentials.config");
 
                 QCPluginUtilities.OutputCommandString("Authenticating QC user...", QCPluginUtilities.Severity.Info);
@@ -52,11 +56,13 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                     user.Email = Encrypter.DecryptString(jsonUser.Email);
                     user.Password = Encrypter.DecryptString(jsonUser.Password);
+                    user.UserID = Encrypter.DecryptString(jsonUser.UserID);
+                    user.AuthToken = Encrypter.DecryptString(jsonUser.AuthToken);
                 }
 
                 try
                 {
-                    await api.Authenticate(user.Email, user.Password);
+                    await api.Authenticate(user.Email, user.Password, user.UserID, user.AuthToken);
                 }
                 catch(Exception ex)
                 {
@@ -64,14 +70,16 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString("Failed to authenticate. Enter credentials manually.", QCPluginUtilities.Severity.Info);
 
                     bool remember = false;
-                    var win = new FormLogin(user.Email, user.Password);
-                    win.SuccessCallback = (email2, pass2, remember2) =>
+                    var win = new FormLogin(user.Email, user.Password, user.UserID, user.AuthToken);
+                    win.SuccessCallback = (email2, pass2, uid2, authtoken2, remember2) =>
                     {
                         user.Email = Encrypter.EncryptString(email2);
                         user.Password = Encrypter.EncryptString(pass2);
+                        user.UserID = Encrypter.EncryptString(uid2);
+                        user.AuthToken = Encrypter.EncryptString(authtoken2);
                         remember = remember2;
-                        
-                        return api.Authenticate(email2, pass2);
+
+                        return api.Authenticate(email2, pass2, uid2, authtoken2);
                     };
 
                     win.ShowDialog();
@@ -93,7 +101,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        public async static Task UploadProject(int ProjectID, string ProjectDir)
+        public async static Task UploadProject(int ProjectID, string cloudProjectName, string ProjectDir)
         {
             try
             {
@@ -103,6 +111,40 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                 SavetoCloud_AddSubdirectoryToFileList(ProjectDir, ProjectDir, fileList);
                 var parsed_filesList = fileList.Select(x => new QCFile(x.Key, x.Value)).ToList();
+                var cloudfiles = await api.ProjectFiles(ProjectID);
+
+                //FULL OUTER JOIN !!!
+                var alookup = parsed_filesList.Select(x => new KeyValuePair<string, dynamic>(x.Name, x));
+                var blookup = cloudfiles.Files.Select(x => new KeyValuePair<string, dynamic>(x.Name, x));
+                var combolist = QCPluginUtilities.FullOuterJoin<string>(alookup, blookup);
+                var rows = combolist.Select(x => {
+                    var row = new DataGridViewRow();
+                    var chkaction = new DataGridViewCheckBoxCell() { Value = false, Tag = x.Item2 };
+                    
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Item3 != null ? x.Item3.Name : "" });
+                    row.Cells.Add(chkaction);
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Item2 != null ? x.Item2.Name : "" });
+
+                    if (x.Item2 == null)
+                    {
+                        chkaction.Style.BackColor = Color.LightGray;
+                        chkaction.ReadOnly = true;
+                    }
+
+                    return row;
+                }).ToArray();
+
+                var form = new ChooseFiles();                
+                form.Text = "Upload files to " + cloudProjectName;
+                form.chkAction.HeaderText = "Upload";
+                form.dgrFiles.Rows.AddRange(rows);
+                var res = form.ShowDialog();
+                if (res != System.Windows.Forms.DialogResult.OK) return;
+
+                parsed_filesList = form.dgrFiles.Rows.Cast<DataGridViewRow>()
+                    .Where(x => (x.Cells[1] as DataGridViewCheckBoxCell).Selected)
+                    .Select(x => x.Cells[1].Tag as QCFile)
+                    .ToList();
 
                 //Upload Files
                 QCPluginUtilities.OutputCommandString("Saving project updates...", QCPluginUtilities.Severity.Info);
@@ -198,6 +240,21 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString("Run backtest error: " + ex.ToString());
                 }               
             }            
+        }       
+
+        public static void ShowBacktestJS(string BacktestId) 
+        {
+            if(string.IsNullOrEmpty(api.UserID) || string.IsNullOrEmpty(api.AuthToken)) {
+                QCPluginUtilities.OutputCommandString("Becktest credentials are absent.", QCPluginUtilities.Severity.Info);
+                return;
+            }
+            
+            QCPluginUtilities.ShowBacktestJSWindow(BacktestId, api.UserID, api.AuthToken);
+        }
+
+        public static void ShowBacktestZED(string BacktestId)
+        {
+            QCPluginUtilities.ShowBacktestZEDWindow(BacktestId);
         }
 
         public async static Task DeleteBacktest(string BacktestID)
@@ -253,28 +310,22 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 QCPluginUtilities.OutputCommandString("Projects received successfuly...", QCPluginUtilities.Severity.Info);
 
                 //FULL OUTER JOIN !!!
-                var alookup = QCPluginUtilities.GetAllProjects().ToLookup(x => x.Id);
-                var blookup = projects.Projects.ToLookup(y => y.Id);
+                var alookup = QCPluginUtilities.GetAllProjects().Select(x => new KeyValuePair<int,dynamic>(x.Id, x));
+                var blookup = projects.Projects.Select(x => new KeyValuePair<int, dynamic>(x.Id, x));
 
-                var keys = new HashSet<int>(alookup.Select(p => (int)p.Key));
-                keys.UnionWith(blookup.Select(p => p.Key));
-
-                var combproj = 
-                    from key in keys
-                    from xa in alookup[key].DefaultIfEmpty(new { name = "", path = "", Id = 0, uniqueName = "" })
-                    from xb in blookup[key].DefaultIfEmpty(new Project())
-                    select new CombinedProject
+                var combproj = QCPluginUtilities.FullOuterJoin<int>(alookup, blookup);
+                return combproj
+                    .Select(x => new CombinedProject
                     {
-                        Id = key,
-                        Name = xb.Name,
-                        CloudProjectName = xb.Name,
-                        Modified = xb.Modified,
-                        LocalProjectName = xa.name,
-                        LocalProjectPath = xa.path,
-                        uniqueName = xa.uniqueName
-                    };
-
-                return combproj.ToList();
+                        Id =               x.Item1,
+                        Name =             x.Item3 != null ? x.Item3.Name : "",
+                        CloudProjectName = x.Item3 != null ? x.Item3.Name : "",
+                        Modified =         x.Item3 != null ? x.Item3.Modified : DateTime.MinValue,
+                        LocalProjectName = x.Item2 != null ? x.Item2.name : "",
+                        LocalProjectPath = x.Item2 != null ? x.Item2.path : "",
+                        uniqueName =       x.Item2 != null ? x.Item2.uniqueName : ""
+                    })
+                    .ToList();
             }
             catch (Exception ex)
             {
@@ -336,17 +387,51 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        public async static Task DownloadProject(int ProjectID, string ProjectName)
+        public async static Task DownloadProject(int ProjectID, string cloudProjectName, string ProjectName, string ProjectDir)
         {
             try
             {
                 await Authenticate();
 
-                QCPluginUtilities.OutputCommandString("Creating project...", QCPluginUtilities.Severity.Info);
+                var fileList = new Dictionary<string, string>();
+                SavetoCloud_AddSubdirectoryToFileList(ProjectDir, ProjectDir, fileList);
+                var cloudfiles = await api.ProjectFiles(ProjectID);
 
-                var files = await api.ProjectFiles(ProjectID);
+                //FULL OUTER JOIN !!!
+                var alookup = fileList.Select(x => new KeyValuePair<string, dynamic>(x.Key, new QCFile(x.Key, x.Value)));
+                var blookup = cloudfiles.Files.Select(x => new KeyValuePair<string, dynamic>(x.Name, x));
+                var combolist = QCPluginUtilities.FullOuterJoin<string>(alookup, blookup);
+                var rows = combolist.Select(x =>
+                {
+                    var row = new DataGridViewRow();
+                    var chkaction = new DataGridViewCheckBoxCell() { Value = false, Tag = x.Item3 };
 
-                QCPluginUtilities.UpdateLocalProject(files.Files, ProjectName);
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Item3 != null ? x.Item3.Name : "" });
+                    row.Cells.Add(chkaction);
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Item2 != null ? x.Item2.Name : "" });
+
+                    if (x.Item3 == null)
+                    {
+                        chkaction.Style.BackColor = Color.LightGray;
+                        chkaction.ReadOnly = true;
+                    }
+
+                    return row;
+                }).ToArray();
+
+                var form = new ChooseFiles();
+                form.Text = "Download files from " + cloudProjectName;
+                form.chkAction.HeaderText = "Download";
+                form.dgrFiles.Rows.AddRange(rows);
+                var res = form.ShowDialog();
+                if (res != System.Windows.Forms.DialogResult.OK) return;
+
+                var parsed_filesList = form.dgrFiles.Rows.Cast<DataGridViewRow>()
+                    .Where(x => (x.Cells[1] as DataGridViewCheckBoxCell).Selected)
+                    .Select(x => x.Cells[1].Tag as QCFile)
+                    .ToList();
+
+                QCPluginUtilities.UpdateLocalProject(parsed_filesList, ProjectName);
 
                 QCPluginUtilities.OutputCommandString("Project created successfuly...", QCPluginUtilities.Severity.Info);
             }
@@ -364,6 +449,12 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
         [JsonProperty(PropertyName = "password")]
         public string Password { get; set; }
+
+        [JsonProperty(PropertyName = "userid")]
+        public string UserID { get; set; }
+
+        [JsonProperty(PropertyName = "authtoken")]
+        public string AuthToken { get; set; }
     }
 
     public class CombinedProject: Project

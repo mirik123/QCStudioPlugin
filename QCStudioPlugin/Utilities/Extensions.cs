@@ -8,6 +8,7 @@
 **********************************************************/
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -26,7 +27,8 @@ namespace QuantConnect.QCPlugin
             if (isi.InvokeRequired)
             {
                 IAsyncResult result = isi.BeginInvoke(call, new object[] { isi });
-                object endResult = isi.EndInvoke(result); return (TResult)endResult;
+                object endResult = isi.EndInvoke(result); 
+                return (TResult)endResult;
             }
             else
                 return call(isi);
@@ -56,6 +58,16 @@ namespace QuantConnect.QCPlugin
             if (@this.IsDisposed) return DialogResult.OK;
 
             return @this.ShowDialog();
-        } 
+        }
+
+        public static void AppendText(this RichTextBox box, string text, Color color)
+        {
+            box.SelectionStart = box.TextLength;
+            box.SelectionLength = 0;
+            box.SelectionColor = color;
+            box.AppendText(text + Environment.NewLine);
+            box.SelectionColor = box.ForeColor;
+            box.ScrollToCaret();
+        }
     }
 }
