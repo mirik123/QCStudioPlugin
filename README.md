@@ -13,7 +13,8 @@ This is a new completely rewritten Visual Studio plugin utilizing the QuantConne
 |Menu item name|Menu item description|
 |---|---|
 |Refresh|Reload the backtests list after selecting active project|
-|Load Backtest|Load backtest results to chart window|
+|Load Backtest JS|Load backtest results to chart window (JavaScript WebBrowser)|
+|Load Backtest ZED|Load backtest results to chart window (ZedGraph)|
 |Delete Backtest|Delete active backtest|
 
 ### Managing projects

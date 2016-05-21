@@ -143,7 +143,7 @@
             // 
             // refreshBacktest
             // 
-            this.refreshBacktest.Interval = 250;
+            this.refreshBacktest.Interval = 2000;
             this.refreshBacktest.Tick += new System.EventHandler(this.refreshBacktest_Tick);
             // 
             // ChartControl
