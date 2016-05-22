@@ -61,6 +61,18 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="QuantConnect.Common">
+      <HintPath>..\..\Lean\Common\bin\Debug\QuantConnect.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="QuantConnect.Configuration">
+      <HintPath>..\..\Lean\Common\bin\Debug\QuantConnect.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="QuantConnect.Lean.Engine">
+      <HintPath>..\..\Lean\Engine\bin\Debug\QuantConnect.Lean.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="QuantConnect.Messaging">
+      <HintPath>..\..\Lean\Engine\bin\Debug\QuantConnect.Messaging.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -181,17 +193,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RestAPI\Interfaces\Charting.cs" />
-    <Compile Include="RestAPI\Interfaces\Global.cs" />
-    <Compile Include="RestAPI\Interfaces\Market.cs" />
-    <Compile Include="RestAPI\Interfaces\Order.cs" />
-    <Compile Include="RestAPI\Interfaces\OrderTypes.cs" />
-    <Compile Include="RestAPI\Interfaces\SecurityIdentifier.cs" />
-    <Compile Include="RestAPI\Interfaces\SecurityIdentifierJsonConverter.cs" />
-    <Compile Include="RestAPI\Interfaces\Symbol.cs" />
-    <Compile Include="RestAPI\Interfaces\SymbolCache.cs" />
-    <Compile Include="RestAPI\Interfaces\SymbolJsonConverter.cs" />
-    <Compile Include="RestAPI\Interfaces\TypeChangeJsonConverter.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="QCStudioPluginPackage.cs" />

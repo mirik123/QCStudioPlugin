@@ -19,40 +19,21 @@ namespace QuantConnect.QCStudioPlugin.Forms
 {
     public partial class QCClientControl : UserControl
     {
-        private string _backtestId = "";
-        private DrawChartsFactory _drawChartActions;
+        public Func<Task<PacketBacktestResult>> GetBacktestResultsCallback;
 
         public QCClientControl()
         {
-            _drawChartActions = new DrawChartsFactory();
             InitializeComponent();
         }
 
-        public void InitBacktestResults(string backtestId)
+        public async void Run()
         {
-            _backtestId = backtestId;
+            var _results = await GetBacktestResultsCallback();
 
-            refreshBacktest.Enabled = true;
-        }
+            dataGridViewTrades.DataSource = _results.Results.Orders;
+            dataGridViewStats.DataSource = _results.Results.Statistics;
 
-        private async void refreshBacktest_Tick(object sender, EventArgs e)
-        {
-            statusLabel.Text = "Updating Results...";
-
-            var _results = await QCStudioPluginActions.GetBacktestResults(_backtestId);
-
-            if (_results == null)
-            {
-                refreshBacktest.Enabled = false;
-                statusLabel.Text = "Backtest Failed.";
-                return;
-            }
-
-            if (_results.Progress == "0%" || _results.Progress == "")
-            {
-                return;
-            }
-
+            var _drawChartActions = new DrawChartsFactory();
             var zedgraphs = _drawChartActions.DrawCharts(_results.Results.Charts);
             foreach (var zed in zedgraphs)
             {
@@ -63,18 +44,6 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     tab.Controls.Add(zed.Value);
                     tabCharts.TabPages.Add(tab);
                 }
-            }
-
-            statusProgress.ProgressBar.Value = Convert.ToInt32(_results.Progress.Replace("%", ""));
-
-            //If finished draw stats and orders
-            if (_results.Progress == "100%")// && _results.Results.Statistics.Count > 0)
-            {
-                refreshBacktest.Enabled = false;
-                statusLabel.Text = "Backtest Completed.";
-
-                dataGridViewTrades.DataSource = _results.Results.Orders;
-                dataGridViewStats.DataSource = _results.Results.Statistics;
             }
         }
     }

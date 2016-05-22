@@ -36,7 +36,7 @@ namespace QuantConnect.QCStudioPlugin
             ToolWindowPane window = this.FindToolWindow(typeof(T), 0, true);
             if ((null == window) || (null == window.Frame))
             {
-                QCPluginUtilities.OutputCommandString("Failed to initialize " + Resources.ToolWindowTitle);
+                QCPluginUtilities.OutputCommandString("Failed to initialize " + Resources.ToolWindowTitle, QCPluginUtilities.Severity.Error);
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
             

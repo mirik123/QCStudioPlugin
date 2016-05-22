@@ -93,7 +93,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                     if (string.IsNullOrEmpty(projectName))
                     {
-                        QCPluginUtilities.OutputCommandString("Project name cannot be empty.");
+                        QCPluginUtilities.OutputCommandString("Project name cannot be empty.", QCPluginUtilities.Severity.Error);
                         return;
                     }
 
@@ -123,7 +123,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                         var localproj = projects.Where(x => x.Id == 0).ToArray();
                         if (localproj.Length == 0 || cloudproj.Length == 0)
                         {
-                            QCPluginUtilities.OutputCommandString("No orphaned projects found on both cloud and local side.");
+                            QCPluginUtilities.OutputCommandString("No orphaned projects found on both cloud and local side.", QCPluginUtilities.Severity.Error);
                             return;
                         }
 
@@ -187,7 +187,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                             if (string.IsNullOrWhiteSpace(backtestName))
                             {
-                                QCPluginUtilities.OutputCommandString("Backtest name cannot be empty.");
+                                QCPluginUtilities.OutputCommandString("Backtest name cannot be empty.", QCPluginUtilities.Severity.Error);
                                 return;
                             }
 

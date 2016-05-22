@@ -27,7 +27,7 @@ namespace QuantConnect.QCPlugin
         /// Draw the charts from a result packet:
         /// </summary>
         /// <param name="charts"></param>
-        public Dictionary<string, ZedGraphControl> DrawCharts(Dictionary<string, Chart> charts)
+        public Dictionary<string, ZedGraphControl> DrawCharts(IDictionary<string, Chart> charts)
         {
             //Draw charts:
             foreach (Chart chart in charts.Values)

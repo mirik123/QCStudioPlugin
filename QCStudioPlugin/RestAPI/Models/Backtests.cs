@@ -6,6 +6,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using QuantConnect.Orders;
+using QuantConnect.Packets;
 /**********************************************************
 * USING NAMESPACES
 **********************************************************/
@@ -41,28 +42,19 @@ namespace QuantConnect.RestAPI.Models
         [JsonProperty(PropertyName = "results")]
         public BacktestResult Results = new BacktestResult();
 
+        // <summary>
+        /// Start of the backtest period as defined in Initialize() method.
+        /// </summary>
+        [JsonProperty(PropertyName = "dtPeriodStart")]
+        public DateTime PeriodStart = DateTime.Now;
+
+        /// <summary>
+        /// End of the backtest period as defined in the Initialize() method.
+        /// </summary>
+        [JsonProperty(PropertyName = "dtPeriodFinish")]
+        public DateTime PeriodFinish = DateTime.Now;
+
         public PacketBacktestResult()
-        { }
-    }
-
-    /// <summary>
-    /// Result Container:
-    /// </summary>
-    public class BacktestResult
-    {
-        [JsonProperty(PropertyName = "Charts")]
-        public Dictionary<string, Chart> Charts = new Dictionary<string, Chart>();
-
-        [JsonProperty(PropertyName = "Statistics")]
-        public Dictionary<string, string> Statistics = new Dictionary<string,string>();
-
-        [JsonProperty(PropertyName = "Orders")]
-        public Dictionary<int, Order> Orders = new Dictionary<int, Order>();
-
-        [JsonProperty(PropertyName = "ProfitLoss")]
-        public Dictionary<DateTime, decimal> ProfitLoss = new Dictionary<DateTime,decimal>();
-
-        public BacktestResult() 
         { }
     }
 
