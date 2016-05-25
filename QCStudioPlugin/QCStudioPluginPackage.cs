@@ -62,14 +62,13 @@ namespace QuantConnect.QCStudioPlugin
         private void CustomInitialize()
         {
             string AppTitle = Resources.ToolWindowTitle;
-            string AppVersion = Resources.QuantConnectVersion;
             var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
             var dialogFactory = GetService(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
             var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
             var chartWindowJSFrame = (ChartPane)this.FindToolWindow(typeof(ChartPane), 0, true);
             var chartWindowZedFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
 
-            QCPluginUtilities.Initialize(AppTitle, AppVersion, dte, dialogFactory, outputWindow, chartWindowJSFrame, chartWindowZedFrame);
+            QCPluginUtilities.Initialize(AppTitle, dte, dialogFactory, outputWindow, chartWindowJSFrame, chartWindowZedFrame);
             QCStudioPluginActions.Initialize();
         }
 
@@ -88,12 +87,27 @@ namespace QuantConnect.QCStudioPlugin
             if ( null != mcs )
             {
                 // Create the command for the tool window
-                CommandID toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCPane);
-                MenuCommand menuToolWin = new MenuCommand((sender,e) => {
+                CommandID toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalJS);
+                OleMenuCommand menuToolWin = new OleMenuCommand((sender, e) =>
+                {
+                    QCPluginUtilities.ShowBacktestJSLocal();
+                }, toolwndCommandID);
+                mcs.AddCommand( menuToolWin );
+
+                toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalZED);
+                menuToolWin = new OleMenuCommand((sender, e) =>
+                {
+                    QCPluginUtilities.ShowBacktestZEDLocal();
+                }, toolwndCommandID);
+                mcs.AddCommand(menuToolWin);
+
+                toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCRemote);
+                menuToolWin = new OleMenuCommand((sender, e) =>
+                {
                     var windowFrame = GetToolWindowFrame<AdminPane>();
                     ErrorHandler.ThrowOnFailure(windowFrame.Show());
                 }, toolwndCommandID);
-                mcs.AddCommand( menuToolWin );
+                mcs.AddCommand(menuToolWin);
             }
 
             CustomInitialize();

@@ -23,6 +23,7 @@ using QuantConnect.Packets;
 using QuantConnect.Interfaces;
 using QuantConnect.Messaging;
 using System.Threading;
+using QuantConnect.QCStudioPlugin.Properties;
 
 
 namespace QuantConnect.QCStudioPlugin.Actions
@@ -248,21 +249,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString("Run backtest error: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 }               
             }            
-        }       
-
-        public static void ShowBacktestJS(string BacktestId) 
-        {
-            if(string.IsNullOrEmpty(api.UserID) || string.IsNullOrEmpty(api.AuthToken)) {
-                QCPluginUtilities.OutputCommandString("Becktest credentials are absent.", QCPluginUtilities.Severity.Info);
-                return;
-            }
-            
-            QCPluginUtilities.ShowBacktestJSWindow(BacktestId, api.UserID, api.AuthToken);
-        }
-
-        public static void ShowBacktestZED(string BacktestId)
-        {
-            QCPluginUtilities.ShowBacktestZEDRemote(BacktestId);
         }
 
         public async static Task DeleteBacktest(string BacktestID)
@@ -365,9 +351,15 @@ namespace QuantConnect.QCStudioPlugin.Actions
         {
             try
             {
+                await Authenticate();
+
                 QCPluginUtilities.OutputCommandString("getting backtest results...", QCPluginUtilities.Severity.Info);
 
-                return await api.BacktestResults(backtestId);
+                var results = await api.BacktestResults(backtestId);
+                results.UserID = api.UserID;
+                results.AuthToken = api.AuthToken;
+
+                return results;
             }
             catch (Exception ex)
             {
@@ -514,6 +506,19 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
 
             return task.Task;
+        }
+
+        public static string GetTerminalUrl(string backtestId, int ProjectId = 0, bool liveMode = false, bool holdReady = true)
+        {
+            var url = "";
+            var hold = holdReady == false ? "0" : "1";
+            var embedPage = liveMode ? "embeddedLive" : "embedded";
+
+            url = string.Format(
+                "https://www.quantconnect.com/terminal/{0}?user={1}&token={2}&pid={3}&version={4}&holdReady={5}&bid={6}",
+                embedPage, api.UserID, api.AuthToken, ProjectId, Resources.QuantConnectVersion, hold, backtestId);
+
+            return url;
         }
     }
 

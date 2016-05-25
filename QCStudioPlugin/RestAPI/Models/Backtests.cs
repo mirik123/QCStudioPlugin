@@ -42,6 +42,9 @@ namespace QuantConnect.RestAPI.Models
         [JsonProperty(PropertyName = "results")]
         public BacktestResult Results = new BacktestResult();
 
+        public string UserID;
+        public string AuthToken;
+
         // <summary>
         /// Start of the backtest period as defined in Initialize() method.
         /// </summary>

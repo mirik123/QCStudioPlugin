@@ -18,6 +18,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
 {
     public partial class ChartControl : UserControl
     {
+        public Func<Task<PacketBacktestResult>> GetBacktestResultsCallback;
         private string browserData = "{}";
         
         public ChartControl()
@@ -25,9 +26,9 @@ namespace QuantConnect.QCStudioPlugin.Forms
             InitializeComponent();
         }
 
-        public async void Run(string url, string backtestId)
+        public async void Run(string url)
         {
-            var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
+            var _results = await GetBacktestResultsCallback();
             MessagingOnBacktestResultEvent(_results, url);
         }
 
@@ -41,32 +42,26 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
         private void MessagingOnBacktestResultEvent(PacketBacktestResult packet, string url)
         {
-            if (packet.Progress != "100%") return;
-
             //Generate JSON:
-            var jObj = new JObject();
             var dateFormat = "yyyy-MM-dd HH:mm:ss";
-            
-            dynamic final = jObj;
-            final.dtPeriodStart = packet.PeriodStart.ToString(dateFormat);
-            final.dtPeriodFinished = packet.PeriodFinish.AddDays(1).ToString(dateFormat);
-            
-            dynamic resultData = new JObject();
-            resultData.version = "3";
-            resultData.results = JObject.FromObject(packet.Results);
-            resultData.statistics = JObject.FromObject(packet.Results.Statistics);
-            resultData.iTradeableDates = 1;
-            resultData.ranking = null;
-            
-            final.oResultData = resultData;
+
+            dynamic final = new
+            {
+                dtPeriodStart = packet.PeriodStart.ToString(dateFormat),
+                dtPeriodFinished = packet.PeriodFinish.AddDays(1).ToString(dateFormat),
+                oResultData = new 
+                { 
+                    version = "3",
+                    results = packet.Results,
+                    statistics = packet.Results.Statistics,
+                    iTradeableDates = 1,
+                    ranking = (object)null
+                }
+            };
+
             browserData = JsonConvert.SerializeObject(final);
             
-            Browser.Navigate(url);
-
-            foreach (var pair in packet.Results.Statistics)
-            {
-                QCPluginUtilities.OutputCommandString("STATISTICS:: " + pair.Key + " " + pair.Value, QCPluginUtilities.Severity.Info);
-            }
+            Browser.Navigate(url);            
         }
 
         private void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
