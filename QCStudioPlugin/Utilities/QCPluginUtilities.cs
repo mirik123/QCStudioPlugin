@@ -259,7 +259,7 @@ namespace QuantConnect.QCStudioPlugin
             classDll = "";
             className = "";
             if (dte.SelectedItems.Count != 1) return;
-            var selitem = dte.SelectedItems.Item(0);
+            var selitem = dte.SelectedItems.Cast<SelectedItem>().FirstOrDefault();
 
             className = selitem.Name;
             var startupProjDir = GetProjectOutputBuildFolder(selitem.Project);

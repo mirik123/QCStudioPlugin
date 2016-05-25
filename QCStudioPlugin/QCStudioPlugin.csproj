@@ -261,6 +261,7 @@
   <ItemGroup>
     <VSCTCompile Include="QCStudioPlugin.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
