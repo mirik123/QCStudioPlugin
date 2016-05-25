@@ -39,6 +39,10 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\packages\MathNet.Numerics.3.11.1\lib\net40\MathNet.Numerics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.ExtensionManager, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -69,6 +73,10 @@
     </Reference>
     <Reference Include="QuantConnect.Lean.Engine">
       <HintPath>..\..\Lean\Engine\bin\Debug\QuantConnect.Lean.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="QuantConnect.Logging, Version=2.2.0.2, Culture=neutral, PublicKeyToken=64a159104f049a6d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lean\Engine\bin\Debug\QuantConnect.Logging.dll</HintPath>
     </Reference>
     <Reference Include="QuantConnect.Messaging">
       <HintPath>..\..\Lean\Engine\bin\Debug\QuantConnect.Messaging.dll</HintPath>

@@ -449,10 +449,10 @@ namespace QuantConnect.QCStudioPlugin.Actions
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
 
-            Composer.Instance.Reset();
-
             try
             {
+                Composer.Instance.Reset();
+
                 // set the configuration up
                 Config.Set("algorithm-type-name", fileName);
                 Config.Set("live-mode", "false");

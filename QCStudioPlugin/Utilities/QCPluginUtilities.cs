@@ -262,8 +262,8 @@ namespace QuantConnect.QCStudioPlugin
             var selitem = dte.SelectedItems.Cast<SelectedItem>().FirstOrDefault();
 
             className = selitem.Name;
-            var startupProjDir = GetProjectOutputBuildFolder(selitem.Project);
-            classDll = Path.Combine(startupProjDir, selitem.Project.Name) + ".dll";
+            var startupProjDir = GetProjectOutputBuildFolder(selitem.ProjectItem.ContainingProject);
+            classDll = Path.Combine(startupProjDir, selitem.ProjectItem.ContainingProject.Name) + ".dll";
         }
 
         public static string GetStartupProjectOutputBinary()
