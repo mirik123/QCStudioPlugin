@@ -30,11 +30,14 @@ namespace QuantConnect.QCStudioPlugin.Forms
         {
             var _results = await GetBacktestResultsCallback();
 
+            //Time.Date; Symbol; Price; Type; Quantity; Direction; Status;
             dataGridViewTrades.DataSource = _results.Results.Orders;
+
+
             dataGridViewStats.DataSource = _results.Results.Statistics;
 
             var _drawChartActions = new DrawChartsFactory();
-            var zedgraphs = _drawChartActions.DrawCharts(_results.Results.Charts);
+            var zedgraphs = _drawChartActions.DrawCharts(_results.Results.Charts, _results.PeriodStart, _results.PeriodFinish);
             foreach (var zed in zedgraphs)
             {
                 if (!tabCharts.TabPages.ContainsKey(zed.Key))

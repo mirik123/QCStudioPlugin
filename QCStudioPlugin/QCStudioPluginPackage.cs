@@ -21,6 +21,7 @@ namespace QuantConnect.QCStudioPlugin
     [ProvideToolWindow(typeof(AdminPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Bottom)]
     [ProvideToolWindow(typeof(ChartPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Top)]
     [ProvideToolWindow(typeof(QCClientPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Top)]
+    [ProvideOptionPage(typeof(OptionPageGrid), "QuantConnect Client", "General", 0, 0, true)]
     [Guid(GuidList.guidQCStudioPluginPkgString)]
     public sealed class QCStudioPluginPackage : Package
     {
@@ -82,6 +83,10 @@ namespace QuantConnect.QCStudioPlugin
             Debug.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
+            var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
+            string pluginsPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathBinaries").Value;
+            string dataPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathData").Value;
+
             // Add our command handlers for menu (commands must exist in the .vsct file)
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
@@ -90,14 +95,14 @@ namespace QuantConnect.QCStudioPlugin
                 CommandID toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalJS);
                 OleMenuCommand menuToolWin = new OleMenuCommand((sender, e) =>
                 {
-                    QCPluginUtilities.ShowBacktestJSLocal();
+                    QCPluginUtilities.ShowBacktestJSLocal(pluginsPath, dataPath);
                 }, toolwndCommandID);
                 mcs.AddCommand( menuToolWin );
 
                 toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalZED);
                 menuToolWin = new OleMenuCommand((sender, e) =>
                 {
-                    QCPluginUtilities.ShowBacktestZEDLocal();
+                    QCPluginUtilities.ShowBacktestZEDLocal(pluginsPath, dataPath);
                 }, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
 

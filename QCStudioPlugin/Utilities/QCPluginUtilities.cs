@@ -21,8 +21,6 @@ using System.Text;
 using System.Windows.Forms;
 using QuantConnect.QCStudioPlugin.Forms;
 using QuantConnect.QCStudioPlugin.Actions;
-using QuantConnect.Packets;
-using QuantConnect.Interfaces;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -61,7 +59,7 @@ namespace QuantConnect.QCStudioPlugin
 
             foreach (var chart in packet.Results.Charts.Values)
             {
-                foreach (Series series in chart.Series.Values)
+                foreach (var series in chart.Series.Values)
                 {
                     if (series.Values.Count == 0) continue;
 
@@ -123,27 +121,21 @@ namespace QuantConnect.QCStudioPlugin
             chartWindowZedFrame.control.Run();
         }
 
-        public static void ShowBacktestJSLocal()
+        public static void ShowBacktestJSLocal(string pluginsPath, string dataPath)
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
             
             chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
             {
-                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className);
+                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
 
                 foreach (var pair in _results.Results.Statistics)
                 {
                     QCPluginUtilities.OutputCommandString("STATISTICS:: " + pair.Key + " " + pair.Value, QCPluginUtilities.Severity.Info);
                 }
 
-                return new RestAPI.Models.PacketBacktestResult
-                {
-                    PeriodFinish = _results.PeriodFinish,
-                    PeriodStart = _results.PeriodStart,
-                    Results = _results.Results,
-                    Progress = _results.Progress.ToString()
-                };
+                return _results;
             };
 
             var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
@@ -153,26 +145,21 @@ namespace QuantConnect.QCStudioPlugin
             chartWindowJSFrame.control.Run(url);
         }
 
-        public static void ShowBacktestZEDLocal()
+        public static void ShowBacktestZEDLocal(string pluginsPath, string dataPath)
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
             
             chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
             {
-                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className);
+                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
 
                 foreach (var pair in _results.Results.Statistics)
                 {
                     QCPluginUtilities.OutputCommandString("STATISTICS:: " + pair.Key + " " + pair.Value, QCPluginUtilities.Severity.Info);
                 }
 
-                return new RestAPI.Models.PacketBacktestResult { 
-                    PeriodFinish = _results.PeriodFinish,
-                    PeriodStart = _results.PeriodStart,
-                    Results = _results.Results,
-                    Progress = _results.Progress.ToString()
-                };
+                return _results;
             };
 
             var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;

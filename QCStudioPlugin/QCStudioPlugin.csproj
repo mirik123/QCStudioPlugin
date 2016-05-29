@@ -39,10 +39,6 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics">
-      <HintPath>..\packages\MathNet.Numerics.3.11.1\lib\net40\MathNet.Numerics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.ExtensionManager, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -61,27 +57,12 @@
     <Reference Include="Microsoft.VisualStudio.Shell.11.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.11.0" />
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="QuantConnect.Common">
-      <HintPath>..\..\Lean\Common\bin\Debug\QuantConnect.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="QuantConnect.Configuration">
-      <HintPath>..\..\Lean\Common\bin\Debug\QuantConnect.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="QuantConnect.Lean.Engine">
-      <HintPath>..\..\Lean\Engine\bin\Debug\QuantConnect.Lean.Engine.dll</HintPath>
-    </Reference>
-    <Reference Include="QuantConnect.Logging, Version=2.2.0.2, Culture=neutral, PublicKeyToken=64a159104f049a6d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lean\Engine\bin\Debug\QuantConnect.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="QuantConnect.Messaging">
-      <HintPath>..\..\Lean\Engine\bin\Debug\QuantConnect.Messaging.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
@@ -189,6 +170,9 @@
       <DependentUpon>AdminControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\AdminPane.cs" />
+    <Compile Include="Forms\OptionPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Forms\QCClientControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -206,6 +190,8 @@
     <Compile Include="QCStudioPluginPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
+    <Compile Include="RestAPI\Models\ColorJsonConverter.cs" />
+    <Compile Include="RestAPI\Models\TypeChangeJsonConverter.cs" />
     <Compile Include="RestAPI\RestAPI.cs" />
     <Compile Include="RestAPI\Models\Backtests.cs" />
     <Compile Include="RestAPI\Models\Base.cs" />
@@ -216,6 +202,7 @@
     <Compile Include="Utilities\DrawChartsFactory.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\LeanRefactoring.cs" />
     <Compile Include="Utilities\QCPluginActions.cs" />
     <Compile Include="Utilities\QCPluginUtilities.cs" />
     <Compile Include="VSPackage.Designer.cs">

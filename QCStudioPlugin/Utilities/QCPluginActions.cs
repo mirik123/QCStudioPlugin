@@ -15,15 +15,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using QuantConnect.Util;
-using QuantConnect.Configuration;
-using QuantConnect.Lean.Engine;
-using QuantConnect.Lean.Engine.Results;
-using QuantConnect.Packets;
-using QuantConnect.Interfaces;
-using QuantConnect.Messaging;
 using System.Threading;
 using QuantConnect.QCStudioPlugin.Properties;
+using QuantConnect.QCStudioPlugin.Lean.interfaces;
+using Newtonsoft.Json.Linq;
 
 
 namespace QuantConnect.QCStudioPlugin.Actions
@@ -441,7 +436,119 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        public static Task<BacktestResultPacket> RunLocalBacktest(string algorithmPath, string fileName)
+        public static Task<PacketBacktestResult> RunLocalBacktest(string algorithmPath, string fileName, string pluginsPath, string dataPath)
+        {
+            var statistics = new Dictionary<string, string>();
+            var task = new TaskCompletionSource<PacketBacktestResult>();
+
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+
+            var lean = new LeanRefactoring();
+
+            try
+            {
+                lean.LoadLibraries(pluginsPath);
+
+                lean.SetConfiguration("environment", "");   //"backtesting-desktop"
+                lean.SetConfiguration("plugin-directory", pluginsPath);
+                lean.SetConfiguration("data-folder", dataPath);
+                lean.SetConfiguration("data-directory", dataPath);                
+                lean.SetConfiguration("algorithm-location", algorithmPath);
+                lean.SetConfiguration("algorithm-type-name", fileName);
+
+                lean.SetConfiguration("algorithm-language", "CSharp");
+                lean.SetConfiguration("live-mode", "false");
+                lean.SetConfiguration("debug-mode", "true");
+
+                lean.SetConfiguration("messaging-handler", "QuantConnect.Messaging.EventMessagingHandler");
+                lean.SetConfiguration("job-queue-handler", "QuantConnect.Queues.JobQueue");
+                lean.SetConfiguration("api-handler", "QuantConnect.Api.Api");
+                lean.SetConfiguration("result-handler", "QuantConnect.Lean.Engine.Results.BacktestingResultHandler");
+                lean.SetConfiguration("setup-handler", "QuantConnect.Lean.Engine.Setup.ConsoleSetupHandler");
+                lean.SetConfiguration("data-feed-handler", "QuantConnect.Lean.Engine.DataFeeds.FileSystemDataFeed");
+                lean.SetConfiguration("real-time-handler", "QuantConnect.Lean.Engine.RealTime.BacktestingRealTimeHandler");
+                lean.SetConfiguration("transaction-handler", "QuantConnect.Lean.Engine.TransactionHandlers.BacktestingTransactionHandler");
+                lean.SetConfiguration("log-handler", "QuantConnect.Logging.QueueLogHandler");
+
+
+                //Composer.Instance.Reset();
+                var composer = lean.CreateComposer();
+
+                //Log.LogHandler = Composer.Instance.GetExportedValueByTypeName<ILogHandler>("QuantConnect.Logging.QueueLogHandler");
+                lean.SetLogHandler(composer, (packet) =>
+                {
+                    var json = JObject.FromObject(packet);
+                    var message = json.GetValue("Message").Value<string>();
+                    var hstack = json.GetValue("StackTrace").Value<string>();
+
+                    QCPluginUtilities.OutputCommandString(message +", "+ hstack, QCPluginUtilities.Severity.Info);
+                });
+
+                Task enginetask = null;
+                //var systemHandlers = LeanEngineSystemHandlers.FromConfiguration(Composer.Instance);
+                var systemHandlers = lean.CreateLeanEngineSystemHandlers(composer);
+
+                //var algorithmHandlers = LeanEngineAlgorithmHandlers.FromConfiguration(Composer.Instance);
+                var algorithmHandlers = lean.CreateLeanEngineAlgorithmHandlers(composer);
+
+                QCPluginUtilities.OutputCommandString("Running " + fileName + "...", QCPluginUtilities.Severity.Info);
+
+                //var _messaging = systemHandlers.Notify;
+                lean.AddMessagingEvents(systemHandlers, algorithmHandlers, (packet) =>
+                {
+                    var json = JObject.FromObject(packet);
+                    var message = json.GetValue("Message").Value<string>();
+                    var hstack = json.GetValue("StackTrace").Value<string>();
+
+                    QCPluginUtilities.OutputCommandString(message + ", " + hstack, QCPluginUtilities.Severity.Info);
+                }, (packet) =>
+                {
+                    (systemHandlers as IDisposable).Dispose();
+                    (algorithmHandlers as IDisposable).Dispose();
+                    tokenSource.Cancel();
+                    tokenSource.Dispose();
+
+                    var json = JObject.FromObject(packet);
+                    var result = new PacketBacktestResult
+                    {
+                        PeriodFinish = json.GetValue("PeriodFinish").Value<DateTime>(),
+                        PeriodStart = json.GetValue("PeriodStart").Value<DateTime>(),
+                        Results = json.GetValue("Results").Value<BacktestResult>(),
+                        Progress = json.GetValue("Progress").Value<string>()
+                    };
+                    task.SetResult(result);
+                });
+
+                string _algorithmPath;
+                var job = lean.GetNextJob(systemHandlers, out _algorithmPath);
+
+                //var engine = new Lean.Engine.Engine(systemHandlers, algorithmHandlers, false);
+                var engine = lean.CreateEngine(systemHandlers, algorithmHandlers, false);
+                enginetask = Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        //engine.Run(job, _algorithmPath); 
+                        lean.RunEngine(engine, job, _algorithmPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.Message, ex.StackTrace), QCPluginUtilities.Severity.Error);
+                        task.SetException(ex);
+                    }
+                }, token);
+            }
+            catch (Exception ex)
+            {
+                QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.Message, ex.StackTrace), QCPluginUtilities.Severity.Error);
+                task.SetException(ex);
+            }
+
+            return task.Task;
+        }
+
+        /*public static Task<BacktestResultPacket> RunLocalBacktest(string algorithmPath, string fileName)
         {
             var statistics = new Dictionary<string, string>();
             var task = new TaskCompletionSource<BacktestResultPacket>();
@@ -506,7 +613,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
 
             return task.Task;
-        }
+        }*/
 
         public static string GetTerminalUrl(string backtestId, int ProjectId = 0, bool liveMode = false, bool holdReady = true)
         {
