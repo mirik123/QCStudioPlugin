@@ -1,5 +1,6 @@
 ﻿/*
-* Mark Babayev (https://github.com/mirik123) - QC internal actions
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
 */
 
 using QuantConnect.QCStudioPlugin.Forms;
@@ -45,7 +46,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        private async static Task Authenticate()
+        public async static Task Authenticate()
         {
             if(!api.IsAuthenticated)
             {

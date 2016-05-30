@@ -29,29 +29,29 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.mnBacktest = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.mnRefreshBacktests = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnLoadBacktestZED = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnDeleteBacktest = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnProjects = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.mnRefreshProjects = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnCreateProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnDeleteProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnUploadProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnDownloadProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnCompileProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnConnectProjectID = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnDisconnectProjectID = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnLogin = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnLogout = new System.Windows.Forms.ToolStripMenuItem();
+            this.BacktestMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RefreshBacktestsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadBacktestZEDMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.DeleteBacktestMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ProjectsMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RefreshProjectsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.CreateProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.DeleteProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.UploadProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.DownloadProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.CompileProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ConnectProjectIDMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.DisconnectProjectIDMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoginMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.LogoutMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dgrBacktests = new System.Windows.Forms.DataGridView();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dgrProjects = new System.Windows.Forms.DataGridView();
-            this.mnLoadBacktestJS = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnBacktest.SuspendLayout();
-            this.mnProjects.SuspendLayout();
+            this.LoadBacktestJSMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.BacktestMenu.SuspendLayout();
+            this.ProjectsMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
@@ -64,137 +64,137 @@
             // 
             // mnBacktest
             // 
-            this.mnBacktest.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnRefreshBacktests,
-            this.mnLoadBacktestJS,
-            this.mnLoadBacktestZED,
-            this.mnDeleteBacktest});
-            this.mnBacktest.Name = "mnBacktest";
-            this.mnBacktest.Size = new System.Drawing.Size(172, 114);
-            this.mnBacktest.Opening += new System.ComponentModel.CancelEventHandler(this.mnBacktest_Opening);
-            this.mnBacktest.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.mnBacktest_Click);
+            this.BacktestMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshBacktestsMenu,
+            this.LoadBacktestJSMenu,
+            this.LoadBacktestZEDMenu,
+            this.DeleteBacktestMenu});
+            this.BacktestMenu.Name = "mnBacktest";
+            this.BacktestMenu.Size = new System.Drawing.Size(172, 114);
+            this.BacktestMenu.Opening += new System.ComponentModel.CancelEventHandler(this.BacktestMenu_Opening);
+            this.BacktestMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.BacktestMenu_Click);
             // 
             // mnRefreshBacktests
             // 
-            this.mnRefreshBacktests.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Reload;
-            this.mnRefreshBacktests.Name = "mnRefreshBacktests";
-            this.mnRefreshBacktests.Size = new System.Drawing.Size(171, 22);
-            this.mnRefreshBacktests.Tag = "1";
-            this.mnRefreshBacktests.Text = "Refresh";
+            this.RefreshBacktestsMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Reload;
+            this.RefreshBacktestsMenu.Name = "mnRefreshBacktests";
+            this.RefreshBacktestsMenu.Size = new System.Drawing.Size(171, 22);
+            this.RefreshBacktestsMenu.Tag = "1";
+            this.RefreshBacktestsMenu.Text = "Refresh";
             // 
             // mnLoadBacktestZED
             // 
-            this.mnLoadBacktestZED.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
-            this.mnLoadBacktestZED.Name = "mnLoadBacktestZED";
-            this.mnLoadBacktestZED.Size = new System.Drawing.Size(171, 22);
-            this.mnLoadBacktestZED.Tag = "0";
-            this.mnLoadBacktestZED.Text = "Load Backtest ZED";
+            this.LoadBacktestZEDMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
+            this.LoadBacktestZEDMenu.Name = "mnLoadBacktestZED";
+            this.LoadBacktestZEDMenu.Size = new System.Drawing.Size(171, 22);
+            this.LoadBacktestZEDMenu.Tag = "0";
+            this.LoadBacktestZEDMenu.Text = "Load Backtest ZED";
             // 
             // mnDeleteBacktest
             // 
-            this.mnDeleteBacktest.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Garbage_Closed;
-            this.mnDeleteBacktest.Name = "mnDeleteBacktest";
-            this.mnDeleteBacktest.Size = new System.Drawing.Size(171, 22);
-            this.mnDeleteBacktest.Tag = "0";
-            this.mnDeleteBacktest.Text = "Delete Backtest";
+            this.DeleteBacktestMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Garbage_Closed;
+            this.DeleteBacktestMenu.Name = "mnDeleteBacktest";
+            this.DeleteBacktestMenu.Size = new System.Drawing.Size(171, 22);
+            this.DeleteBacktestMenu.Tag = "0";
+            this.DeleteBacktestMenu.Text = "Delete Backtest";
             // 
             // mnProjects
             // 
-            this.mnProjects.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnRefreshProjects,
-            this.mnCreateProject,
-            this.mnDeleteProject,
-            this.mnUploadProject,
-            this.mnDownloadProject,
-            this.mnCompileProject,
-            this.mnConnectProjectID,
-            this.mnDisconnectProjectID,
-            this.mnLogin,
-            this.mnLogout});
-            this.mnProjects.Name = "mnProjects";
-            this.mnProjects.Size = new System.Drawing.Size(188, 224);
-            this.mnProjects.Opening += new System.ComponentModel.CancelEventHandler(this.mnProjects_Opening);
-            this.mnProjects.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.mnProjects_Click);
+            this.ProjectsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshProjectsMenu,
+            this.CreateProjectMenu,
+            this.DeleteProjectMenu,
+            this.UploadProjectMenu,
+            this.DownloadProjectMenu,
+            this.CompileProjectMenu,
+            this.ConnectProjectIDMenu,
+            this.DisconnectProjectIDMenu,
+            this.LoginMenu,
+            this.LogoutMenu});
+            this.ProjectsMenu.Name = "mnProjects";
+            this.ProjectsMenu.Size = new System.Drawing.Size(188, 224);
+            this.ProjectsMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ProjectsMenu_Opening);
+            this.ProjectsMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ProjectsMenu_Click);
             // 
             // mnRefreshProjects
             // 
-            this.mnRefreshProjects.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Reload;
-            this.mnRefreshProjects.Name = "mnRefreshProjects";
-            this.mnRefreshProjects.Size = new System.Drawing.Size(187, 22);
-            this.mnRefreshProjects.Tag = "1";
-            this.mnRefreshProjects.Text = "Refresh";
+            this.RefreshProjectsMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Reload;
+            this.RefreshProjectsMenu.Name = "mnRefreshProjects";
+            this.RefreshProjectsMenu.Size = new System.Drawing.Size(187, 22);
+            this.RefreshProjectsMenu.Tag = "1";
+            this.RefreshProjectsMenu.Text = "Refresh";
             // 
             // mnCreateProject
             // 
-            this.mnCreateProject.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
-            this.mnCreateProject.Name = "mnCreateProject";
-            this.mnCreateProject.Size = new System.Drawing.Size(187, 22);
-            this.mnCreateProject.Tag = "1";
-            this.mnCreateProject.Text = "Create Project";
+            this.CreateProjectMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
+            this.CreateProjectMenu.Name = "mnCreateProject";
+            this.CreateProjectMenu.Size = new System.Drawing.Size(187, 22);
+            this.CreateProjectMenu.Tag = "1";
+            this.CreateProjectMenu.Text = "Create Project";
             // 
             // mnDeleteProject
             // 
-            this.mnDeleteProject.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Garbage_Closed;
-            this.mnDeleteProject.Name = "mnDeleteProject";
-            this.mnDeleteProject.Size = new System.Drawing.Size(187, 22);
-            this.mnDeleteProject.Tag = "0";
-            this.mnDeleteProject.Text = "Delete Project";
+            this.DeleteProjectMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Garbage_Closed;
+            this.DeleteProjectMenu.Name = "mnDeleteProject";
+            this.DeleteProjectMenu.Size = new System.Drawing.Size(187, 22);
+            this.DeleteProjectMenu.Tag = "0";
+            this.DeleteProjectMenu.Text = "Delete Project";
             // 
             // mnUploadProject
             // 
-            this.mnUploadProject.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Save;
-            this.mnUploadProject.Name = "mnUploadProject";
-            this.mnUploadProject.Size = new System.Drawing.Size(187, 22);
-            this.mnUploadProject.Tag = "0";
-            this.mnUploadProject.Text = "Upload Project";
+            this.UploadProjectMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Save;
+            this.UploadProjectMenu.Name = "mnUploadProject";
+            this.UploadProjectMenu.Size = new System.Drawing.Size(187, 22);
+            this.UploadProjectMenu.Tag = "0";
+            this.UploadProjectMenu.Text = "Upload Project";
             // 
             // mnDownloadProject
             // 
-            this.mnDownloadProject.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
-            this.mnDownloadProject.Name = "mnDownloadProject";
-            this.mnDownloadProject.Size = new System.Drawing.Size(187, 22);
-            this.mnDownloadProject.Tag = "0";
-            this.mnDownloadProject.Text = "Download Project";
+            this.DownloadProjectMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
+            this.DownloadProjectMenu.Name = "mnDownloadProject";
+            this.DownloadProjectMenu.Size = new System.Drawing.Size(187, 22);
+            this.DownloadProjectMenu.Tag = "0";
+            this.DownloadProjectMenu.Text = "Download Project";
             // 
             // mnCompileProject
             // 
-            this.mnCompileProject.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Graph_03;
-            this.mnCompileProject.Name = "mnCompileProject";
-            this.mnCompileProject.Size = new System.Drawing.Size(187, 22);
-            this.mnCompileProject.Tag = "0";
-            this.mnCompileProject.Text = "Build Project";
+            this.CompileProjectMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Graph_03;
+            this.CompileProjectMenu.Name = "mnCompileProject";
+            this.CompileProjectMenu.Size = new System.Drawing.Size(187, 22);
+            this.CompileProjectMenu.Tag = "0";
+            this.CompileProjectMenu.Text = "Build Project";
             // 
             // mnConnectProjectID
             // 
-            this.mnConnectProjectID.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Key;
-            this.mnConnectProjectID.Name = "mnConnectProjectID";
-            this.mnConnectProjectID.Size = new System.Drawing.Size(187, 22);
-            this.mnConnectProjectID.Tag = "0";
-            this.mnConnectProjectID.Text = "Connect Project ID";
+            this.ConnectProjectIDMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Key;
+            this.ConnectProjectIDMenu.Name = "mnConnectProjectID";
+            this.ConnectProjectIDMenu.Size = new System.Drawing.Size(187, 22);
+            this.ConnectProjectIDMenu.Tag = "0";
+            this.ConnectProjectIDMenu.Text = "Connect Project ID";
             // 
             // mnDisconnectProjectID
             // 
-            this.mnDisconnectProjectID.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.fork;
-            this.mnDisconnectProjectID.Name = "mnDisconnectProjectID";
-            this.mnDisconnectProjectID.Size = new System.Drawing.Size(187, 22);
-            this.mnDisconnectProjectID.Tag = "1";
-            this.mnDisconnectProjectID.Text = "Disconnect Project ID";
+            this.DisconnectProjectIDMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.fork;
+            this.DisconnectProjectIDMenu.Name = "mnDisconnectProjectID";
+            this.DisconnectProjectIDMenu.Size = new System.Drawing.Size(187, 22);
+            this.DisconnectProjectIDMenu.Tag = "1";
+            this.DisconnectProjectIDMenu.Text = "Disconnect Project ID";
             // 
             // mnLogin
             // 
-            this.mnLogin.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.User_Login;
-            this.mnLogin.Name = "mnLogin";
-            this.mnLogin.Size = new System.Drawing.Size(187, 22);
-            this.mnLogin.Tag = "1";
-            this.mnLogin.Text = "Login";
+            this.LoginMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.User_Login;
+            this.LoginMenu.Name = "mnLogin";
+            this.LoginMenu.Size = new System.Drawing.Size(187, 22);
+            this.LoginMenu.Tag = "1";
+            this.LoginMenu.Text = "Login";
             // 
             // mnLogout
             // 
-            this.mnLogout.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Logout;
-            this.mnLogout.Name = "mnLogout";
-            this.mnLogout.Size = new System.Drawing.Size(187, 22);
-            this.mnLogout.Tag = "1";
-            this.mnLogout.Text = "Logout";
+            this.LogoutMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Logout;
+            this.LogoutMenu.Name = "mnLogout";
+            this.LogoutMenu.Size = new System.Drawing.Size(187, 22);
+            this.LogoutMenu.Tag = "1";
+            this.LogoutMenu.Text = "Logout";
             // 
             // splitContainer3
             // 
@@ -237,7 +237,7 @@
             this.dgrBacktests.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
             this.dgrBacktests.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgrBacktests.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgrBacktests.ContextMenuStrip = this.mnBacktest;
+            this.dgrBacktests.ContextMenuStrip = this.BacktestMenu;
             this.dgrBacktests.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgrBacktests.GridColor = System.Drawing.SystemColors.ScrollBar;
             this.dgrBacktests.Location = new System.Drawing.Point(3, 16);
@@ -275,7 +275,7 @@
             this.dgrProjects.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
             this.dgrProjects.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgrProjects.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgrProjects.ContextMenuStrip = this.mnProjects;
+            this.dgrProjects.ContextMenuStrip = this.ProjectsMenu;
             this.dgrProjects.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgrProjects.GridColor = System.Drawing.SystemColors.ScrollBar;
             this.dgrProjects.Location = new System.Drawing.Point(3, 16);
@@ -291,11 +291,11 @@
             // 
             // mnLoadBacktestJS
             // 
-            this.mnLoadBacktestJS.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
-            this.mnLoadBacktestJS.Name = "mnLoadBacktestJS";
-            this.mnLoadBacktestJS.Size = new System.Drawing.Size(171, 22);
-            this.mnLoadBacktestJS.Tag = "0";
-            this.mnLoadBacktestJS.Text = "Load Backtest JS";
+            this.LoadBacktestJSMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
+            this.LoadBacktestJSMenu.Name = "mnLoadBacktestJS";
+            this.LoadBacktestJSMenu.Size = new System.Drawing.Size(171, 22);
+            this.LoadBacktestJSMenu.Tag = "0";
+            this.LoadBacktestJSMenu.Text = "Load Backtest JS";
             // 
             // AdminControl
             // 
@@ -304,8 +304,8 @@
             this.Controls.Add(this.splitContainer3);
             this.Name = "AdminControl";
             this.Size = new System.Drawing.Size(1394, 292);
-            this.mnBacktest.ResumeLayout(false);
-            this.mnProjects.ResumeLayout(false);
+            this.BacktestMenu.ResumeLayout(false);
+            this.ProjectsMenu.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel1.PerformLayout();
             this.splitContainer3.Panel2.ResumeLayout(false);
@@ -322,26 +322,26 @@
 
         #endregion
 
-        private System.Windows.Forms.ContextMenuStrip mnBacktest;
-        private System.Windows.Forms.ToolStripMenuItem mnRefreshBacktests;
-        private System.Windows.Forms.ToolStripMenuItem mnLoadBacktestZED;
-        private System.Windows.Forms.ToolStripMenuItem mnDeleteBacktest;
-        private System.Windows.Forms.ContextMenuStrip mnProjects;
-        private System.Windows.Forms.ToolStripMenuItem mnRefreshProjects;
-        private System.Windows.Forms.ToolStripMenuItem mnCreateProject;
-        private System.Windows.Forms.ToolStripMenuItem mnDeleteProject;
-        private System.Windows.Forms.ToolStripMenuItem mnUploadProject;
-        private System.Windows.Forms.ToolStripMenuItem mnDownloadProject;
-        private System.Windows.Forms.ToolStripMenuItem mnCompileProject;
-        private System.Windows.Forms.ToolStripMenuItem mnConnectProjectID;
-        private System.Windows.Forms.ToolStripMenuItem mnLogin;
-        private System.Windows.Forms.ToolStripMenuItem mnLogout;
-        private System.Windows.Forms.ToolStripMenuItem mnDisconnectProjectID;
+        private System.Windows.Forms.ContextMenuStrip BacktestMenu;
+        private System.Windows.Forms.ToolStripMenuItem RefreshBacktestsMenu;
+        private System.Windows.Forms.ToolStripMenuItem LoadBacktestZEDMenu;
+        private System.Windows.Forms.ToolStripMenuItem DeleteBacktestMenu;
+        private System.Windows.Forms.ContextMenuStrip ProjectsMenu;
+        private System.Windows.Forms.ToolStripMenuItem RefreshProjectsMenu;
+        private System.Windows.Forms.ToolStripMenuItem CreateProjectMenu;
+        private System.Windows.Forms.ToolStripMenuItem DeleteProjectMenu;
+        private System.Windows.Forms.ToolStripMenuItem UploadProjectMenu;
+        private System.Windows.Forms.ToolStripMenuItem DownloadProjectMenu;
+        private System.Windows.Forms.ToolStripMenuItem CompileProjectMenu;
+        private System.Windows.Forms.ToolStripMenuItem ConnectProjectIDMenu;
+        private System.Windows.Forms.ToolStripMenuItem LoginMenu;
+        private System.Windows.Forms.ToolStripMenuItem LogoutMenu;
+        private System.Windows.Forms.ToolStripMenuItem DisconnectProjectIDMenu;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.DataGridView dgrBacktests;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.DataGridView dgrProjects;
-        private System.Windows.Forms.ToolStripMenuItem mnLoadBacktestJS;
+        private System.Windows.Forms.ToolStripMenuItem LoadBacktestJSMenu;
     }
 }

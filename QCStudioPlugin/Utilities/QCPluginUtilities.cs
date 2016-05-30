@@ -1,5 +1,6 @@
 ﻿/*
-* Mark Babayev (https://github.com/mirik123) - Visual Studio extension utilities
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
 */
 
 using QuantConnect.QCStudioPlugin;
@@ -128,6 +129,8 @@ namespace QuantConnect.QCStudioPlugin
             
             chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
             {
+                await QCStudioPluginActions.Authenticate();
+                
                 var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
 
                 foreach (var pair in _results.Results.Statistics)
@@ -140,7 +143,7 @@ namespace QuantConnect.QCStudioPlugin
 
             var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
             ErrorHandler.ThrowOnFailure(frame.Show());
-
+             
             string url = QCStudioPluginActions.GetTerminalUrl(className);
             chartWindowJSFrame.control.Run(url);
         }

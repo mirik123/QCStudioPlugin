@@ -1,7 +1,6 @@
 ﻿/*
-* Mark Babayev (https://github.com/mirik123) - User Control for ToolWindowPane
- * The desing and the idea are based on the original QuantConnect client plugin:
- * https://github.com/QuantConnect/QCStudioPlugin
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
 */
 
 using QuantConnect.QCPlugin;

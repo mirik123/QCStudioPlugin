@@ -1,4 +1,7 @@
-﻿
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
 
 using Newtonsoft.Json.Linq;
 using System;

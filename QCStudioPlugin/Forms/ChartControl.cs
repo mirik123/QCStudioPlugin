@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;

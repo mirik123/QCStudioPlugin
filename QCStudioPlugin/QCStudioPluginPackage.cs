@@ -1,4 +1,9 @@
-﻿using QuantConnect.QCStudioPlugin.Properties;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+using QuantConnect.QCStudioPlugin.Properties;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ExtensionManager;

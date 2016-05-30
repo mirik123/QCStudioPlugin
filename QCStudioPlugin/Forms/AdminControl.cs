@@ -1,7 +1,6 @@
 ﻿/*
-* Mark Babayev (https://github.com/mirik123) - User Control for ToolWindowPane
- * The desing and the idea are based on the original QuantConnect client plugin:
- * https://github.com/QuantConnect/QCStudioPlugin
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
 */
 
 using QuantConnect.QCPlugin;
@@ -41,7 +40,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             }
         }
 
-        private async void mnBacktest_Click(object sender, ToolStripItemClickedEventArgs e)
+        private async void BacktestMenu_Click(object sender, ToolStripItemClickedEventArgs e)
         {
             if (dgrProjects.SelectedRows.Count == 0) return;
             var selproj = dgrProjects.SelectedRows[0].DataBoundItem as CombinedProject;
@@ -74,14 +73,14 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     case "mnDeleteBacktest":
                         await QCStudioPluginActions.DeleteBacktest(selbacktest.BacktestId);
 
-                        mnRefreshBacktests.PerformClick();
+                        RefreshBacktestsMenu.PerformClick();
 
                         break;
                 }
             }
         }
 
-        private async void mnProjects_Click(object sender, ToolStripItemClickedEventArgs e)
+        private async void ProjectsMenu_Click(object sender, ToolStripItemClickedEventArgs e)
         {
             var sourceControl = e.ClickedItem;
             switch (sourceControl.Name)
@@ -98,7 +97,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     }
 
                     await QCStudioPluginActions.CreateProject(projectName);
-                    mnRefreshProjects.PerformClick();
+                    RefreshProjectsMenu.PerformClick();
 
                     break;
                 case "mnLogin":
@@ -114,7 +113,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     var firstrow = dgrProjects.Rows.Cast<DataGridViewRow>().FirstOrDefault(x => (x.DataBoundItem as CombinedProject).Id > 0);
                     if (firstrow != null) firstrow.Selected = true;
 
-                    mnRefreshBacktests.PerformClick();
+                    RefreshBacktestsMenu.PerformClick();
 
                     break;
                 case "mnConnectProjectID":
@@ -146,7 +145,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                             var selName = win.cmbLocal.SelectedItem as CombinedProject;
 
                             QCPluginUtilities.SetProjectID(selID.Id, selName.uniqueName);
-                            mnRefreshProjects.PerformClick();
+                            RefreshProjectsMenu.PerformClick();
                         }
 
                         break;
@@ -162,7 +161,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                             await QCStudioPluginActions.DeleteProject(selproj.Id);
                             
                             QCPluginUtilities.SetProjectID(0, selproj.uniqueName);
-                            mnRefreshProjects.PerformClick();
+                            RefreshProjectsMenu.PerformClick();
 
                             break;
                         case "mnUploadProject":
@@ -177,7 +176,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                             break;                        
                         case "mnDisconnectProjectID":
                             QCPluginUtilities.SetProjectID(0, selproj.uniqueName);
-                            mnRefreshProjects.PerformClick();
+                            RefreshProjectsMenu.PerformClick();
 
                             break;
                         case "mnCompileProject":
@@ -202,15 +201,15 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
         private void dgrProjects_DoubleClick(object sender, EventArgs e)
         {
-            mnRefreshBacktests.PerformClick();
+            RefreshBacktestsMenu.PerformClick();
         }
 
         private void dgrBacktests_DoubleClick(object sender, EventArgs e)
         {
-            mnLoadBacktestZED.PerformClick();
+            LoadBacktestZEDMenu.PerformClick();
         }
 
-        private void mnBacktest_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void BacktestMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var isProjSelected = false;
             if (dgrProjects.SelectedRows.Count > 0)
@@ -228,13 +227,13 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     isSelected = true;
             }
 
-            foreach (ToolStripMenuItem itm in mnBacktest.Items)
+            foreach (ToolStripMenuItem itm in BacktestMenu.Items)
             {
                 itm.Enabled = isProjSelected && (isSelected || itm.Tag.ToString() == "1");
             }
         }
 
-        private void mnProjects_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void ProjectsMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var isSelected = false;
             var hasLocalProject = false;
@@ -249,13 +248,13 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     hasLocalProject = true;
             }
 
-            foreach (ToolStripMenuItem itm in mnProjects.Items)
+            foreach (ToolStripMenuItem itm in ProjectsMenu.Items)
             {
                 itm.Enabled = isSelected || itm.Tag.ToString() == "1";
             }
 
             if (!hasLocalProject)
-                mnUploadProject.Enabled = false;
+                UploadProjectMenu.Enabled = false;
         }
     }
 }

@@ -1,4 +1,9 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Diagnostics;
