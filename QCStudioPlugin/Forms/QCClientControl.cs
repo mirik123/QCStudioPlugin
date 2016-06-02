@@ -25,7 +25,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             InitializeComponent();
         }
 
-        public async void Run()
+        public async Task Run()
         {
             var _results = await GetBacktestResultsCallback();
 

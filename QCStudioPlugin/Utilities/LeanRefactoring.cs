@@ -101,6 +101,7 @@ namespace QuantConnect.QCStudioPlugin.Lean.interfaces
         {
             //var job = systemHandlers.JobQueue.NextJob(out _algorithmPath);
             var type = assemblies["Lean.Engine"].GetType("QuantConnect.Lean.Engine.LeanEngineSystemHandlers");
+
             //var jobqueue = type.InvokeMember("JobQueue", BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.Public, null, systemHandlers, null);
             var jobqueue = type.GetProperty("JobQueue").GetValue(systemHandlers);
 
@@ -123,6 +124,9 @@ namespace QuantConnect.QCStudioPlugin.Lean.interfaces
             AddEventHandler(type.GetEvent("RuntimeErrorEvent"), notify, messagingLogEvent);
             AddEventHandler(type.GetEvent("HandledErrorEvent"), notify, messagingLogEvent);
             AddEventHandler(type.GetEvent("BacktestResultEvent"), notify, backtestResultEvent);
+
+            // _messaging.OnConsumerReadyEvent();
+            type.InvokeMember("OnConsumerReadyEvent", BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public, null, notify, new object[] { });
         }
 
         public void SetLogHandler(object composer, Action<object> messagingLogEvent) 

@@ -311,7 +311,7 @@ namespace QuantConnect.QCStudioPlugin
 
             // --- As the last step, write to the output window pane 
             windowPane.SetName(AppTitle);
-            windowPane.OutputString(string.Format("[{0}] {1}: {2} ", severity, caption, text));
+            windowPane.OutputString(string.Format("[{0}] {1}: {2} " + Environment.NewLine, severity, caption, text));
             windowPane.Activate();
         }
 

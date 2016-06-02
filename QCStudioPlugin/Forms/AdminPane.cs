@@ -38,7 +38,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             // Creating the user control that will be displayed in the window
             _control = new AdminControl();
 
-            this.Caption = QCPluginUtilities.AppTitle;
+            this.Caption = "Admin Console";
             this.BitmapResourceID = 700;
             this.BitmapIndex = 1;
         }

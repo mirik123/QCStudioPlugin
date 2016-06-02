@@ -24,15 +24,17 @@ namespace QuantConnect.QCStudioPlugin.Forms
     public partial class ChartControl : UserControl
     {
         public Func<Task<PacketBacktestResult>> GetBacktestResultsCallback;
-        private string browserData = "{}";
+        private string browserData = null;
         
         public ChartControl()
         {
             InitializeComponent();
         }
 
-        public async void Run(string url)
+        public async Task Run(string url)
         {
+            Browser.Navigate(string.Format(url, 0));
+            
             var _results = await GetBacktestResultsCallback();
             MessagingOnBacktestResultEvent(_results, url);
         }
@@ -65,16 +67,16 @@ namespace QuantConnect.QCStudioPlugin.Forms
             };
 
             browserData = JsonConvert.SerializeObject(final);
-            
-            Browser.Navigate(url);            
+
+            Browser.Navigate(string.Format(url, 1));
         }
 
         private void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             //MONO WEB BROWSER RESULT SET:
-            if (Browser.Document == null) return;
+            if (Browser.Document == null || browserData == null) return;
             Browser.Document.InvokeScript("eval", new object[] { "window.jnBacktest = JSON.parse('" + browserData + "');" });
-            Browser.Document.InvokeScript("eval", new object[] { "$.holdReady(false)" });
+            Browser.Document.InvokeScript("eval", new object[] { "$.holdReady(false);" });
         }
     }
 }

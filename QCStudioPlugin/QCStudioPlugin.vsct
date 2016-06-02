@@ -14,21 +14,21 @@
     <Buttons>
       <Button guid="guidQCStudioPluginCmdSet" id="cmdidQCRemote" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
-        <Icon guid="guidImages" id="bmpPic2" />
+        <Icon guid="guidlocbt" id="bmpPic1" />
         <Strings>
           <ButtonText>QuantConnect Client</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidQCStudioPluginCmdSet" id="cmdidQCLocalZED" priority="0x0100" type="Button">
         <Parent guid="guidQCStudioPluginCmdSet" id="MyMenuGroup"/>
-        <Icon guid="guidImages" id="bmpPic1" />
+        <Icon guid="guidlocbt" id="bmpPic1" />
         <Strings>
           <ButtonText>Run backtest locally (ZED)</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidQCStudioPluginCmdSet" id="cmdidQCLocalJS" priority="0x0100" type="Button">
         <Parent guid="guidQCStudioPluginCmdSet" id="MyMenuGroup"/>
-        <Icon guid="guidImages" id="bmpPic2" />
+        <Icon guid="guidlocbt" id="bmpPic1" />
         <Strings>
           <ButtonText>Run backtest locally (JS)</ButtonText>
         </Strings>
@@ -36,7 +36,8 @@
     </Buttons>
 
     <Bitmaps>
-      <Bitmap guid="guidImages" href="Resources\Images.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows"/>     
+      <Bitmap guid="guidImages" href="Resources\Images.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows"/>
+      <Bitmap guid="guidlocbt" href="Icons\Open16.png" usedList="bmpPic1"/>
     </Bitmaps> 
   </Commands>
 
@@ -59,6 +60,9 @@
       <IDSymbol name="bmpPicX" value="4" />
       <IDSymbol name="bmpPicArrows" value="5" />
       <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+    <GuidSymbol name="guidlocbt" value="{879C9F5A-8F2F-4395-B19D-54BF36E0FBDC}" >
+      <IDSymbol name="bmpPic1" value="1" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

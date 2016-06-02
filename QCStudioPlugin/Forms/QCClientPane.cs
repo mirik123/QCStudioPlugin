@@ -38,7 +38,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             // Creating the user control that will be displayed in the window
             _control = new QCClientControl();
 
-            this.Caption = QCPluginUtilities.AppTitle;
+            this.Caption = QCPluginUtilities.ChartTitle;
             this.BitmapResourceID = 700;
             this.BitmapIndex = 1;
         }

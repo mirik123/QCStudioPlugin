@@ -39,6 +39,7 @@
             this.Browser.Name = "Browser";
             this.Browser.Size = new System.Drawing.Size(1046, 559);
             this.Browser.TabIndex = 1;
+            this.Browser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.Browser_DocumentCompleted);
             // 
             // ChartControl
             // 

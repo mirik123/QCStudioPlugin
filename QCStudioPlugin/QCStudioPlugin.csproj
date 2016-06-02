@@ -263,9 +263,13 @@
     <None Include="Resources\Images.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\runlocal.png" />
+    <Resource Include="Resources\runremote.png" />
     <Resource Include="Resources\BacktestsMenu.png" />
     <Resource Include="Resources\ProjectsMenu.png" />
     <Resource Include="License-LGPL.txt" />
+    <Resource Include="Resources\optionspage.png" />
+    <Resource Include="Icons\Open16.png" />
     <Content Include="Resources\QCClient.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

@@ -480,13 +480,13 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 lean.SetLogHandler(composer, (packet) =>
                 {
                     var json = JObject.FromObject(packet);
-                    var message = json.GetValue("Message").Value<string>();
-                    var hstack = json.GetValue("StackTrace").Value<string>();
+                    var message = (json.GetValue("sMessage") ?? json.GetValue("Message") ?? JToken.FromObject("")).Value<string>();
+                    var hstack = (json.GetValue("sStackTrace") ?? json.GetValue("StackTrace") ?? JToken.FromObject("")).Value<string>();
+                    var msgtype = string.IsNullOrEmpty(hstack) ? QCPluginUtilities.Severity.Info : QCPluginUtilities.Severity.Error;
 
-                    QCPluginUtilities.OutputCommandString(message +", "+ hstack, QCPluginUtilities.Severity.Info);
+                    QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
                 });
 
-                Task enginetask = null;
                 //var systemHandlers = LeanEngineSystemHandlers.FromConfiguration(Composer.Instance);
                 var systemHandlers = lean.CreateLeanEngineSystemHandlers(composer);
 
@@ -499,10 +499,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 lean.AddMessagingEvents(systemHandlers, algorithmHandlers, (packet) =>
                 {
                     var json = JObject.FromObject(packet);
-                    var message = json.GetValue("Message").Value<string>();
-                    var hstack = json.GetValue("StackTrace").Value<string>();
+                    var message = (json.GetValue("sMessage") ?? json.GetValue("Message") ?? JToken.FromObject("")).Value<string>();
+                    var hstack = (json.GetValue("sStackTrace") ?? json.GetValue("StackTrace") ?? JToken.FromObject("")).Value<string>();
+                    var msgtype = string.IsNullOrEmpty(hstack) ? QCPluginUtilities.Severity.Info : QCPluginUtilities.Severity.Error;
 
-                    QCPluginUtilities.OutputCommandString(message + ", " + hstack, QCPluginUtilities.Severity.Info);
+                    QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
                 }, (packet) =>
                 {
                     (systemHandlers as IDisposable).Dispose();
@@ -511,12 +512,18 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     tokenSource.Dispose();
 
                     var json = JObject.FromObject(packet);
+                    if (json.GetValue("Results") == null)
+                    {
+                        task.SetException(new Exception("No Backend Result!"));
+                        return;
+                    }
+
                     var result = new PacketBacktestResult
                     {
-                        PeriodFinish = json.GetValue("PeriodFinish").Value<DateTime>(),
-                        PeriodStart = json.GetValue("PeriodStart").Value<DateTime>(),
+                        PeriodFinish = (json.GetValue("PeriodFinish") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
+                        PeriodStart = (json.GetValue("PeriodStart") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
                         Results = json.GetValue("Results").Value<BacktestResult>(),
-                        Progress = json.GetValue("Progress").Value<string>()
+                        Progress = (json.GetValue("Progress") ?? JToken.FromObject("0%")).Value<string>()
                     };
                     task.SetResult(result);
                 });
@@ -526,7 +533,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                 //var engine = new Lean.Engine.Engine(systemHandlers, algorithmHandlers, false);
                 var engine = lean.CreateEngine(systemHandlers, algorithmHandlers, false);
-                enginetask = Task.Factory.StartNew(() =>
+
+                Task.Factory.StartNew(() =>
                 {
                     try
                     {
@@ -616,15 +624,14 @@ namespace QuantConnect.QCStudioPlugin.Actions
             return task.Task;
         }*/
 
-        public static string GetTerminalUrl(string backtestId, int ProjectId = 0, bool liveMode = false, bool holdReady = true)
+        public static string GetTerminalUrl(string backtestId, int ProjectId = 0, bool liveMode = false)
         {
             var url = "";
-            var hold = holdReady == false ? "0" : "1";
             var embedPage = liveMode ? "embeddedLive" : "embedded";
 
             url = string.Format(
                 "https://www.quantconnect.com/terminal/{0}?user={1}&token={2}&pid={3}&version={4}&holdReady={5}&bid={6}",
-                embedPage, api.UserID, api.AuthToken, ProjectId, Resources.QuantConnectVersion, hold, backtestId);
+                embedPage, api.UserID, api.AuthToken, ProjectId, Resources.QuantConnectVersion, "{0}", backtestId);
 
             return url;
         }
