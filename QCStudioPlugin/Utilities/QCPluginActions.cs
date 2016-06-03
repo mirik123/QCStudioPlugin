@@ -512,7 +512,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     tokenSource.Dispose();
 
                     var json = JObject.FromObject(packet);
-                    if (json.GetValue("Results") == null)
+                    if (json.GetValue("oResults") == null)
                     {
                         task.SetException(new Exception("No Backend Result!"));
                         return;
@@ -520,10 +520,10 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                     var result = new PacketBacktestResult
                     {
-                        PeriodFinish = (json.GetValue("PeriodFinish") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        PeriodStart = (json.GetValue("PeriodStart") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        Results = json.GetValue("Results").Value<BacktestResult>(),
-                        Progress = (json.GetValue("Progress") ?? JToken.FromObject("0%")).Value<string>()
+                        PeriodFinish = (json.GetValue("dtPeriodFinish") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
+                        PeriodStart = (json.GetValue("dtPeriodStart") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
+                        Results = json.GetValue("oResults").Value<BacktestResult>(),
+                        Progress = (json.GetValue("dProgress") ?? JToken.FromObject("0%")).Value<string>()
                     };
                     task.SetResult(result);
                 });

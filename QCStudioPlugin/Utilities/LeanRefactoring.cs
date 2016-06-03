@@ -22,15 +22,13 @@ namespace QuantConnect.QCStudioPlugin.Lean.interfaces
 
         public LeanRefactoring()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-        }
+            AppDomain.CurrentDomain.AssemblyResolve += (object sender, ResolveEventArgs args) =>
+            {
+                Console.WriteLine("Resolving..." + args.Name);
+                var result = assemblies.Values.First(x => x.FullName == args.Name);
 
-        Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            Console.WriteLine("Resolving..." + args.Name);
-            var result = assemblies.Values.First(x => x.FullName == args.Name);
-
-            return result;
+                return result;
+            };
         }
 
         public void LoadLibraries(string pluginsPath)

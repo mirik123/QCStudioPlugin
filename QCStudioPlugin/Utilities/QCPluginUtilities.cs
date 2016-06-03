@@ -22,6 +22,8 @@ using System.Text;
 using System.Windows.Forms;
 using QuantConnect.QCStudioPlugin.Forms;
 using QuantConnect.QCStudioPlugin.Actions;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -126,6 +128,7 @@ namespace QuantConnect.QCStudioPlugin
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
+            if (algorithmPath == null || className == null) return;
             
             chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
             {
@@ -152,6 +155,7 @@ namespace QuantConnect.QCStudioPlugin
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
+            if (algorithmPath == null || className == null) return;
             
             chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
             {
@@ -169,6 +173,20 @@ namespace QuantConnect.QCStudioPlugin
             ErrorHandler.ThrowOnFailure(frame.Show());
 
             chartWindowZedFrame.control.Run();
+        }
+
+        public static string[] GetAlgorithmsList(string filePath, string classDll)
+        {
+            var source = File.ReadAllText(filePath, Encoding.UTF8);
+            var algoass = Assembly.LoadFrom(classDll);
+
+            var algorithms = algoass.GetTypes()
+                .Where(x => x.BaseType.FullName == "QuantConnect.Algorithm.QCAlgorithm")
+                .Select(x => x.Name)
+                .Where(x => source.Contains(x))
+                .ToArray();
+
+            return algorithms;
         }
 
         private static string RetrieveAssemblyDirectory()
@@ -251,9 +269,21 @@ namespace QuantConnect.QCStudioPlugin
             if (dte.SelectedItems.Count != 1) return;
             var selitem = dte.SelectedItems.Cast<SelectedItem>().FirstOrDefault();
 
-            className = selitem.Name;
             var startupProjDir = GetProjectOutputBuildFolder(selitem.ProjectItem.ContainingProject);
             classDll = Path.Combine(startupProjDir, selitem.ProjectItem.ContainingProject.Name) + ".dll";
+
+            className = GetAlgorithmsList(selitem.ProjectItem.Document.FullName, classDll).FirstOrDefault();
+
+            if (!File.Exists(classDll))
+            {
+                QCPluginUtilities.OutputCommandString("The algorithm binary not found: " + classDll, QCPluginUtilities.Severity.Error);
+                classDll = null;
+            }
+            
+            if (className == null)
+            {
+                QCPluginUtilities.OutputCommandString("The algorithm class not found. Check that all relevant classes implement QuantConnect.Algorithm.QCAlgorithm.", QCPluginUtilities.Severity.Error);
+            }
         }
 
         public static string GetStartupProjectOutputBinary()
