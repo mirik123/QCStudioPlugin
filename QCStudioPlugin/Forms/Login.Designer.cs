@@ -93,6 +93,8 @@
             // 
             this.checkBoxRememberCredentials.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxRememberCredentials.AutoSize = true;
+            this.checkBoxRememberCredentials.Checked = true;
+            this.checkBoxRememberCredentials.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxRememberCredentials.Location = new System.Drawing.Point(93, 129);
             this.checkBoxRememberCredentials.Name = "checkBoxRememberCredentials";
             this.checkBoxRememberCredentials.Size = new System.Drawing.Size(132, 17);

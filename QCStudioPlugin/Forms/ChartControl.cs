@@ -25,7 +25,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
     {
         public Func<Task<PacketBacktestResult>> GetBacktestResultsCallback;
         private string browserData = null;
-        
+
         public ChartControl()
         {
             InitializeComponent();
@@ -34,9 +34,36 @@ namespace QuantConnect.QCStudioPlugin.Forms
         public async Task Run(string url)
         {
             Browser.Navigate(string.Format(url, 0));
-            
+
+            //var _results = await Task<PacketBacktestResult>.Run(() => { return GetBacktestResultsCallback(); }).ConfigureAwait(false);
             var _results = await GetBacktestResultsCallback();
-            MessagingOnBacktestResultEvent(_results, url);
+            
+            var dateFormat = "yyyy-MM-dd HH:mm:ss";
+
+            try
+            {
+                dynamic final = new
+                {
+                    dtPeriodStart = _results.PeriodStart.ToString(dateFormat),
+                    dtPeriodFinished = _results.PeriodFinish.AddDays(1).ToString(dateFormat),
+                    oResultData = new
+                    {
+                        version = "3",
+                        results = _results.Results,
+                        statistics = _results.Results.Statistics,
+                        iTradeableDates = 1,
+                        ranking = (object)null
+                    }
+                };
+
+                browserData = JsonConvert.SerializeObject(final);
+
+                Browser.Navigate(string.Format(url, 1));
+            }
+            catch (Exception ex)
+            {
+                QCPluginUtilities.OutputCommandString(ex.ToString(), QCPluginUtilities.Severity.Error);
+            }
         }
 
         private void ChartControl_Load(object sender, EventArgs e)
@@ -45,30 +72,6 @@ namespace QuantConnect.QCStudioPlugin.Forms
             {
                 WBEmulator.SetBrowserEmulationVersion();
             }
-        }
-
-        private void MessagingOnBacktestResultEvent(PacketBacktestResult packet, string url)
-        {
-            //Generate JSON:
-            var dateFormat = "yyyy-MM-dd HH:mm:ss";
-
-            dynamic final = new
-            {
-                dtPeriodStart = packet.PeriodStart.ToString(dateFormat),
-                dtPeriodFinished = packet.PeriodFinish.AddDays(1).ToString(dateFormat),
-                oResultData = new 
-                { 
-                    version = "3",
-                    results = packet.Results,
-                    statistics = packet.Results.Statistics,
-                    iTradeableDates = 1,
-                    ranking = (object)null
-                }
-            };
-
-            browserData = JsonConvert.SerializeObject(final);
-
-            Browser.Navigate(string.Format(url, 1));
         }
 
         private void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)

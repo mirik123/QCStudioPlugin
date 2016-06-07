@@ -63,11 +63,11 @@ namespace QuantConnect.QCStudioPlugin.Forms
                 switch (sourceControl.Name)
                 {
                     case "mnLoadBacktestJS":
-                        QCPluginUtilities.ShowBacktestJSRemote(selbacktest.BacktestId);
+                        await QCPluginUtilities.ShowBacktestJSRemote(selbacktest.BacktestId);
 
                         break;
                     case "mnLoadBacktestZED":
-                        QCPluginUtilities.ShowBacktestZEDRemote(selbacktest.BacktestId);
+                        await QCPluginUtilities.ShowBacktestZEDRemote(selbacktest.BacktestId);
 
                         break;
                     case "mnDeleteBacktest":
@@ -190,7 +190,12 @@ namespace QuantConnect.QCStudioPlugin.Forms
                                 return;
                             }
 
-                            await QCStudioPluginActions.CreateBacktest(selproj.Id, backtestName);
+                            var isfinished = false;
+                            var cnt = 0;
+                            while (!isfinished && cnt++ < 5)
+                            {
+                                isfinished = await QCStudioPluginActions.CreateBacktest(selproj.Id, backtestName);
+                            }
 
                             break;
                     }

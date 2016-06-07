@@ -14,11 +14,26 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace QuantConnect.QCStudioPlugin.Lean.interfaces
+namespace QuantConnect.QCStudioPlugin
 {
-    public class LeanRefactoring
+    public class LeanRefactoring: MarshalByRefObject
     {
         private Dictionary<string, Assembly> assemblies = new Dictionary<string, Assembly>();
+        public AppDomain domain = null;
+
+        public static LeanRefactoring CreateProxy() {
+            string pathdll = Assembly.GetExecutingAssembly().Location;
+            var domainSetup = new AppDomainSetup { PrivateBinPath = pathdll };
+            var domain = AppDomain.CreateDomain("LeanDomain", null, domainSetup);
+
+            var proxy = domain.CreateInstanceFromAndUnwrap(pathdll, typeof(LeanRefactoring).FullName) as LeanRefactoring;
+            if (proxy != null)
+                proxy.domain = domain;
+            else
+                proxy = new LeanRefactoring();
+            
+            return proxy;
+        }
 
         public LeanRefactoring()
         {
@@ -31,11 +46,14 @@ namespace QuantConnect.QCStudioPlugin.Lean.interfaces
             };
         }
 
+        ~LeanRefactoring()
+        {
+            if (domain != null) AppDomain.Unload(domain);
+        }
+
         public void LoadLibraries(string pluginsPath)
         {
             assemblies.Clear();
-            var currfolder = AppDomain.CurrentDomain.BaseDirectory;
-
             foreach (var dllpath in Directory.GetFiles(pluginsPath, "*.dll"))
             {
                 var assembly = Assembly.LoadFrom(dllpath);

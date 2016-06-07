@@ -26,26 +26,32 @@ namespace QuantConnect.QCStudioPlugin.Forms
         }
 
         public async Task Run()
-        {
-            var _results = await GetBacktestResultsCallback();
-
-            //Time.Date; Symbol; Price; Type; Quantity; Direction; Status;
-            dataGridViewTrades.DataSource = _results.Results.Orders;
-
-
-            dataGridViewStats.DataSource = _results.Results.Statistics;
-
-            var _drawChartActions = new DrawChartsFactory();
-            var zedgraphs = _drawChartActions.DrawCharts(_results.Results.Charts, _results.PeriodStart, _results.PeriodFinish);
-            foreach (var zed in zedgraphs)
+        {          
+            try
             {
-                if (!tabCharts.TabPages.ContainsKey(zed.Key))
+                //var _results = await Task<PacketBacktestResult>.Run(() => { return GetBacktestResultsCallback(); }).ConfigureAwait(false);
+                var _results = await GetBacktestResultsCallback();
+
+                //Time.Date; Symbol; Price; Type; Quantity; Direction; Status;
+                dataGridViewTrades.DataSource = _results.Results.Orders;
+                dataGridViewStats.DataSource = _results.Results.Statistics;
+
+                var _drawChartActions = new DrawChartsFactory();
+                var zedgraphs = _drawChartActions.DrawCharts(_results.Results.Charts, _results.PeriodStart, _results.PeriodFinish);
+                foreach (var zed in zedgraphs)
                 {
-                    //Create the tab and zedgraph control:
-                    var tab = new TabPage(zed.Key);
-                    tab.Controls.Add(zed.Value);
-                    tabCharts.TabPages.Add(tab);
+                    if (!tabCharts.TabPages.ContainsKey(zed.Key))
+                    {
+                        //Create the tab and zedgraph control:
+                        var tab = new TabPage(zed.Key);
+                        tab.Controls.Add(zed.Value);
+                        tabCharts.TabPages.Add(tab);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                QCPluginUtilities.OutputCommandString(ex.ToString(), QCPluginUtilities.Severity.Error);
             }
         }
     }

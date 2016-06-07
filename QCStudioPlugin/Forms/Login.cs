@@ -3,6 +3,7 @@
 * QuantConnect Visual Studio Plugin
 */
 
+using QuantConnect.QCStudioPlugin;
 /**********************************************************
 * USING NAMESPACES
 **********************************************************/
@@ -46,7 +47,7 @@ namespace QuantConnect.QCPlugin
                 {
                     progressBar1.Visible = false;
                     buttonLogin.Enabled = true;
-                    MessageBox.Show(this, ex.ToString(), "Authentication Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    QCPluginUtilities.OutputCommandString("Authentication Error: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 }
             }
             else

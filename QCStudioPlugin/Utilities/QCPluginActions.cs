@@ -17,9 +17,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Threading;
-using QuantConnect.QCStudioPlugin.Properties;
-using QuantConnect.QCStudioPlugin.Lean.interfaces;
 using Newtonsoft.Json.Linq;
+using QuantConnect.QCStudioPlugin.Properties;
 
 
 namespace QuantConnect.QCStudioPlugin.Actions
@@ -212,7 +211,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 File.Delete(credentialFile);
         }
 
-        public async static Task CreateBacktest(int ProjectID, string backtestName)
+        public async static Task<bool> CreateBacktest(int ProjectID, string backtestName)
         {
             try
             {
@@ -227,6 +226,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     throw new Exception("Failed to run backtest.");
 
                 QCPluginUtilities.OutputCommandString("Project Backtest created.", QCPluginUtilities.Severity.Info);
+                return true;
             }
             catch (Exception ex)
             {
@@ -234,17 +234,19 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 if (msg.Contains("Time out on build request"))
                 {
                     QCPluginUtilities.OutputCommandString("Build timed out, retrying...", QCPluginUtilities.Severity.Warning);
-                    CreateBacktest(ProjectID, backtestName);
+                    return false;
                 }
                 else if (msg.Contains("Please upgrade your account"))
                 {
                     QCPluginUtilities.OutputCommandString("You have reached the limit of 5 backtests per day via API on a free account. Please upgrade your account to unlock unlimited backtests.", QCPluginUtilities.Severity.Info);
+                    return true;
                 }
                 else
                 {
                     QCPluginUtilities.OutputCommandString("Run backtest error: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                    return true;
                 }               
-            }            
+            }
         }
 
         public async static Task DeleteBacktest(string BacktestID)
@@ -445,7 +447,13 @@ namespace QuantConnect.QCStudioPlugin.Actions
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
 
-            var lean = new LeanRefactoring();
+            var lean = LeanRefactoring.CreateProxy();
+            if (lean.domain == null)
+            {
+                QCPluginUtilities.OutputCommandString("Failed to generate Lean proxy", QCPluginUtilities.Severity.Warning);
+                //task.SetException(new Exception("Failed to generate proxy"));
+                //return task.Task;
+            }
 
             try
             {
@@ -522,8 +530,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     {
                         PeriodFinish = (json.GetValue("dtPeriodFinish") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
                         PeriodStart = (json.GetValue("dtPeriodStart") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        Results = json.GetValue("oResults").Value<BacktestResult>(),
-                        Progress = (json.GetValue("dProgress") ?? JToken.FromObject("0%")).Value<string>()
+                        Results = JsonConvert.DeserializeObject<BacktestResult>(json.GetValue("oResults").ToString()),
+                        Progress = (json.GetValue("dProgress") ?? JToken.FromObject("0")).Value<string>()
                     };
                     task.SetResult(result);
                 });
@@ -534,7 +542,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 //var engine = new Lean.Engine.Engine(systemHandlers, algorithmHandlers, false);
                 var engine = lean.CreateEngine(systemHandlers, algorithmHandlers, false);
 
-                Task.Factory.StartNew(() =>
+                Task.Run(() =>
                 {
                     try
                     {

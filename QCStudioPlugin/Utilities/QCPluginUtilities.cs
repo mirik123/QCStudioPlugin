@@ -8,8 +8,6 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ExtensionManager;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,6 +22,8 @@ using QuantConnect.QCStudioPlugin.Forms;
 using QuantConnect.QCStudioPlugin.Actions;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -45,7 +45,8 @@ namespace QuantConnect.QCStudioPlugin
         static internal ChartPane chartWindowJSFrame;
         static internal QCClientPane chartWindowZedFrame;
 
-        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, ChartPane chartWindowJSFrame, QCClientPane chartWindowZedFrame)
+        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, 
+                                        ChartPane chartWindowJSFrame, QCClientPane chartWindowZedFrame)
         {
             QCPluginUtilities.AppTitle = AppTitle;
             QCPluginUtilities.dialogFactory = dialogFactory;
@@ -79,8 +80,11 @@ namespace QuantConnect.QCStudioPlugin
             packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
         }
 
-        public static void ShowBacktestJSRemote(string backtestId)
+        public async static System.Threading.Tasks.Task ShowBacktestJSRemote(string backtestId)
         {
+            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+
             chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
             {
                 var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
@@ -95,15 +99,15 @@ namespace QuantConnect.QCStudioPlugin
                 return _results;
             };
 
-            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
             string url = QCStudioPluginActions.GetTerminalUrl(backtestId);
-            chartWindowJSFrame.control.Run(url);
+            await chartWindowJSFrame.control.Run(url);
         }
 
-        public static void ShowBacktestZEDRemote(string backtestId)
+        public async static System.Threading.Tasks.Task ShowBacktestZEDRemote(string backtestId)
         {
+            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+
             chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
             {
                 var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
@@ -118,22 +122,22 @@ namespace QuantConnect.QCStudioPlugin
                 return _results;
             };
 
-            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
-            chartWindowZedFrame.control.Run();
+            await chartWindowZedFrame.control.Run();
         }
 
-        public static void ShowBacktestJSLocal(string pluginsPath, string dataPath)
+        public async static System.Threading.Tasks.Task ShowBacktestJSLocal(string pluginsPath, string dataPath)
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
             if (algorithmPath == null || className == null) return;
             
+            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+
             chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
             {
                 await QCStudioPluginActions.Authenticate();
-                
+
                 var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
 
                 foreach (var pair in _results.Results.Statistics)
@@ -144,19 +148,19 @@ namespace QuantConnect.QCStudioPlugin
                 return _results;
             };
 
-            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-             
             string url = QCStudioPluginActions.GetTerminalUrl(className);
-            chartWindowJSFrame.control.Run(url);
+            await chartWindowJSFrame.control.Run(url);
         }
 
-        public static void ShowBacktestZEDLocal(string pluginsPath, string dataPath)
+        public async static System.Threading.Tasks.Task ShowBacktestZEDLocal(string pluginsPath, string dataPath)
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
             if (algorithmPath == null || className == null) return;
             
+            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+
             chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
             {
                 var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
@@ -169,10 +173,7 @@ namespace QuantConnect.QCStudioPlugin
                 return _results;
             };
 
-            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
-            chartWindowZedFrame.control.Run();
+            await chartWindowZedFrame.control.Run();
         }
 
         public static string[] GetAlgorithmsList(string filePath, string classDll)
@@ -418,7 +419,7 @@ namespace QuantConnect.QCStudioPlugin
                 EnvDTE.ConfigurationManager configManager = proj.ConfigurationManager;
 
                 if (configManager == null)
-                    MessageBox.Show("The project " + proj.Name + " doesn't have a configuration manager");
+                    QCPluginUtilities.OutputCommandString("The project " + proj.Name + " doesn't have a configuration manager", QCPluginUtilities.Severity.Error);
                 else
                 {
                     //Get the active project configuration
@@ -459,7 +460,7 @@ namespace QuantConnect.QCStudioPlugin
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                QCPluginUtilities.OutputCommandString("Get project output build folder error: " + ex.ToString(), QCPluginUtilities.Severity.Error);
             }
 
             return absoluteOutputPath;
