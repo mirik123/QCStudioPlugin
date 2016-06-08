@@ -63,11 +63,11 @@ namespace QuantConnect.QCStudioPlugin.Forms
                 switch (sourceControl.Name)
                 {
                     case "mnLoadBacktestJS":
-                        await QCPluginUtilities.ShowBacktestJSRemote(selbacktest.BacktestId);
+                        QCPluginUtilities.ShowBacktestJSRemote(selbacktest.BacktestId);
 
                         break;
                     case "mnLoadBacktestZED":
-                        await QCPluginUtilities.ShowBacktestZEDRemote(selbacktest.BacktestId);
+                        QCPluginUtilities.ShowBacktestZEDRemote(selbacktest.BacktestId);
 
                         break;
                     case "mnDeleteBacktest":

@@ -202,7 +202,8 @@
     <Compile Include="Utilities\DrawChartsFactory.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\LeanRefactoring.cs" />
+    <Compile Include="Utilities\LeanProxy.cs" />
+    <Compile Include="Utilities\LeanProxyFactory.cs" />
     <Compile Include="Utilities\QCPluginActions.cs" />
     <Compile Include="Utilities\QCPluginUtilities.cs" />
     <Compile Include="VSPackage.Designer.cs">

@@ -31,39 +31,44 @@ namespace QuantConnect.QCStudioPlugin.Forms
             InitializeComponent();
         }
 
-        public async Task Run(string url)
+        public void Run(string url)
         {
             Browser.Navigate(string.Format(url, 0));
 
-            //var _results = await Task<PacketBacktestResult>.Run(() => { return GetBacktestResultsCallback(); }).ConfigureAwait(false);
-            var _results = await GetBacktestResultsCallback();
-            
-            var dateFormat = "yyyy-MM-dd HH:mm:ss";
-
-            try
+            Task<PacketBacktestResult>.Run(() =>
+            { 
+                return GetBacktestResultsCallback(); 
+            })
+            .ContinueWith(x =>
             {
-                dynamic final = new
+                var _results = x.Result;            
+                var dateFormat = "yyyy-MM-dd HH:mm:ss";
+
+                try
                 {
-                    dtPeriodStart = _results.PeriodStart.ToString(dateFormat),
-                    dtPeriodFinished = _results.PeriodFinish.AddDays(1).ToString(dateFormat),
-                    oResultData = new
+                    dynamic final = new
                     {
-                        version = "3",
-                        results = _results.Results,
-                        statistics = _results.Results.Statistics,
-                        iTradeableDates = 1,
-                        ranking = (object)null
-                    }
-                };
+                        dtPeriodStart = _results.PeriodStart.ToString(dateFormat),
+                        dtPeriodFinished = _results.PeriodFinish.AddDays(1).ToString(dateFormat),
+                        oResultData = new
+                        {
+                            version = "3",
+                            results = _results.Results,
+                            statistics = _results.Results.Statistics,
+                            iTradeableDates = 1,
+                            ranking = (object)null
+                        }
+                    };
 
-                browserData = JsonConvert.SerializeObject(final);
+                    browserData = JsonConvert.SerializeObject(final);
 
-                Browser.Navigate(string.Format(url, 1));
-            }
-            catch (Exception ex)
-            {
-                QCPluginUtilities.OutputCommandString(ex.ToString(), QCPluginUtilities.Severity.Error);
-            }
+                    Browser.Navigate(string.Format(url, 1));
+                }
+                catch (Exception ex)
+                {
+                    QCPluginUtilities.OutputCommandString(ex.ToString(), QCPluginUtilities.Severity.Error);
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());     
         }
 
         private void ChartControl_Load(object sender, EventArgs e)

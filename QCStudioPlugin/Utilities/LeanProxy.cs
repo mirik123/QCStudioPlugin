@@ -16,39 +16,27 @@ using System.Threading.Tasks;
 
 namespace QuantConnect.QCStudioPlugin
 {
-    public class LeanRefactoring: MarshalByRefObject
+    public class LeanProxy : MarshalByRefObject
     {
         private Dictionary<string, Assembly> assemblies = new Dictionary<string, Assembly>();
-        public AppDomain domain = null;
 
-        public static LeanRefactoring CreateProxy() {
-            string pathdll = Assembly.GetExecutingAssembly().Location;
-            var domainSetup = new AppDomainSetup { PrivateBinPath = pathdll };
-            var domain = AppDomain.CreateDomain("LeanDomain", null, domainSetup);
-
-            var proxy = domain.CreateInstanceFromAndUnwrap(pathdll, typeof(LeanRefactoring).FullName) as LeanRefactoring;
-            if (proxy != null)
-                proxy.domain = domain;
-            else
-                proxy = new LeanRefactoring();
-            
-            return proxy;
+        public LeanProxy()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve -= AssemblyResolveHandler;
+            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolveHandler;
         }
 
-        public LeanRefactoring()
+        ~LeanProxy()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += (object sender, ResolveEventArgs args) =>
-            {
-                Console.WriteLine("Resolving..." + args.Name);
-                var result = assemblies.Values.First(x => x.FullName == args.Name);
-
-                return result;
-            };
+            AppDomain.CurrentDomain.AssemblyResolve -= AssemblyResolveHandler;
         }
 
-        ~LeanRefactoring()
+        public Assembly AssemblyResolveHandler(object sender, ResolveEventArgs args)
         {
-            if (domain != null) AppDomain.Unload(domain);
+            Console.WriteLine("Resolving..." + args.Name);
+            var result = assemblies.Values.First(x => x.FullName == args.Name);
+
+            return result;
         }
 
         public void LoadLibraries(string pluginsPath)

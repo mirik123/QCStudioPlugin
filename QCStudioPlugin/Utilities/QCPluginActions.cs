@@ -447,12 +447,12 @@ namespace QuantConnect.QCStudioPlugin.Actions
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
 
-            var lean = LeanRefactoring.CreateProxy();
-            if (lean.domain == null)
+            var lean = new LeanProxy();
+            if (lean == null)
             {
                 QCPluginUtilities.OutputCommandString("Failed to generate Lean proxy", QCPluginUtilities.Severity.Warning);
-                //task.SetException(new Exception("Failed to generate proxy"));
-                //return task.Task;
+                task.SetException(new Exception("Failed to generate proxy"));
+                return task.Task;
             }
 
             try

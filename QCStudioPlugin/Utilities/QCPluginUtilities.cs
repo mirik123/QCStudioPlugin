@@ -80,7 +80,7 @@ namespace QuantConnect.QCStudioPlugin
             packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
         }
 
-        public async static System.Threading.Tasks.Task ShowBacktestJSRemote(string backtestId)
+        public static void ShowBacktestJSRemote(string backtestId)
         {
             var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
             ErrorHandler.ThrowOnFailure(frame.Show());
@@ -100,10 +100,10 @@ namespace QuantConnect.QCStudioPlugin
             };
 
             string url = QCStudioPluginActions.GetTerminalUrl(backtestId);
-            await chartWindowJSFrame.control.Run(url);
+            chartWindowJSFrame.control.Run(url);
         }
 
-        public async static System.Threading.Tasks.Task ShowBacktestZEDRemote(string backtestId)
+        public static void ShowBacktestZEDRemote(string backtestId)
         {
             var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
             ErrorHandler.ThrowOnFailure(frame.Show());
@@ -122,10 +122,10 @@ namespace QuantConnect.QCStudioPlugin
                 return _results;
             };
 
-            await chartWindowZedFrame.control.Run();
+            chartWindowZedFrame.control.Run();
         }
 
-        public async static System.Threading.Tasks.Task ShowBacktestJSLocal(string pluginsPath, string dataPath)
+        public static void ShowBacktestJSLocal(string pluginsPath, string dataPath)
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
@@ -149,10 +149,10 @@ namespace QuantConnect.QCStudioPlugin
             };
 
             string url = QCStudioPluginActions.GetTerminalUrl(className);
-            await chartWindowJSFrame.control.Run(url);
+            chartWindowJSFrame.control.Run(url);
         }
 
-        public async static System.Threading.Tasks.Task ShowBacktestZEDLocal(string pluginsPath, string dataPath)
+        public static void ShowBacktestZEDLocal(string pluginsPath, string dataPath)
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
@@ -173,7 +173,7 @@ namespace QuantConnect.QCStudioPlugin
                 return _results;
             };
 
-            await chartWindowZedFrame.control.Run();
+            chartWindowZedFrame.control.Run();
         }
 
         public static string[] GetAlgorithmsList(string filePath, string classDll)
