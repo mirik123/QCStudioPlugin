@@ -164,12 +164,6 @@ namespace QuantConnect.QCStudioPlugin
             chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
             {
                 var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
-
-                foreach (var pair in _results.Results.Statistics)
-                {
-                    QCPluginUtilities.OutputCommandString("STATISTICS:: " + pair.Key + " " + pair.Value, QCPluginUtilities.Severity.Info);
-                }
-
                 return _results;
             };
 

@@ -3,6 +3,7 @@
 * QuantConnect Visual Studio Plugin
 */
 
+using QuantConnect.Orders;
 using QuantConnect.QCPlugin;
 using QuantConnect.QCStudioPlugin.Actions;
 using QuantConnect.RestAPI.Models;
@@ -37,8 +38,20 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                 try
                 {
-                    dataGridViewTrades.DataSource = _results.Results.Orders;
-                    dataGridViewStats.DataSource = _results.Results.Statistics;
+                    dataGridViewTrades.DataSource = _results.Results.Orders.Select(itm => new {
+                        DateTime = itm.Value.Time,
+                        Symbol = itm.Value.Symbol.Value,
+                        Price = itm.Value.Price,
+                        Type = (OrderType)itm.Value.Type,
+                        Quantity = itm.Value.Quantity,
+                        Operation = itm.Value.Quantity > 0 ? OrderDirection.Buy : itm.Value.Quantity < 0 ? OrderDirection.Sell : OrderDirection.Hold,
+                        Status = (OrderStatus)itm.Value.Status
+                    }).ToArray();
+
+                    dataGridViewStats.DataSource = _results.Results.Statistics.Select(itm => new { 
+                        Name = itm.Key, 
+                        Value = itm.Value 
+                    }).ToArray();
 
                     var _drawChartActions = new DrawChartsFactory();
                     var zedgraphs = _drawChartActions.DrawCharts(_results.Results.Charts, _results.PeriodStart, _results.PeriodFinish);
