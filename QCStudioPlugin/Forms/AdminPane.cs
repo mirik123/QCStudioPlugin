@@ -1,4 +1,9 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Diagnostics;
@@ -33,7 +38,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             // Creating the user control that will be displayed in the window
             _control = new AdminControl();
 
-            this.Caption = QCPluginUtilities.AppTitle;
+            this.Caption = "Admin Console";
             this.BitmapResourceID = 700;
             this.BitmapIndex = 1;
         }

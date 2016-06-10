@@ -57,11 +57,12 @@
     <Reference Include="Microsoft.VisualStudio.Shell.11.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.11.0" />
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
@@ -169,6 +170,9 @@
       <DependentUpon>AdminControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\AdminPane.cs" />
+    <Compile Include="Forms\OptionPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Forms\QCClientControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -181,22 +185,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RestAPI\Interfaces\Charting.cs" />
-    <Compile Include="RestAPI\Interfaces\Global.cs" />
-    <Compile Include="RestAPI\Interfaces\Market.cs" />
-    <Compile Include="RestAPI\Interfaces\Order.cs" />
-    <Compile Include="RestAPI\Interfaces\OrderTypes.cs" />
-    <Compile Include="RestAPI\Interfaces\SecurityIdentifier.cs" />
-    <Compile Include="RestAPI\Interfaces\SecurityIdentifierJsonConverter.cs" />
-    <Compile Include="RestAPI\Interfaces\Symbol.cs" />
-    <Compile Include="RestAPI\Interfaces\SymbolCache.cs" />
-    <Compile Include="RestAPI\Interfaces\SymbolJsonConverter.cs" />
-    <Compile Include="RestAPI\Interfaces\TypeChangeJsonConverter.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="QCStudioPluginPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
+    <Compile Include="RestAPI\Models\ColorJsonConverter.cs" />
+    <Compile Include="RestAPI\Models\OrderTypes.cs" />
+    <Compile Include="RestAPI\Models\TypeChangeJsonConverter.cs" />
     <Compile Include="RestAPI\RestAPI.cs" />
     <Compile Include="RestAPI\Models\Backtests.cs" />
     <Compile Include="RestAPI\Models\Base.cs" />
@@ -207,6 +203,8 @@
     <Compile Include="Utilities\DrawChartsFactory.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\LeanProxy.cs" />
+    <Compile Include="Utilities\LeanProxyFactory.cs" />
     <Compile Include="Utilities\QCPluginActions.cs" />
     <Compile Include="Utilities\QCPluginUtilities.cs" />
     <Compile Include="VSPackage.Designer.cs">
@@ -260,15 +258,21 @@
   <ItemGroup>
     <VSCTCompile Include="QCStudioPlugin.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Images.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\runlocal.png" />
+    <Resource Include="Resources\runremote.png" />
     <Resource Include="Resources\BacktestsMenu.png" />
     <Resource Include="Resources\ProjectsMenu.png" />
     <Resource Include="License-LGPL.txt" />
+    <Resource Include="Resources\optionspage.png" />
+    <Resource Include="Icons\Open16.png" />
+    <Resource Include="Resources\adminpane.png" />
     <Content Include="Resources\QCClient.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

@@ -1,5 +1,6 @@
 ﻿/*
-* Mark Babayev (https://github.com/mirik123) - Visual Studio extension utilities
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
 */
 
 using QuantConnect.QCStudioPlugin;
@@ -7,8 +8,6 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ExtensionManager;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +19,11 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using QuantConnect.QCStudioPlugin.Forms;
+using QuantConnect.QCStudioPlugin.Actions;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -34,7 +38,6 @@ namespace QuantConnect.QCStudioPlugin
 
         static internal string ChartTitle = "QuantConnect Lean Algorithmic Trading Engine";
         static internal string AppTitle;
-        static internal string AppVersion;
         static internal DTE2 dte;
         static internal IVsThreadedWaitDialogFactory dialogFactory;
         static internal IVsOutputWindow outputWindow;
@@ -42,10 +45,10 @@ namespace QuantConnect.QCStudioPlugin
         static internal ChartPane chartWindowJSFrame;
         static internal QCClientPane chartWindowZedFrame;
 
-        public static void Initialize(string AppTitle, string AppVersion, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, ChartPane chartWindowJSFrame, QCClientPane chartWindowZedFrame)
+        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, 
+                                        ChartPane chartWindowJSFrame, QCClientPane chartWindowZedFrame)
         {
             QCPluginUtilities.AppTitle = AppTitle;
-            QCPluginUtilities.AppVersion = AppVersion;
             QCPluginUtilities.dialogFactory = dialogFactory;
             QCPluginUtilities.dte = dte;
             QCPluginUtilities.outputWindow = outputWindow;
@@ -54,34 +57,131 @@ namespace QuantConnect.QCStudioPlugin
             QCPluginUtilities.chartWindowZedFrame = chartWindowZedFrame;
         }
 
-        public static void ShowBacktestJSWindow(string backtestId, string UserId, string AuthToken)
+        private static void CalcPeriods(QuantConnect.RestAPI.Models.PacketBacktestResult packet)
         {
-            string url = GetTerminalUrl(backtestId, UserId, AuthToken);
-            chartWindowJSFrame.control.InitBacktestResults(url, backtestId);
+            long _startDate = long.MaxValue, _endDate = -1;
 
+            foreach (var chart in packet.Results.Charts.Values)
+            {
+                foreach (var series in chart.Series.Values)
+                {
+                    if (series.Values.Count == 0) continue;
+
+                    var mindt = series.Values.Min(x => x.x);
+                    var maxdt = series.Values.Max(x => x.x);
+                    if (_startDate > mindt) _startDate = mindt;
+                    if (_endDate < maxdt) _endDate = maxdt;
+                }
+            }
+
+            if (_endDate < 0) return;
+
+            packet.PeriodStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_startDate);
+            packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
+        }
+
+        public static void ShowBacktestJSRemote(string backtestId)
+        {
             var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
             ErrorHandler.ThrowOnFailure(frame.Show());
+
+            chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
+            {
+                var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
+                CalcPeriods(_results);
+
+                QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
+                foreach (var err in _results.Errors)
+                {
+                    QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
+                }
+
+                return _results;
+            };
+
+            string url = QCStudioPluginActions.GetTerminalUrl(backtestId);
+            chartWindowJSFrame.control.Run(url);
         }
 
-        public static void ShowBacktestZEDWindow(string backtestId)
+        public static void ShowBacktestZEDRemote(string backtestId)
         {
-            chartWindowZedFrame.control.InitBacktestResults(backtestId);
-
             var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
             ErrorHandler.ThrowOnFailure(frame.Show());
+
+            chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
+            {
+                var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
+                CalcPeriods(_results);
+
+                QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
+                foreach (var err in _results.Errors)
+                {
+                    QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
+                }
+
+                return _results;
+            };
+
+            chartWindowZedFrame.control.Run();
         }
 
-        public static string GetTerminalUrl(string backtestId, string UserId, string AuthToken, int ProjectId = 0, bool liveMode = false, bool holdReady = true)
+        public static void ShowBacktestJSLocal(string pluginsPath, string dataPath)
         {
-            var url = "";
-            var hold = holdReady == false ? "0" : "1";
-            var embedPage = liveMode ? "embeddedLive" : "embedded";
+            string algorithmPath, className;
+            GetSelectedItem(out algorithmPath, out className);
+            if (algorithmPath == null || className == null) return;
+            
+            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
 
-            url = string.Format(
-                "https://www.quantconnect.com/terminal/{0}?user={1}&token={2}&pid={3}&version={4}&holdReady={5}&bid={6}",
-                embedPage, UserId, AuthToken, ProjectId, AppVersion, hold, backtestId);
+            chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
+            {
+                await QCStudioPluginActions.Authenticate();
 
-            return url;
+                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
+
+                foreach (var pair in _results.Results.Statistics)
+                {
+                    QCPluginUtilities.OutputCommandString("STATISTICS:: " + pair.Key + " " + pair.Value, QCPluginUtilities.Severity.Info);
+                }
+
+                return _results;
+            };
+
+            string url = QCStudioPluginActions.GetTerminalUrl(className);
+            chartWindowJSFrame.control.Run(url);
+        }
+
+        public static void ShowBacktestZEDLocal(string pluginsPath, string dataPath)
+        {
+            string algorithmPath, className;
+            GetSelectedItem(out algorithmPath, out className);
+            if (algorithmPath == null || className == null) return;
+            
+            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+
+            chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
+            {
+                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
+                return _results;
+            };
+
+            chartWindowZedFrame.control.Run();
+        }
+
+        public static string[] GetAlgorithmsList(string filePath, string classDll)
+        {
+            var source = File.ReadAllText(filePath, Encoding.UTF8);
+            var algoass = Assembly.LoadFrom(classDll);
+
+            var algorithms = algoass.GetTypes()
+                .Where(x => x.BaseType.FullName == "QuantConnect.Algorithm.QCAlgorithm")
+                .Select(x => x.Name)
+                .Where(x => source.Contains(x))
+                .ToArray();
+
+            return algorithms;
         }
 
         private static string RetrieveAssemblyDirectory()
@@ -157,6 +257,30 @@ namespace QuantConnect.QCStudioPlugin
             }
         }
 
+        public static void GetSelectedItem(out string classDll, out string className)
+        {
+            classDll = "";
+            className = "";
+            if (dte.SelectedItems.Count != 1) return;
+            var selitem = dte.SelectedItems.Cast<SelectedItem>().FirstOrDefault();
+
+            var startupProjDir = GetProjectOutputBuildFolder(selitem.ProjectItem.ContainingProject);
+            classDll = Path.Combine(startupProjDir, selitem.ProjectItem.ContainingProject.Name) + ".dll";
+
+            className = GetAlgorithmsList(selitem.ProjectItem.Document.FullName, classDll).FirstOrDefault();
+
+            if (!File.Exists(classDll))
+            {
+                QCPluginUtilities.OutputCommandString("The algorithm binary not found: " + classDll, QCPluginUtilities.Severity.Error);
+                classDll = null;
+            }
+            
+            if (className == null)
+            {
+                QCPluginUtilities.OutputCommandString("The algorithm class not found. Check that all relevant classes implement QuantConnect.Algorithm.QCAlgorithm.", QCPluginUtilities.Severity.Error);
+            }
+        }
+
         public static string GetStartupProjectOutputBinary()
         {
             var msg = (Array)(dte.Solution.SolutionBuild as SolutionBuild2).StartupProjects;
@@ -191,16 +315,12 @@ namespace QuantConnect.QCStudioPlugin
         /// </summary>
         /// <param name="text">The text.</param>
         /// <param name="caption">The caption.</param>
-        static internal void OutputCommandString(string text, string caption)
+        static internal void OutputCommandString(string text, string caption, Severity severity)
         {
-            // --- Build the string to write on the debugger and Output window. 
-            var outputText = new StringBuilder();
-            outputText.AppendFormat("{0}: {1} ", caption, text);
-            outputText.AppendLine();
             // --- Get a reference to IVsOutputWindow. 
             if (outputWindow == null)
             {
-                Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "{0}: {1} ", caption, text));
+                Debug.WriteLine(string.Format("[{0}] {1}: {2} ", severity, caption, text));
                 return;
             }
 
@@ -210,19 +330,19 @@ namespace QuantConnect.QCStudioPlugin
 
             if (Microsoft.VisualStudio.ErrorHandler.Failed(outputWindow.GetPane(ref guidGeneral, out windowPane)))
             {
-                Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "{0}: {1} ", caption, text));
+                Debug.WriteLine(string.Format("[{0}] {1}: {2} ", severity, caption, text));
                 return;
             }
 
             // --- As the last step, write to the output window pane 
             windowPane.SetName(AppTitle);
-            windowPane.OutputString(outputText.ToString());
+            windowPane.OutputString(string.Format("[{0}] {1}: {2} " + Environment.NewLine, severity, caption, text));
             windowPane.Activate();
         }
 
-        static internal void OutputCommandString(string text, Severity severity = Severity.Error)
+        static internal void OutputCommandString(string text, Severity severity)
         {
-            OutputCommandString(text, AppTitle);
+            OutputCommandString(text, AppTitle, severity);
         }
 
         /// <summary>
@@ -275,7 +395,7 @@ namespace QuantConnect.QCStudioPlugin
                 }
                 catch (SystemException ex)
                 {
-                    OutputCommandString("Error adding files to local project: " + ex.ToString());
+                    OutputCommandString("Error adding files to local project: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 }
             }
 
@@ -293,7 +413,7 @@ namespace QuantConnect.QCStudioPlugin
                 EnvDTE.ConfigurationManager configManager = proj.ConfigurationManager;
 
                 if (configManager == null)
-                    MessageBox.Show("The project " + proj.Name + " doesn't have a configuration manager");
+                    QCPluginUtilities.OutputCommandString("The project " + proj.Name + " doesn't have a configuration manager", QCPluginUtilities.Severity.Error);
                 else
                 {
                     //Get the active project configuration
@@ -334,7 +454,7 @@ namespace QuantConnect.QCStudioPlugin
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                QCPluginUtilities.OutputCommandString("Get project output build folder error: " + ex.ToString(), QCPluginUtilities.Severity.Error);
             }
 
             return absoluteOutputPath;

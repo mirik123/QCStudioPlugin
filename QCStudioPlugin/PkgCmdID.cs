@@ -5,8 +5,8 @@ namespace QuantConnect.QCStudioPlugin
 {
     static class PkgCmdIDList
     {
-        public const uint cmdidQCStart =        0x100;
-        public const uint cmdidQCPane =    0x101;
-
+        public const uint cmdidQCLocalJS = 0x1020;
+        public const uint cmdidQCLocalZED = 0x1021;
+        public const uint cmdidQCRemote = 0x0101;
     };
 }

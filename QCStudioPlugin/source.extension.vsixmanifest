@@ -3,7 +3,7 @@
   <Metadata>
     <Identity Id="c061f3cd-9fd7-4e6f-af9f-f925e05a4aab" Version="1.0" Language="en-US" Publisher="Mark Babayev" />
     <DisplayName>QuantConnect client plugin</DisplayName>
-    <Description>This is a new and a completely rewritten version of the original QuantConnect Visual Studio plugin. It utilizes the QuantConnect REST API to launch backtests and display results inside Visual Studio 2012.</Description>
+    <Description xml:space="preserve">This Visual Studio plugin allows running QuantConnect backtests either localy using local installation of the QuantConnect Lean engine or remotely by utilizing the QuantConnect REST API. </Description>
     <MoreInfo>https://www.quantconnect.com/terminal/</MoreInfo>
     <License>License-LGPL.txt</License>
     <Icon>Icons\QuantConnectLogo.ico</Icon>
@@ -19,6 +19,5 @@
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="QCAlgorithmTemplate" d:TargetPath="|QCAlgorithmTemplate;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
   </Assets>
 </PackageManifest>

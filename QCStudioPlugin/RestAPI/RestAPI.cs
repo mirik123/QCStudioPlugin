@@ -1,8 +1,6 @@
 ﻿/*
-* Mark Babayev (https://github.com/mirik123) - REST API
-* C# Wrapper for Restful API for Managing QuantConnect Connection
-* Inspired by the Ryandhall's Rest API.
-* https://github.com/ryandhall/QCRestAPI
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
 */
 
 /**********************************************************

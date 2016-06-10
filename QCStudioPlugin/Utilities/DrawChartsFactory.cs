@@ -4,6 +4,7 @@
 */
 
 
+using QuantConnect.RestAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +14,6 @@ using ZedGraph;
 
 namespace QuantConnect.QCPlugin
 {
-    [Obsolete]
     public class DrawChartsFactory
     {
         private Dictionary<string, ZedGraphControl> _chartObjects = new Dictionary<string, ZedGraphControl>();
@@ -23,14 +23,20 @@ namespace QuantConnect.QCPlugin
         private Dictionary<string, Dictionary<string, CurveItem>> _cache = new Dictionary<string, Dictionary<string, CurveItem>>();
         private Dictionary<string, Dictionary<string, double>> _cacheMax = new Dictionary<string, Dictionary<string, double>>();
 
+        DateTime PeriodStart;
+        DateTime PeriodFinish;
+
         /// <summary>
         /// Draw the charts from a result packet:
         /// </summary>
         /// <param name="charts"></param>
-        public Dictionary<string, ZedGraphControl> DrawCharts(Dictionary<string, Chart> charts)
+        public Dictionary<string, ZedGraphControl> DrawCharts(IDictionary<string, QCChart> charts, DateTime PeriodStart, DateTime PeriodFinish)
         {
+            this.PeriodStart = PeriodStart;
+            this.PeriodFinish = PeriodFinish;
+            
             //Draw charts:
-            foreach (Chart chart in charts.Values)
+            foreach (var chart in charts.Values)
             {
                 DrawChart(charts[chart.Name]);
             }
@@ -54,25 +60,8 @@ namespace QuantConnect.QCPlugin
         /// Add the data to the empty chart:
         /// </summary>
         /// <param name="chart"></param>
-        private void DrawChart(Chart chart)
+        private void DrawChart(QCChart chart)
         {
-            //Convert.ToInt64(Time.DateTimeToUnixTimeStamp(time.ToUniversalTime()))
-            long _startDate = long.MaxValue, _endDate = -1;
-            foreach (Series series in chart.Series.Values)
-            {
-                if (series.Values.Count == 0) continue;
-
-                var mindt = series.Values.Min(x => x.x);
-                var maxdt = series.Values.Max(x => x.x);
-                if (_startDate > mindt) _startDate = mindt;
-                if (_endDate < maxdt) _endDate = maxdt;
-            }
-
-            if (_endDate < 0) return;            
-
-            DateTime startDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_startDate);
-            DateTime endDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
-
             //Setting up this chart for the first time:
             if (!_initialized.ContainsKey(chart.Name))
             {
@@ -96,7 +85,7 @@ namespace QuantConnect.QCPlugin
                     _cacheMax[chart.Name].Add(series.Name, 0);
                     _cache[chart.Name].Add(series.Name, null);
 
-                    Initialize(chart.Name, series, startDate, endDate);
+                    Initialize(chart.Name, chart.ChartType, series);
                 }
 
                 switch (series.SeriesType)
@@ -137,7 +126,7 @@ namespace QuantConnect.QCPlugin
         /// <summary>
         /// Initialize the charts
         /// </summary>
-        private void Initialize(string chartName, Series series, DateTime startDate, DateTime endDate)
+        private void Initialize(string chartName, ChartType chartType, Series series)
         {
             //Setup Chart:
             var chart = _chartObjects[chartName];
@@ -145,11 +134,25 @@ namespace QuantConnect.QCPlugin
             chart.MasterPane.Border.IsVisible = false;
             chart.IsSynchronizeXAxes = true;
 
-            GraphPane stackedPane = CreateGraphPane(series.Name, startDate, endDate);
-            CurveItem stackedCurveItem = CreateCurveItem(series);
-            stackedPane.CurveList.Add(stackedCurveItem);
-            chart.MasterPane.Add(stackedPane);
-            _cache[chartName][series.Name] = stackedCurveItem;
+            //Based on the QC chart type, draw the panes:
+            switch (chartType)
+            { 
+                case ChartType.Overlay:
+                    GraphPane overlayPane = CreateGraphPane(chartName);
+                    CurveItem curveItem = CreateCurveItem(series);
+                    overlayPane.CurveList.Add(curveItem);
+                    _cache[chartName][series.Name] = curveItem;
+                    chart.MasterPane.Add(overlayPane);
+                    break;
+
+                case ChartType.Stacked:
+                    GraphPane stackedPane = CreateGraphPane(series.Name);
+                    CurveItem stackedCurveItem = CreateCurveItem(series);
+                    stackedPane.CurveList.Add(stackedCurveItem);
+                    chart.MasterPane.Add(stackedPane);
+                    _cache[chartName][series.Name] = stackedCurveItem;
+                    break;
+            }
 
             //Refresh it:
             RefreshChart(ref chart);
@@ -194,7 +197,7 @@ namespace QuantConnect.QCPlugin
         /// <summary>
         /// Create a new graph pane
         /// </summary>
-        private GraphPane CreateGraphPane(string name, DateTime startDate, DateTime endDate)
+        private GraphPane CreateGraphPane(string name)
         {
             GraphPane pane = new GraphPane(); //Here I create a new pane to stack charts?
             FontSpec _fontTitle = new FontSpec("Arial", 12, Color.Black, true, false, false);
@@ -218,8 +221,8 @@ namespace QuantConnect.QCPlugin
             pane.XAxis.Scale.FontSpec = _fontChart;
             pane.XAxis.Color = Color.Black;
 
-            if (startDate != DateTime.MinValue) pane.XAxis.Scale.Min = startDate.ToOADate();
-            if (endDate != DateTime.MinValue) pane.XAxis.Scale.Max = endDate.ToOADate();
+            if (PeriodStart != DateTime.MinValue) pane.XAxis.Scale.Min = PeriodStart.ToOADate();
+            if (PeriodFinish != DateTime.MinValue) pane.XAxis.Scale.Max = PeriodFinish.ToOADate();
 
             //pane.XAxis.CrossAuto = true;
             pane.XAxis.MajorGrid.IsVisible = true;

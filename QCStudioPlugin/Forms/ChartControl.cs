@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -18,50 +23,52 @@ namespace QuantConnect.QCStudioPlugin.Forms
 {
     public partial class ChartControl : UserControl
     {
-        private string url = "";
-        private string backtestId = "";
-        private string browserData = "{}";
-        
+        public Func<Task<PacketBacktestResult>> GetBacktestResultsCallback;
+        private string browserData = null;
+
         public ChartControl()
         {
             InitializeComponent();
         }
 
-        public void InitBacktestResults(string url, string backtestId)
+        public void Run(string url)
         {
-            //Save off the messaging event handler we need:
-            this.url = url;
-            this.backtestId = backtestId;
+            Browser.Navigate(string.Format(url, 0));
 
-            refreshBacktest.Enabled = true;
-        }
-
-        private async void refreshBacktest_Tick(object sender, EventArgs e)
-        {
-            var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
-
-            if (_results == null)
+            Task<PacketBacktestResult>.Run(() =>
+            { 
+                return GetBacktestResultsCallback(); 
+            })
+            .ContinueWith(x =>
             {
-                refreshBacktest.Enabled = false;
-                FormToolStripStatusLabel.Text = "Backtest Failed.";
-                return;
-            }
+                var _results = x.Result;            
+                var dateFormat = "yyyy-MM-dd HH:mm:ss";
 
-            if (_results.Progress == "0%" || _results.Progress == "")
-            {
-                return;
-            }
+                try
+                {
+                    dynamic final = new
+                    {
+                        dtPeriodStart = _results.PeriodStart.ToString(dateFormat),
+                        dtPeriodFinished = _results.PeriodFinish.AddDays(1).ToString(dateFormat),
+                        oResultData = new
+                        {
+                            version = "3",
+                            results = _results.Results,
+                            statistics = _results.Results.Statistics,
+                            iTradeableDates = 1,
+                            ranking = (object)null
+                        }
+                    };
 
-            FormToolStripProgressBar.ProgressBar.Value = Convert.ToInt32(_results.Progress.Replace("%", ""));
+                    browserData = JsonConvert.SerializeObject(final);
 
-            //If finished draw stats and orders
-            if (_results.Progress == "100%")// && _results.Results.Statistics.Count > 0)
-            {
-                refreshBacktest.Enabled = false;
-                FormToolStripStatusLabel.Text = "Backtest Completed.";
-
-                MessagingOnBacktestResultEvent(_results);
-            }
+                    Browser.Navigate(string.Format(url, 1));
+                }
+                catch (Exception ex)
+                {
+                    QCPluginUtilities.OutputCommandString(ex.ToString(), QCPluginUtilities.Severity.Error);
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());     
         }
 
         private void ChartControl_Load(object sender, EventArgs e)
@@ -72,68 +79,12 @@ namespace QuantConnect.QCStudioPlugin.Forms
             }
         }
 
-        private Tuple<DateTime, DateTime> CalcPeriods(PacketBacktestResult packet)
-        {
-            long _startDate = long.MaxValue, _endDate = -1;
-
-            foreach (var chart in packet.Results.Charts.Values)
-            {
-                foreach (Series series in chart.Series.Values)
-                {
-                    if (series.Values.Count == 0) continue;
-
-                    var mindt = series.Values.Min(x => x.x);
-                    var maxdt = series.Values.Max(x => x.x);
-                    if (_startDate > mindt) _startDate = mindt;
-                    if (_endDate < maxdt) _endDate = maxdt;
-                } 
-            }
-
-            if (_endDate < 0) return null;
-
-            DateTime startDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_startDate);
-            DateTime endDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
-
-            return new Tuple<DateTime, DateTime>(startDate, endDate);
-        }
-
-        private void MessagingOnBacktestResultEvent(PacketBacktestResult packet)
-        {
-            if (packet.Progress != "100%") return;
-
-            //Generate JSON:
-            var jObj = new JObject();
-            var dateFormat = "yyyy-MM-dd HH:mm:ss";
-            
-            dynamic final = jObj;
-            var period = CalcPeriods(packet);
-            final.dtPeriodStart = period.Item1.ToString(dateFormat);
-            final.dtPeriodFinished = period.Item2.AddDays(1).ToString(dateFormat);
-            
-            dynamic resultData = new JObject();
-            resultData.version = "3";
-            resultData.results = JObject.FromObject(packet.Results);
-            resultData.statistics = JObject.FromObject(packet.Results.Statistics);
-            resultData.iTradeableDates = 1;
-            resultData.ranking = null;
-            
-            final.oResultData = resultData;
-            browserData = JsonConvert.SerializeObject(final);
-            
-            Browser.Navigate(url);
-
-            foreach (var pair in packet.Results.Statistics)
-            {
-                LogTextBox.AppendText("STATISTICS:: " + pair.Key + " " + pair.Value, Color.Black);
-            }
-        }
-
         private void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             //MONO WEB BROWSER RESULT SET:
-            if (Browser.Document == null) return;
+            if (Browser.Document == null || browserData == null) return;
             Browser.Document.InvokeScript("eval", new object[] { "window.jnBacktest = JSON.parse('" + browserData + "');" });
-            Browser.Document.InvokeScript("eval", new object[] { "$.holdReady(false)" });
+            Browser.Document.InvokeScript("eval", new object[] { "$.holdReady(false);" });
         }
     }
 }

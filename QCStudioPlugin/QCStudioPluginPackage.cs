@@ -1,4 +1,9 @@
-﻿using QuantConnect.QCStudioPlugin.Properties;
+﻿/*
+* QUANTCONNECT.COM - Democratizing Finance, Empowering Individuals,
+* QuantConnect Visual Studio Plugin
+*/
+
+using QuantConnect.QCStudioPlugin.Properties;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ExtensionManager;
@@ -21,6 +26,7 @@ namespace QuantConnect.QCStudioPlugin
     [ProvideToolWindow(typeof(AdminPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Bottom)]
     [ProvideToolWindow(typeof(ChartPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Top)]
     [ProvideToolWindow(typeof(QCClientPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Top)]
+    [ProvideOptionPage(typeof(OptionPageGrid), "QuantConnect Client", "General", 0, 0, true)]
     [Guid(GuidList.guidQCStudioPluginPkgString)]
     public sealed class QCStudioPluginPackage : Package
     {
@@ -36,7 +42,7 @@ namespace QuantConnect.QCStudioPlugin
             ToolWindowPane window = this.FindToolWindow(typeof(T), 0, true);
             if ((null == window) || (null == window.Frame))
             {
-                QCPluginUtilities.OutputCommandString("Failed to initialize " + Resources.ToolWindowTitle);
+                QCPluginUtilities.OutputCommandString("Failed to initialize " + Resources.ToolWindowTitle, QCPluginUtilities.Severity.Error);
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
             
@@ -62,14 +68,13 @@ namespace QuantConnect.QCStudioPlugin
         private void CustomInitialize()
         {
             string AppTitle = Resources.ToolWindowTitle;
-            string AppVersion = Resources.QuantConnectVersion;
             var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
             var dialogFactory = GetService(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
             var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
             var chartWindowJSFrame = (ChartPane)this.FindToolWindow(typeof(ChartPane), 0, true);
             var chartWindowZedFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
 
-            QCPluginUtilities.Initialize(AppTitle, AppVersion, dte, dialogFactory, outputWindow, chartWindowJSFrame, chartWindowZedFrame);
+            QCPluginUtilities.Initialize(AppTitle, dte, dialogFactory, outputWindow, chartWindowJSFrame, chartWindowZedFrame);
             QCStudioPluginActions.Initialize();
         }
 
@@ -88,12 +93,33 @@ namespace QuantConnect.QCStudioPlugin
             if ( null != mcs )
             {
                 // Create the command for the tool window
-                CommandID toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCPane);
-                MenuCommand menuToolWin = new MenuCommand((sender,e) => {
+                CommandID toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalJS);
+                OleMenuCommand menuToolWin = new OleMenuCommand((sender, e) =>
+                {
+                    var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
+                    string pluginsPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathBinaries").Value;
+                    string dataPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathData").Value;
+                    QCPluginUtilities.ShowBacktestJSLocal(pluginsPath, dataPath);
+                }, toolwndCommandID);
+                mcs.AddCommand( menuToolWin );
+
+                toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalZED);
+                menuToolWin = new OleMenuCommand((sender, e) =>
+                {
+                    var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
+                    string pluginsPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathBinaries").Value;
+                    string dataPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathData").Value;
+                    QCPluginUtilities.ShowBacktestZEDLocal(pluginsPath, dataPath);
+                }, toolwndCommandID);
+                mcs.AddCommand(menuToolWin);
+
+                toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCRemote);
+                menuToolWin = new OleMenuCommand((sender, e) =>
+                {
                     var windowFrame = GetToolWindowFrame<AdminPane>();
                     ErrorHandler.ThrowOnFailure(windowFrame.Show());
                 }, toolwndCommandID);
-                mcs.AddCommand( menuToolWin );
+                mcs.AddCommand(menuToolWin);
             }
 
             CustomInitialize();
