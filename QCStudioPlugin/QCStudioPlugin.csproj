@@ -272,6 +272,7 @@
     <Resource Include="License-LGPL.txt" />
     <Resource Include="Resources\optionspage.png" />
     <Resource Include="Icons\Open16.png" />
+    <Resource Include="Resources\adminpane.png" />
     <Content Include="Resources\QCClient.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

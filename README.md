@@ -20,6 +20,10 @@ And than choose to show results by ZedGraph or by the WebBrowser control.
 To run backtest remotely go to the Visual Studio menu: VIEW -> Other Windows -> QuantConnect Client
 ![Local run workflow](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/runremote.png "Local run workflow")
 
+Then Administrative window pane is opened with sections for managing projects and backtests
+![Admin widow](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/adminpane.png "Admin widow")
+
+
 ### Managing backtests
 ![Backtest menu](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/BacktestsMenu.png "Backtest menu")
 
