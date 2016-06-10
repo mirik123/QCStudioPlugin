@@ -1,11 +1,24 @@
 New QuantConnect Visual Studio plugin
 ==============
 
-This is a new completely rewritten Visual Studio plugin utilizing the QuantConnect REST API to launch backtests and display results inside Visual Studio 2012-2015.
+This Visual Studio plugin allows running QuantConnect backtests either localy using local installation of the QuantConnect Lean engine or remotely by utilizing the QuantConnect REST API.  
 
-### The main plugin window
-
+## The main plugin window
 ![QuantConnect client](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/QCClient.png "QuantConnect client")
+
+## Local Run
+### Specify QuantConnect Lean installation folders
+![VisualStudio Options Page](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/optionspage.png "VisualStudio Options Page")
+
+### Run workflow
+To run backtest locally go to the selected C# file context menu<br/>
+![Local run workflow](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/runlocal.png "Local run workflow")
+
+And than choose to show results by ZedGraph or by the WebBrowser control.
+
+## Remote Run
+To run backtest remotely go to the Visual Studio menu: VIEW -> Other Windows -> QuantConnect Client
+![Local run workflow](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/runremote.png "Local run workflow")
 
 ### Managing backtests
 ![Backtest menu](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/BacktestsMenu.png "Backtest menu")
@@ -33,8 +46,8 @@ This is a new completely rewritten Visual Studio plugin utilizing the QuantConne
 |Login|Authenticate user|
 |Logout|Remove user authentication|
 
-### Getting started (workflow example)
-The actions workflow generally looks like that:
+### Remote run workflow
+After the main window pane is open you can proceed with the choosen scenario:
    1. Login the the system (optional) <br/> *Authentication occures automatically when user sends server request.*
    2. Get projects list with **Resfresh**.
    3. If no projects exist in the cloud:
