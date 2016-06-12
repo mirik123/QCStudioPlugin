@@ -16,11 +16,15 @@ using System;
 using System.IO;
 using System.Security;
 using Microsoft.Win32;
+using System.Windows.Forms;
+using QuantConnect.QCStudioPlugin.Properties;
+using QuantConnect.QCStudioPlugin;
 
 namespace QuantConnect.Views
 {
     public enum BrowserEmulationVersion
     {
+        Error = -1,
         Default = 0,
         Version7 = 7000,
         Version8 = 8000,
@@ -67,17 +71,19 @@ namespace QuantConnect.Views
                     }
                 }
             }
-            catch (SecurityException)
+            catch (SecurityException ex)
             {
-                // The user does not have the permissions required to read from the registry key.
+                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                return -1;
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                // The user does not have the necessary registry rights.
+                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                return -1;
             }
+
             return result;
         }
-        
 
         public static BrowserEmulationVersion GetBrowserEmulationVersion()
         {
@@ -96,14 +102,17 @@ namespace QuantConnect.Views
                     }
                 }
             }
-            catch (SecurityException)
+            catch (SecurityException ex)
             {
-                // The user does not have the permissions required to read from the registry key.
+                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                result = BrowserEmulationVersion.Error;
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                // The user does not have the necessary registry rights.
+                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                result = BrowserEmulationVersion.Error;
             }
+
             return result;
         }
 
@@ -114,9 +123,10 @@ namespace QuantConnect.Views
         /// <returns></returns>
         public static bool SetBrowserEmulationVersion(BrowserEmulationVersion browserEmulationVersion)
         {
-            var result = false;
+            
             try
             {
+                var result = false;
                 var key = Registry.CurrentUser.OpenSubKey(BrowserEmulationKey, true);
                 if (key != null)
                 {
@@ -134,29 +144,31 @@ namespace QuantConnect.Views
 
                     result = true;
                 }
+
+                return result;
             }
-            catch (SecurityException)
+            catch (SecurityException ex)
             {
-                // The user does not have the permissions required to read from the registry key.
+                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                return false;
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                // The user does not have the necessary registry rights.
+                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                return false;
             }
-            return result;
         }
 
-        /// <summary>
-        /// Set the enumulation version for the web browser control
-        /// </summary>
-        public static bool SetBrowserEmulationVersion()
+        public static BrowserEmulationVersion GetBrowserEmulationForInternetExplorer(int ieVersion)
         {
             BrowserEmulationVersion emulationCode;
-            var ieVersion = GetInternetExplorerMajorVersion();
-
             if (ieVersion >= 11)
             {
                 emulationCode = BrowserEmulationVersion.Version11;
+            }
+            else if (ieVersion < 0)
+            {
+                emulationCode = BrowserEmulationVersion.Error;
             }
             else
             {
@@ -176,16 +188,30 @@ namespace QuantConnect.Views
                         break;
                 }
             }
-            return SetBrowserEmulationVersion(emulationCode);
+
+            return emulationCode;
         }
 
-        /// <summary>
-        /// Helper to confirm if the browser 
-        /// </summary>
-        /// <returns>Bool check if its set</returns>
-        public static bool IsBrowserEmulationSet()
+        public static void ValidateAndUpdateBrowserEmulation()
         {
-            return GetBrowserEmulationVersion() != BrowserEmulationVersion.Default;
+            var ieVersion = GetInternetExplorerMajorVersion();
+            var emulationIECode = GetBrowserEmulationForInternetExplorer(ieVersion);
+            if (ieVersion < 0) return;
+
+            var emulationRegCode = GetBrowserEmulationVersion();
+            if (emulationRegCode == BrowserEmulationVersion.Error) return;
+
+            string msg = "";
+
+            if (emulationRegCode == BrowserEmulationVersion.Default)
+                msg = "Currently no Visual Studio Browser emulation is set in the registry. Do you want to set it to the latest Internet Explorer version: " + ieVersion + "?";
+            else if (emulationRegCode != emulationIECode)
+                msg = "The Visual Studio Browser emulation is set to the version: " + emulationRegCode.ToString().Replace("Version", "") +
+                        ". Do you want to set it to the latest Internet Explorer version: " + ieVersion + "?";
+            else return;
+
+            if (DialogResult.Yes == MessageBox.Show(msg, Resources.ToolWindowTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1))
+                SetBrowserEmulationVersion(emulationIECode);
         }
 
         /// <summary>

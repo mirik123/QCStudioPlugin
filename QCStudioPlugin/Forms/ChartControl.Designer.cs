@@ -49,7 +49,6 @@
             this.Controls.Add(this.Browser);
             this.Name = "ChartControl";
             this.Size = new System.Drawing.Size(1046, 559);
-            this.Load += new System.EventHandler(this.ChartControl_Load);
             this.ResumeLayout(false);
 
         }

@@ -190,8 +190,11 @@
     <Compile Include="QCStudioPluginPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
+    <Compile Include="RestAPI\Models\AlgorithmPerformance.cs" />
     <Compile Include="RestAPI\Models\ColorJsonConverter.cs" />
     <Compile Include="RestAPI\Models\OrderTypes.cs" />
+    <Compile Include="RestAPI\Models\PortfolioStatistics.cs" />
+    <Compile Include="RestAPI\Models\TradeStatistics.cs" />
     <Compile Include="RestAPI\Models\TypeChangeJsonConverter.cs" />
     <Compile Include="RestAPI\RestAPI.cs" />
     <Compile Include="RestAPI\Models\Backtests.cs" />

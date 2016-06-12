@@ -80,7 +80,7 @@ namespace QuantConnect.QCStudioPlugin
             packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
         }
 
-        public static void ShowBacktestJSRemote(string backtestId)
+        public async static void ShowBacktestJSRemote(string backtestId)
         {
             var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
             ErrorHandler.ThrowOnFailure(frame.Show());
@@ -99,11 +99,13 @@ namespace QuantConnect.QCStudioPlugin
                 return _results;
             };
 
+            await QCStudioPluginActions.Authenticate();
+
             string url = QCStudioPluginActions.GetTerminalUrl(backtestId);
             chartWindowJSFrame.control.Run(url);
         }
 
-        public static void ShowBacktestZEDRemote(string backtestId)
+        public async static void ShowBacktestZEDRemote(string backtestId)
         {
             var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
             ErrorHandler.ThrowOnFailure(frame.Show());
@@ -122,10 +124,12 @@ namespace QuantConnect.QCStudioPlugin
                 return _results;
             };
 
+            await QCStudioPluginActions.Authenticate();
+
             chartWindowZedFrame.control.Run();
         }
 
-        public static void ShowBacktestJSLocal(string pluginsPath, string dataPath)
+        public async static void ShowBacktestJSLocal(string pluginsPath, string dataPath)
         {
             string algorithmPath, className;
             GetSelectedItem(out algorithmPath, out className);
@@ -136,8 +140,6 @@ namespace QuantConnect.QCStudioPlugin
 
             chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
             {
-                await QCStudioPluginActions.Authenticate();
-
                 var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
 
                 foreach (var pair in _results.Results.Statistics)
@@ -147,6 +149,8 @@ namespace QuantConnect.QCStudioPlugin
 
                 return _results;
             };
+
+            await QCStudioPluginActions.Authenticate();
 
             string url = QCStudioPluginActions.GetTerminalUrl(className);
             chartWindowJSFrame.control.Run(url);
@@ -274,11 +278,16 @@ namespace QuantConnect.QCStudioPlugin
                 QCPluginUtilities.OutputCommandString("The algorithm binary not found: " + classDll, QCPluginUtilities.Severity.Error);
                 classDll = null;
             }
-            
+            else
+                QCPluginUtilities.OutputCommandString("Using algorithm binary: " + classDll, QCPluginUtilities.Severity.Info);
+
             if (className == null)
             {
                 QCPluginUtilities.OutputCommandString("The algorithm class not found. Check that all relevant classes implement QuantConnect.Algorithm.QCAlgorithm.", QCPluginUtilities.Severity.Error);
+                //TODO: show dialog with 2 dropdowns to choose correct algorithm class
             }
+            else
+                QCPluginUtilities.OutputCommandString("Using algorithm class: " + className, QCPluginUtilities.Severity.Info);
         }
 
         public static string GetStartupProjectOutputBinary()
@@ -336,7 +345,7 @@ namespace QuantConnect.QCStudioPlugin
 
             // --- As the last step, write to the output window pane 
             windowPane.SetName(AppTitle);
-            windowPane.OutputString(string.Format("[{0}] {1}: {2} " + Environment.NewLine, severity, caption, text));
+            windowPane.OutputString(string.Format("[{0}] {1} " + Environment.NewLine, severity, text));
             windowPane.Activate();
         }
 

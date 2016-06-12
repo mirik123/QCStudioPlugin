@@ -33,6 +33,9 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
         public void Run(string url)
         {
+            if (WBEmulator.IsWindows)
+                WBEmulator.ValidateAndUpdateBrowserEmulation();
+            
             Browser.Navigate(string.Format(url, 0));
 
             Task<PacketBacktestResult>.Run(() =>
@@ -71,18 +74,16 @@ namespace QuantConnect.QCStudioPlugin.Forms
             }, TaskScheduler.FromCurrentSynchronizationContext());     
         }
 
-        private void ChartControl_Load(object sender, EventArgs e)
-        {
-            if (WBEmulator.IsWindows && !WBEmulator.IsBrowserEmulationSet())
-            {
-                WBEmulator.SetBrowserEmulationVersion();
-            }
-        }
-
         private void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            //MONO WEB BROWSER RESULT SET:
-            if (Browser.Document == null || browserData == null) return;
+            if (Browser.Document == null) return;
+            Browser.Document.Window.Error += (object s2, HtmlElementErrorEventArgs e2) =>
+            {
+                var err = string.Format("JS ERROR: Url=\"{0}\", Line={0}, Description=\"{0}\", ", e2.Url, e2.LineNumber, e2.Description);
+                QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
+            };
+
+            if (browserData == null) return;
             Browser.Document.InvokeScript("eval", new object[] { "window.jnBacktest = JSON.parse('" + browserData + "');" });
             Browser.Document.InvokeScript("eval", new object[] { "$.holdReady(false);" });
         }
