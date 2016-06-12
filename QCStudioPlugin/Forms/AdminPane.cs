@@ -71,7 +71,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             //int result = ((IVsWindowFrame)this.Frame).SetProperty((int)__VSFPROPID.VSFPROPID_FrameMode, VSFRAMEMODE.VSFM_MdiChild);
             //if (result != VSConstants.S_OK)
             //{
-            //MessageBox.Show("Failed to dock Work Item Merger under Visual Studio IDE window.", "Work Item Merger");
+            //MessageBox.Show(error);
             //}
 
             // Register to the window events

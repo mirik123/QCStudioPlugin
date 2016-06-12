@@ -30,8 +30,6 @@ namespace QuantConnect.QCStudioPlugin
     [Guid(GuidList.guidQCStudioPluginPkgString)]
     public sealed class QCStudioPluginPackage : Package
     {
-        uint cookie;
-
         public QCStudioPluginPackage()
         {
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
@@ -127,7 +125,7 @@ namespace QuantConnect.QCStudioPlugin
         #endregion
 
         //IVsShellPropertyEvents
-        public int OnShellPropertyChange(int propid, object var)
+        /*public int OnShellPropertyChange(int propid, object var)
         {
             if ((int)__VSSPROPID.VSSPROPID_Zombie == propid)
             {
@@ -144,6 +142,6 @@ namespace QuantConnect.QCStudioPlugin
                 }
             }
             return VSConstants.S_OK;
-        }
+        }*/
     }
 }

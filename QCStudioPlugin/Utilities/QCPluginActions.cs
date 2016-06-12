@@ -349,8 +349,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
         {
             try
             {
-                await Authenticate();
-
                 QCPluginUtilities.OutputCommandString("getting backtest results...", QCPluginUtilities.Severity.Info);
 
                 var results = await api.BacktestResults(backtestId);
@@ -465,6 +463,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 lean.SetConfiguration("data-directory", dataPath);                
                 lean.SetConfiguration("algorithm-location", algorithmPath);
                 lean.SetConfiguration("algorithm-type-name", fileName);
+                //lean.SetConfiguration("api-access-token", "");
+                //lean.SetConfiguration("job-user-id", "0");
 
                 lean.SetConfiguration("algorithm-language", "CSharp");
                 lean.SetConfiguration("live-mode", "false");
@@ -514,11 +514,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
                 }, (packet) =>
                 {
-                    (systemHandlers as IDisposable).Dispose();
-                    (algorithmHandlers as IDisposable).Dispose();
-                    tokenSource.Cancel();
-                    tokenSource.Dispose();
-
                     var json = JObject.FromObject(packet);
                     if (json.GetValue("oResults") == null)
                     {
@@ -533,7 +528,16 @@ namespace QuantConnect.QCStudioPlugin.Actions
                         Results = JsonConvert.DeserializeObject<BacktestResult>(json.GetValue("oResults").ToString()),
                         Progress = (json.GetValue("dProgress") ?? JToken.FromObject("0")).Value<string>()
                     };
-                    task.SetResult(result);
+
+                    QCPluginUtilities.OutputCommandString("Backtest progress: " + result.Progress, QCPluginUtilities.Severity.Info);
+
+                    if (result.Progress == "1")
+                    {
+                        task.TrySetResult(result);
+                        tokenSource.Cancel();
+                        (systemHandlers as IDisposable).Dispose();
+                        (algorithmHandlers as IDisposable).Dispose();
+                    }
                 });
 
                 string _algorithmPath;
@@ -551,14 +555,14 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     }
                     catch (Exception ex)
                     {
-                        QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.Message, ex.StackTrace), QCPluginUtilities.Severity.Error);
+                        QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.ToString(), ex.StackTrace), QCPluginUtilities.Severity.Error);
                         task.SetException(ex);
                     }
                 }, token);
             }
             catch (Exception ex)
             {
-                QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.Message, ex.StackTrace), QCPluginUtilities.Severity.Error);
+                QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.ToString(), ex.StackTrace), QCPluginUtilities.Severity.Error);
                 task.SetException(ex);
             }
 
@@ -625,7 +629,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
             catch (Exception ex)
             {
-                QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.Message, ex.StackTrace), QCPluginUtilities.Severity.Error);
+                QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.ToString(), ex.StackTrace), QCPluginUtilities.Severity.Error);
                 task.SetException(ex);
             }
 
