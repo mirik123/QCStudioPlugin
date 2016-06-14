@@ -352,6 +352,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 QCPluginUtilities.OutputCommandString("getting backtest results...", QCPluginUtilities.Severity.Info);
 
                 var results = await api.BacktestResults(backtestId);
+
+                CalcPeriods(results);
                 results.UserID = api.UserID;
                 results.AuthToken = api.AuthToken;
 
@@ -363,6 +365,29 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
 
             return null;
+        }
+
+        private static void CalcPeriods(PacketBacktestResult packet)
+        {
+            long _startDate = long.MaxValue, _endDate = -1;
+
+            foreach (var chart in packet.Results.Charts.Values)
+            {
+                foreach (var series in chart.Series.Values)
+                {
+                    if (series.Values.Count == 0) continue;
+
+                    var mindt = series.Values.Min(x => x.x);
+                    var maxdt = series.Values.Max(x => x.x);
+                    if (_startDate > mindt) _startDate = mindt;
+                    if (_endDate < maxdt) _endDate = maxdt;
+                }
+            }
+
+            if (_endDate < 0) return;
+
+            packet.PeriodStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_startDate);
+            packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
         }
 
         public async static Task DeleteProject(int ProjectID)
@@ -646,6 +671,59 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 embedPage, api.UserID, api.AuthToken, ProjectId, Resources.QuantConnectVersion, "{0}", backtestId);
 
             return url;
+        }
+
+        public async static Task SaveRemoteBacktest(string backtestId)
+        {
+            await QCStudioPluginActions.Authenticate();
+            var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
+
+            QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
+            foreach (var err in _results.Errors)
+            {
+                QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
+            }
+
+            if (_results != null)
+            {
+                var dlg = new SaveFileDialog
+                {
+                    AddExtension = true,
+                    Filter = "JSON file|*.json|All files|*.*",
+                    Title = "Save Backtest results to file"
+                };
+                
+                if(DialogResult.OK == dlg.ShowDialog()) {
+                    var json = JsonConvert.SerializeObject(_results);
+                    File.Delete(dlg.FileName);
+                    File.WriteAllText(dlg.FileName, json);
+                }
+            }
+        }
+
+        public async static Task SaveLocalBacktest(string pluginsPath, string dataPath)
+        {
+            string algorithmPath, className;
+            QCPluginUtilities.GetSelectedItem(out algorithmPath, out className);
+            if (algorithmPath == null || className == null) return;
+
+            var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
+            if (_results != null)
+            {               
+                var dlg = new SaveFileDialog
+                {
+                    AddExtension = true,
+                    Filter = "JSON file|*.json|All files|*.*",
+                    Title = "Save Backtest results to file"
+                };
+
+                if (DialogResult.OK == dlg.ShowDialog())
+                {
+                    var json = JsonConvert.SerializeObject(_results);
+                    File.Delete(dlg.FileName);
+                    File.WriteAllText(dlg.FileName, json);
+                }
+            }
         }
     }
 

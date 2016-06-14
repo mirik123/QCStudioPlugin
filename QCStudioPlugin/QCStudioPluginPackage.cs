@@ -111,6 +111,16 @@ namespace QuantConnect.QCStudioPlugin
                 }, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
 
+                toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCSaveLocal);
+                menuToolWin = new OleMenuCommand((sender, e) =>
+                {
+                    var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
+                    string pluginsPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathBinaries").Value;
+                    string dataPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathData").Value;
+                    QCPluginUtilities.SaveLocalBacktest(pluginsPath, dataPath);
+                }, toolwndCommandID);
+                mcs.AddCommand(menuToolWin);
+
                 toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCRemote);
                 menuToolWin = new OleMenuCommand((sender, e) =>
                 {

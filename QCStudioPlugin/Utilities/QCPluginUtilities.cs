@@ -57,27 +57,9 @@ namespace QuantConnect.QCStudioPlugin
             QCPluginUtilities.chartWindowZedFrame = chartWindowZedFrame;
         }
 
-        private static void CalcPeriods(QuantConnect.RestAPI.Models.PacketBacktestResult packet)
+        public async static void SaveLocalBacktest(string pluginsPath, string dataPath)
         {
-            long _startDate = long.MaxValue, _endDate = -1;
-
-            foreach (var chart in packet.Results.Charts.Values)
-            {
-                foreach (var series in chart.Series.Values)
-                {
-                    if (series.Values.Count == 0) continue;
-
-                    var mindt = series.Values.Min(x => x.x);
-                    var maxdt = series.Values.Max(x => x.x);
-                    if (_startDate > mindt) _startDate = mindt;
-                    if (_endDate < maxdt) _endDate = maxdt;
-                }
-            }
-
-            if (_endDate < 0) return;
-
-            packet.PeriodStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_startDate);
-            packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
+            await QCStudioPluginActions.SaveLocalBacktest(pluginsPath, dataPath);
         }
 
         public async static void ShowBacktestJSRemote(string backtestId)
@@ -88,7 +70,6 @@ namespace QuantConnect.QCStudioPlugin
             chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
             {
                 var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
-                CalcPeriods(_results);
 
                 QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
                 foreach (var err in _results.Errors)
@@ -113,7 +94,6 @@ namespace QuantConnect.QCStudioPlugin
             chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
             {
                 var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
-                CalcPeriods(_results);
 
                 QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
                 foreach (var err in _results.Errors)

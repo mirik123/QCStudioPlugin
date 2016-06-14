@@ -272,7 +272,10 @@
     <Resource Include="Resources\runremote.png" />
     <Resource Include="Resources\BacktestsMenu.png" />
     <Resource Include="Resources\ProjectsMenu.png" />
-    <Resource Include="License-LGPL.txt" />
+    <Content Include="License-LGPL.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="Resources\optionspage.png" />
     <Resource Include="Icons\Open16.png" />
     <Resource Include="Resources\adminpane.png" />

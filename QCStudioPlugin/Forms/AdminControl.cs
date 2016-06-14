@@ -72,8 +72,11 @@ namespace QuantConnect.QCStudioPlugin.Forms
                         break;
                     case "mnDeleteBacktest":
                         await QCStudioPluginActions.DeleteBacktest(selbacktest.BacktestId);
-
                         RefreshBacktestsMenu.PerformClick();
+
+                        break;
+                    case "SaveLocallyMenu":
+                        await QCStudioPluginActions.SaveRemoteBacktest(selbacktest.BacktestId);                        
 
                         break;
                 }

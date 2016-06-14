@@ -33,6 +33,13 @@
           <ButtonText>Run backtest locally (JS)</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidQCStudioPluginCmdSet" id="cmdidQCSaveLocal" priority="0x0100" type="Button">
+        <Parent guid="guidQCStudioPluginCmdSet" id="MyMenuGroup"/>
+        <Icon guid="guidlocbt" id="bmpPic1" />
+        <Strings>
+          <ButtonText>Save backtest to JSON</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
 
     <Bitmaps>
@@ -48,6 +55,7 @@
       <IDSymbol name="cmdidQCLocalZED" value="0x1021" />
       <IDSymbol name="cmdidQCRemote" value="0x0101" />
       <IDSymbol name="MyMenuGroup" value="0x1022" />
+      <IDSymbol name="cmdidQCSaveLocal" value="0x1023" />
     </GuidSymbol>
     <GuidSymbol name="guidProjectItem" value="{d309f791-903f-11d0-9efc-00a0c911004f}">
       <IDSymbol name="idProjectItem" value="0x430" />
