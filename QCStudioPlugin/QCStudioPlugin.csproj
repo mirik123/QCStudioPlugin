@@ -279,6 +279,7 @@
     <Resource Include="Resources\optionspage.png" />
     <Resource Include="Icons\Open16.png" />
     <Resource Include="Resources\adminpane.png" />
+    <Resource Include="Resources\QCChart.png" />
     <Content Include="Resources\QCClient.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
