@@ -71,7 +71,7 @@
             this.LoadBacktestZEDMenu,
             this.DeleteBacktestMenu,
             this.SaveLocallyMenu});
-            this.BacktestMenu.Name = "mnBacktest";
+            this.BacktestMenu.Name = "BacktestMenu";
             this.BacktestMenu.Size = new System.Drawing.Size(172, 136);
             this.BacktestMenu.Opening += new System.ComponentModel.CancelEventHandler(this.BacktestMenu_Opening);
             this.BacktestMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.BacktestMenu_Click);
@@ -129,7 +129,7 @@
             this.DisconnectProjectIDMenu,
             this.LoginMenu,
             this.LogoutMenu});
-            this.ProjectsMenu.Name = "mnProjects";
+            this.ProjectsMenu.Name = "ProjectsMenu";
             this.ProjectsMenu.Size = new System.Drawing.Size(188, 224);
             this.ProjectsMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ProjectsMenu_Opening);
             this.ProjectsMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ProjectsMenu_Click);

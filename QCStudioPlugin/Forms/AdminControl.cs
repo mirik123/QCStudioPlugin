@@ -48,7 +48,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                 return;
 
             var sourceControl = e.ClickedItem;
-            if (sourceControl.Name == "mnRefreshBacktests")
+            if (sourceControl.Name == "RefreshBacktestsMenu")
             {
                 dgrBacktests.DataSource = null;
                 dgrBacktests.DataSource = await QCStudioPluginActions.GetBacktestList(selproj.Id);
@@ -62,15 +62,15 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                 switch (sourceControl.Name)
                 {
-                    case "mnLoadBacktestJS":
+                    case "LoadBacktestJSMenu":
                         QCPluginUtilities.ShowBacktestJSRemote(selbacktest.BacktestId);
 
                         break;
-                    case "mnLoadBacktestZED":
+                    case "LoadBacktestZEDMenu":
                         QCPluginUtilities.ShowBacktestZEDRemote(selbacktest.BacktestId);
 
                         break;
-                    case "mnDeleteBacktest":
+                    case "DeleteBacktestMenu":
                         await QCStudioPluginActions.DeleteBacktest(selbacktest.BacktestId);
                         RefreshBacktestsMenu.PerformClick();
 
@@ -88,7 +88,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             var sourceControl = e.ClickedItem;
             switch (sourceControl.Name)
             {
-                case "mnCreateProject":
+                case "CreateProjectMenu":
                     string projectName = QCPluginUtilities.GetStartupProjectName();
                     projectName = Microsoft.VisualBasic.Interaction.InputBox("Enter new project name", QCPluginUtilities.AppTitle, projectName);
                     projectName = CleanInput(projectName);
@@ -103,15 +103,15 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     RefreshProjectsMenu.PerformClick();
 
                     break;
-                case "mnLogin":
+                case "LoginMenu":
                     QCStudioPluginActions.Login();
 
                     break;
-                case "mnLogout":
+                case "LogoutMenu":
                     QCStudioPluginActions.Logout();
 
                     break;
-                case "mnRefreshProjects":
+                case "RefreshProjectsMenu":
                     dgrProjects.DataSource = await QCStudioPluginActions.GetProjectList();
                     var firstrow = dgrProjects.Rows.Cast<DataGridViewRow>().FirstOrDefault(x => (x.DataBoundItem as CombinedProject).Id > 0);
                     if (firstrow != null) firstrow.Selected = true;
@@ -119,7 +119,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
                     RefreshBacktestsMenu.PerformClick();
 
                     break;
-                case "mnConnectProjectID":
+                case "ConnectProjectIDMenu":
                         var projects = dgrProjects.DataSource as List<CombinedProject>;
                         var cloudproj = projects.Where(x => string.IsNullOrEmpty(x.LocalProjectName)).ToArray();
                         var localproj = projects.Where(x => x.Id == 0).ToArray();
@@ -160,29 +160,29 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                     switch (sourceControl.Name)
                     {
-                        case "mnDeleteProject":
+                        case "DeleteProjectMenu":
                             await QCStudioPluginActions.DeleteProject(selproj.Id);
                             
                             QCPluginUtilities.SetProjectID(0, selproj.uniqueName);
                             RefreshProjectsMenu.PerformClick();
 
                             break;
-                        case "mnUploadProject":
+                        case "UploadProjectMenu":
                             if (string.IsNullOrEmpty(selproj.LocalProjectPath)) return;
                             await QCStudioPluginActions.UploadProject(selproj.Id, selproj.CloudProjectName, selproj.LocalProjectPath);
 
                             break;
-                        case "mnDownloadProject":
+                        case "DownloadProjectMenu":
 
                             await QCStudioPluginActions.DownloadProject(selproj.Id, selproj.CloudProjectName, selproj.LocalProjectName, selproj.LocalProjectPath);
 
-                            break;                        
-                        case "mnDisconnectProjectID":
+                            break;
+                        case "DisconnectProjectIDMenu":
                             QCPluginUtilities.SetProjectID(0, selproj.uniqueName);
                             RefreshProjectsMenu.PerformClick();
 
                             break;
-                        case "mnCompileProject":
+                        case "CompileProjectMenu":
                             string backtestName = QCPluginUtilities.GetStartupProjectName();
                             backtestName = Microsoft.VisualBasic.Interaction.InputBox("Enter new backtest name", QCPluginUtilities.AppTitle, backtestName);
                             backtestName = CleanInput(backtestName);

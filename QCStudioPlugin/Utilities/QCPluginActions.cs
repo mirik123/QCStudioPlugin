@@ -352,10 +352,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 QCPluginUtilities.OutputCommandString("getting backtest results...", QCPluginUtilities.Severity.Info);
 
                 var results = await api.BacktestResults(backtestId);
-
                 CalcPeriods(results);
-                results.UserID = api.UserID;
-                results.AuthToken = api.AuthToken;
 
                 return results;
             }
@@ -469,6 +466,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
+            var timer = DateTime.Now;
 
             var lean = new LeanProxy();
             if (lean == null)
@@ -558,10 +556,14 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                     if (result.Progress == "1")
                     {
-                        task.TrySetResult(result);
-                        tokenSource.Cancel();
-                        (systemHandlers as IDisposable).Dispose();
-                        (algorithmHandlers as IDisposable).Dispose();
+                        result.Progress = "100%";
+                        result.ProcessingTime = DateTime.Now.Subtract(timer).TotalSeconds;
+                        if (task.TrySetResult(result))
+                        {                            
+                            tokenSource.Cancel();
+                            (systemHandlers as IDisposable).Dispose();
+                            (algorithmHandlers as IDisposable).Dispose();
+                        }                        
                     }
                 });
 
@@ -693,7 +695,9 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     Title = "Save Backtest results to file"
                 };
                 
-                if(DialogResult.OK == dlg.ShowDialog()) {
+                if(DialogResult.OK == dlg.ShowDialog()) 
+                {
+                    if (string.IsNullOrEmpty(dlg.FileName)) return;
                     var json = JsonConvert.SerializeObject(_results);
                     File.Delete(dlg.FileName);
                     File.WriteAllText(dlg.FileName, json);
@@ -719,6 +723,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                 if (DialogResult.OK == dlg.ShowDialog())
                 {
+                    if (string.IsNullOrEmpty(dlg.FileName)) return;
                     var json = JsonConvert.SerializeObject(_results);
                     File.Delete(dlg.FileName);
                     File.WriteAllText(dlg.FileName, json);
