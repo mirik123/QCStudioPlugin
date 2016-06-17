@@ -92,32 +92,20 @@ namespace QuantConnect.QCStudioPlugin
             {
                 // Create the command for the tool window
                 CommandID toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalJS);
-                OleMenuCommand menuToolWin = new OleMenuCommand((sender, e) =>
-                {
-                    var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
-                    string pluginsPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathBinaries").Value;
-                    string dataPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathData").Value;
-                    QCPluginUtilities.ShowBacktestJSLocal(pluginsPath, dataPath);
-                }, toolwndCommandID);
+                OleMenuCommand menuToolWin = new OleMenuCommand((sender, e) => { QCPluginUtilities.ShowBacktestJSLocal(); }, toolwndCommandID);
                 mcs.AddCommand( menuToolWin );
 
                 toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalZED);
-                menuToolWin = new OleMenuCommand((sender, e) =>
-                {
-                    var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
-                    string pluginsPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathBinaries").Value;
-                    string dataPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathData").Value;
-                    QCPluginUtilities.ShowBacktestZEDLocal(pluginsPath, dataPath);
-                }, toolwndCommandID);
+                menuToolWin = new OleMenuCommand((sender, e) => { QCPluginUtilities.ShowBacktestZEDLocal(); }, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
 
                 toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCSaveLocal);
-                menuToolWin = new OleMenuCommand((sender, e) =>
+                menuToolWin = new OleMenuCommand(async (sender, e) =>
                 {
                     var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
                     string pluginsPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathBinaries").Value;
                     string dataPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathData").Value;
-                    QCPluginUtilities.SaveLocalBacktest(pluginsPath, dataPath);
+                    await QCStudioPluginActions.SaveLocalBacktest(pluginsPath, dataPath);
                 }, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
 

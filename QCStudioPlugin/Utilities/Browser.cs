@@ -204,10 +204,12 @@ namespace QuantConnect.Views
             string msg = "";
 
             if (emulationRegCode == BrowserEmulationVersion.Default)
-                msg = "Currently no Visual Studio Browser emulation is set in the registry. Do you want to set it to the latest Internet Explorer version: " + ieVersion + "?";
+                msg = "No Visual Studio Browser emulation is set in the registry. Do you want to set it to the latest Internet Explorer version: " + ieVersion + 
+                        "? The results will be enabled after restarting VisualStudio.";
             else if (emulationRegCode != emulationIECode)
                 msg = "The Visual Studio Browser emulation is set to the version: " + emulationRegCode.ToString().Replace("Version", "") +
-                        ". Do you want to set it to the latest Internet Explorer version: " + ieVersion + "?";
+                        ". Do you want to set it to the latest Internet Explorer version: " + ieVersion +
+                        "? The results will be enabled after restarting VisualStudio.";
             else return;
 
             if (DialogResult.Yes == MessageBox.Show(msg, Resources.ToolWindowTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1))

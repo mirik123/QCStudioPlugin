@@ -703,6 +703,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     File.WriteAllText(dlg.FileName, json);
                 }
             }
+            else
+                QCPluginUtilities.OutputCommandString("No backtest results for: " + backtestId, QCPluginUtilities.Severity.Error);
         }
 
         public async static Task SaveLocalBacktest(string pluginsPath, string dataPath)
@@ -713,7 +715,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
             var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
             if (_results != null)
-            {               
+            {
                 var dlg = new SaveFileDialog
                 {
                     AddExtension = true,
@@ -729,6 +731,25 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     File.WriteAllText(dlg.FileName, json);
                 }
             }
+            else
+                QCPluginUtilities.OutputCommandString("No backtest results for: " + className, QCPluginUtilities.Severity.Error);
+        }
+
+        public async static Task<PacketBacktestResult> LoadLocalBacktest(string FileName)
+        {
+            if (string.IsNullOrEmpty(FileName)) return null;
+            if (!File.Exists(FileName))
+            {
+                QCPluginUtilities.OutputCommandString("Backtest file doesn't exist " + FileName, QCPluginUtilities.Severity.Error);
+                return null;
+            }
+
+            string json = null;
+            using (var reader = File.OpenText(FileName))
+                json = await reader.ReadToEndAsync();
+
+            var _results = JsonConvert.DeserializeObject<PacketBacktestResult>(json);
+            return _results;               
         }
     }
 

@@ -24,6 +24,7 @@ using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
+using Newtonsoft.Json;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -55,11 +56,6 @@ namespace QuantConnect.QCStudioPlugin
             QCPluginUtilities.InstallPath = RetrieveAssemblyDirectory();
             QCPluginUtilities.chartWindowJSFrame = chartWindowJSFrame;
             QCPluginUtilities.chartWindowZedFrame = chartWindowZedFrame;
-        }
-
-        public async static void SaveLocalBacktest(string pluginsPath, string dataPath)
-        {
-            await QCStudioPluginActions.SaveLocalBacktest(pluginsPath, dataPath);
         }
 
         public async static void ShowBacktestJSRemote(string backtestId)
@@ -109,49 +105,49 @@ namespace QuantConnect.QCStudioPlugin
             chartWindowZedFrame.control.Run();
         }
 
-        public async static void ShowBacktestJSLocal(string pluginsPath, string dataPath)
+        public async static void ShowBacktestJSLocal()
         {
-            string algorithmPath, className;
-            GetSelectedItem(out algorithmPath, out className);
-            if (algorithmPath == null || className == null) return;
-            
-            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
-            chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
+            var dlg = new OpenFileDialog
             {
-                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
-
-                foreach (var pair in _results.Results.Statistics)
-                {
-                    QCPluginUtilities.OutputCommandString("STATISTICS:: " + pair.Key + " " + pair.Value, QCPluginUtilities.Severity.Info);
-                }
-
-                return _results;
+                Filter = "JSON file|*.json|All files|*.*",
+                Title = "Open Backtest results from file"
             };
 
-            await QCStudioPluginActions.Authenticate();
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
+                ErrorHandler.ThrowOnFailure(frame.Show());            
 
-            string url = QCStudioPluginActions.GetTerminalUrl(className);
-            chartWindowJSFrame.control.Run(url);
+                await QCStudioPluginActions.Authenticate();
+                string url = QCStudioPluginActions.GetTerminalUrl("className");
+
+                chartWindowJSFrame.control.GetBacktestResultsCallback = async () => { 
+                    return await QCStudioPluginActions.LoadLocalBacktest(dlg.FileName); 
+                };            
+
+                chartWindowJSFrame.control.Run(url);
+            }           
         }
 
-        public static void ShowBacktestZEDLocal(string pluginsPath, string dataPath)
+        public static void ShowBacktestZEDLocal()
         {
-            string algorithmPath, className;
-            GetSelectedItem(out algorithmPath, out className);
-            if (algorithmPath == null || className == null) return;
-            
-            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
-            chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
+            var dlg = new OpenFileDialog
             {
-                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
-                return _results;
+                Filter = "JSON file|*.json|All files|*.*",
+                Title = "Open Backtest results from file"
             };
 
-            chartWindowZedFrame.control.Run();
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
+                ErrorHandler.ThrowOnFailure(frame.Show());
+
+                chartWindowZedFrame.control.GetBacktestResultsCallback = async () => { 
+                    return await QCStudioPluginActions.LoadLocalBacktest(dlg.FileName); 
+                };
+
+                chartWindowZedFrame.control.Run();
+            }
         }
 
         public static string[] GetAlgorithmsList(string filePath, string classDll)

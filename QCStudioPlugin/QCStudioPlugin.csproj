@@ -268,6 +268,8 @@
     <None Include="Resources\Images.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\runlocal2.png" />
+    <Resource Include="Resources\runremote2.png" />
     <Resource Include="Resources\runlocal.png" />
     <Resource Include="Resources\runremote.png" />
     <Resource Include="Resources\BacktestsMenu.png" />
@@ -280,6 +282,7 @@
     <Resource Include="Icons\Open16.png" />
     <Resource Include="Resources\adminpane.png" />
     <Resource Include="Resources\QCChart.png" />
+    <Resource Include="Resources\QCChart2.png" />
     <Content Include="Resources\QCClient.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

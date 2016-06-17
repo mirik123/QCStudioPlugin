@@ -16,28 +16,28 @@
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Icon guid="guidlocbt" id="bmpPic1" />
         <Strings>
-          <ButtonText>QuantConnect Client</ButtonText>
+          <ButtonText>QuantConnect Terminal</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidQCStudioPluginCmdSet" id="cmdidQCLocalZED" priority="0x0100" type="Button">
-        <Parent guid="guidQCStudioPluginCmdSet" id="MyMenuGroup"/>
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Icon guid="guidlocbt" id="bmpPic1" />
         <Strings>
-          <ButtonText>Run backtest locally (ZED)</ButtonText>
+          <ButtonText>Show results (ZED)</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidQCStudioPluginCmdSet" id="cmdidQCLocalJS" priority="0x0100" type="Button">
-        <Parent guid="guidQCStudioPluginCmdSet" id="MyMenuGroup"/>
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Icon guid="guidlocbt" id="bmpPic1" />
         <Strings>
-          <ButtonText>Run backtest locally (JS)</ButtonText>
+          <ButtonText>Show results (JS)</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidQCStudioPluginCmdSet" id="cmdidQCSaveLocal" priority="0x0100" type="Button">
         <Parent guid="guidQCStudioPluginCmdSet" id="MyMenuGroup"/>
         <Icon guid="guidlocbt" id="bmpPic1" />
         <Strings>
-          <ButtonText>Save backtest to JSON</ButtonText>
+          <ButtonText>Run backtest locally</ButtonText>
         </Strings>
       </Button>
     </Buttons>
