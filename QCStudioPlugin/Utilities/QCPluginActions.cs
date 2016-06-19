@@ -26,6 +26,22 @@ namespace QuantConnect.QCStudioPlugin.Actions
     public static class QCStudioPluginActions
     {
         private static API api;
+        private static LeanProxy lean;
+        private static object composer;
+
+        public static string UserID { get { return api.UserID; } }
+        public static string AuthToken { get { return api.AuthToken; } }
+
+        public static void UpdateLeanAndComposer(string pluginsPath)
+        {
+            lean = new LeanProxy();
+            if (!string.IsNullOrEmpty(pluginsPath))
+            {
+                lean.LoadLibraries(pluginsPath);
+                lean.SetConfiguration("plugin-directory", pluginsPath);
+            }
+            composer = lean.CreateComposer();          
+        }
 
         public static void Initialize()
         {
@@ -468,8 +484,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
             var token = tokenSource.Token;
             var timer = DateTime.Now;
 
-            var lean = new LeanProxy();
-            if (lean == null)
+            if (lean == null || composer == null) UpdateLeanAndComposer(pluginsPath);
+            if (lean == null || composer == null)
             {
                 QCPluginUtilities.OutputCommandString("Failed to generate Lean proxy", QCPluginUtilities.Severity.Warning);
                 task.SetException(new Exception("Failed to generate proxy"));
@@ -478,7 +494,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
             try
             {
-                lean.LoadLibraries(pluginsPath);
+                //lean.LoadLibraries(pluginsPath);
 
                 lean.SetConfiguration("environment", "");   //"backtesting-desktop"
                 lean.SetConfiguration("plugin-directory", pluginsPath);
@@ -502,10 +518,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 lean.SetConfiguration("real-time-handler", "QuantConnect.Lean.Engine.RealTime.BacktestingRealTimeHandler");
                 lean.SetConfiguration("transaction-handler", "QuantConnect.Lean.Engine.TransactionHandlers.BacktestingTransactionHandler");
                 lean.SetConfiguration("log-handler", "QuantConnect.Logging.QueueLogHandler");
-
-
-                //Composer.Instance.Reset();
-                var composer = lean.CreateComposer();
 
                 //Log.LogHandler = Composer.Instance.GetExportedValueByTypeName<ILogHandler>("QuantConnect.Logging.QueueLogHandler");
                 lean.SetLogHandler(composer, (packet) =>
@@ -662,18 +674,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
             return task.Task;
         }*/
-
-        public static string GetTerminalUrl(string backtestId, int ProjectId = 0, bool liveMode = false)
-        {
-            var url = "";
-            var embedPage = liveMode ? "embeddedLive" : "embedded";
-
-            url = string.Format(
-                "https://www.quantconnect.com/terminal/{0}?user={1}&token={2}&pid={3}&version={4}&holdReady={5}&bid={6}",
-                embedPage, api.UserID, api.AuthToken, ProjectId, Resources.QuantConnectVersion, "{0}", backtestId);
-
-            return url;
-        }
 
         public async static Task SaveRemoteBacktest(string backtestId)
         {

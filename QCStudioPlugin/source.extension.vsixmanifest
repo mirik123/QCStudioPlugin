@@ -19,5 +19,7 @@
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QCTerminalControl" d:VsixSubPath="extensions" Path="|QCTerminalControl|" AssemblyName="|QCTerminalControl;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="ZedGraphUIControl" d:VsixSubPath="extensions" Path="|ZedGraphUIControl|" AssemblyName="|ZedGraphUIControl;AssemblyName|" />
   </Assets>
 </PackageManifest>

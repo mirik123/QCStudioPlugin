@@ -31,8 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.BacktestMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.RefreshBacktestsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.LoadBacktestJSMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.LoadBacktestZEDMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadBacktestMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.DeleteBacktestMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveLocallyMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.ProjectsMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -67,12 +66,11 @@
             // 
             this.BacktestMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RefreshBacktestsMenu,
-            this.LoadBacktestJSMenu,
-            this.LoadBacktestZEDMenu,
+            this.LoadBacktestMenu,
             this.DeleteBacktestMenu,
             this.SaveLocallyMenu});
             this.BacktestMenu.Name = "BacktestMenu";
-            this.BacktestMenu.Size = new System.Drawing.Size(172, 136);
+            this.BacktestMenu.Size = new System.Drawing.Size(188, 114);
             this.BacktestMenu.Opening += new System.ComponentModel.CancelEventHandler(this.BacktestMenu_Opening);
             this.BacktestMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.BacktestMenu_Click);
             // 
@@ -80,31 +78,23 @@
             // 
             this.RefreshBacktestsMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Reload;
             this.RefreshBacktestsMenu.Name = "RefreshBacktestsMenu";
-            this.RefreshBacktestsMenu.Size = new System.Drawing.Size(171, 22);
+            this.RefreshBacktestsMenu.Size = new System.Drawing.Size(187, 22);
             this.RefreshBacktestsMenu.Tag = "1";
             this.RefreshBacktestsMenu.Text = "Refresh";
             // 
-            // LoadBacktestJSMenu
+            // LoadBacktestMenu
             // 
-            this.LoadBacktestJSMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
-            this.LoadBacktestJSMenu.Name = "LoadBacktestJSMenu";
-            this.LoadBacktestJSMenu.Size = new System.Drawing.Size(171, 22);
-            this.LoadBacktestJSMenu.Tag = "0";
-            this.LoadBacktestJSMenu.Text = "Load Backtest JS";
-            // 
-            // LoadBacktestZEDMenu
-            // 
-            this.LoadBacktestZEDMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
-            this.LoadBacktestZEDMenu.Name = "LoadBacktestZEDMenu";
-            this.LoadBacktestZEDMenu.Size = new System.Drawing.Size(171, 22);
-            this.LoadBacktestZEDMenu.Tag = "0";
-            this.LoadBacktestZEDMenu.Text = "Load Backtest ZED";
+            this.LoadBacktestMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Open;
+            this.LoadBacktestMenu.Name = "LoadBacktestMenu";
+            this.LoadBacktestMenu.Size = new System.Drawing.Size(187, 22);
+            this.LoadBacktestMenu.Tag = "0";
+            this.LoadBacktestMenu.Text = "Load Backtest Results";
             // 
             // DeleteBacktestMenu
             // 
             this.DeleteBacktestMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Garbage_Closed;
             this.DeleteBacktestMenu.Name = "DeleteBacktestMenu";
-            this.DeleteBacktestMenu.Size = new System.Drawing.Size(171, 22);
+            this.DeleteBacktestMenu.Size = new System.Drawing.Size(187, 22);
             this.DeleteBacktestMenu.Tag = "0";
             this.DeleteBacktestMenu.Text = "Delete Backtest";
             // 
@@ -112,7 +102,7 @@
             // 
             this.SaveLocallyMenu.Image = global::QuantConnect.QCStudioPlugin.Properties.Resources.Save;
             this.SaveLocallyMenu.Name = "SaveLocallyMenu";
-            this.SaveLocallyMenu.Size = new System.Drawing.Size(171, 22);
+            this.SaveLocallyMenu.Size = new System.Drawing.Size(187, 22);
             this.SaveLocallyMenu.Tag = "0";
             this.SaveLocallyMenu.Text = "Save Locally";
             // 
@@ -334,7 +324,6 @@
 
         private System.Windows.Forms.ContextMenuStrip BacktestMenu;
         private System.Windows.Forms.ToolStripMenuItem RefreshBacktestsMenu;
-        private System.Windows.Forms.ToolStripMenuItem LoadBacktestZEDMenu;
         private System.Windows.Forms.ToolStripMenuItem DeleteBacktestMenu;
         private System.Windows.Forms.ContextMenuStrip ProjectsMenu;
         private System.Windows.Forms.ToolStripMenuItem RefreshProjectsMenu;
@@ -352,7 +341,7 @@
         private System.Windows.Forms.DataGridView dgrBacktests;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.DataGridView dgrProjects;
-        private System.Windows.Forms.ToolStripMenuItem LoadBacktestJSMenu;
+        private System.Windows.Forms.ToolStripMenuItem LoadBacktestMenu;
         private System.Windows.Forms.ToolStripMenuItem SaveLocallyMenu;
     }
 }

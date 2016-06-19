@@ -1,6 +1,6 @@
-﻿namespace QuantConnect.QCStudioPlugin.Forms
+﻿namespace QCTerminalControl
 {
-    partial class ChartControl
+    partial class JSChartControl
     {
         /// <summary> 
         /// Required designer variable.

@@ -17,6 +17,7 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using QuantConnect.RestAPI.Models;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -24,7 +25,6 @@ namespace QuantConnect.QCStudioPlugin
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(AdminPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Bottom)]
-    [ProvideToolWindow(typeof(ChartPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Top)]
     [ProvideToolWindow(typeof(QCClientPane), MultiInstances = false, Style = VsDockStyle.Tabbed, Transient = true, Orientation = ToolWindowOrientation.Top)]
     [ProvideOptionPage(typeof(OptionPageGrid), "QuantConnect Client", "General", 0, 0, true)]
     [Guid(GuidList.guidQCStudioPluginPkgString)]
@@ -47,32 +47,15 @@ namespace QuantConnect.QCStudioPlugin
             return (IVsWindowFrame)window.Frame;            
         }
 
-        private string GetVSIXInstalledLocation()
-        {
-            //return "";
-            
-            // get ExtensionManager
-            IVsExtensionManager manager = ServiceProvider.GlobalProvider.GetService(typeof(SVsExtensionManager)) as IVsExtensionManager;
-            //foreach (IInstalledExtension extension in manager.GetInstalledExtensions())
-            //    if(extension.Header.Name == "MyExtensionName")
-            //        return extension.InstallPath;
-
-            // get your extension by Product Id
-            IInstalledExtension myExtension = manager.GetInstalledExtension(GuidList.guidQCStudioPluginPkgString);
-            // get current version
-            return myExtension.InstallPath;
-        }
-
         private void CustomInitialize()
         {
             string AppTitle = Resources.ToolWindowTitle;
             var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
             var dialogFactory = GetService(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
             var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
-            var chartWindowJSFrame = (ChartPane)this.FindToolWindow(typeof(ChartPane), 0, true);
-            var chartWindowZedFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
+            var chartWindowFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
 
-            QCPluginUtilities.Initialize(AppTitle, dte, dialogFactory, outputWindow, chartWindowJSFrame, chartWindowZedFrame);
+            QCPluginUtilities.Initialize(AppTitle, dte, dialogFactory, outputWindow, chartWindowFrame);
             QCStudioPluginActions.Initialize();
         }
 
@@ -91,12 +74,8 @@ namespace QuantConnect.QCStudioPlugin
             if ( null != mcs )
             {
                 // Create the command for the tool window
-                CommandID toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalJS);
-                OleMenuCommand menuToolWin = new OleMenuCommand((sender, e) => { QCPluginUtilities.ShowBacktestJSLocal(); }, toolwndCommandID);
-                mcs.AddCommand( menuToolWin );
-
-                toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocalZED);
-                menuToolWin = new OleMenuCommand((sender, e) => { QCPluginUtilities.ShowBacktestZEDLocal(); }, toolwndCommandID);
+                var toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCLocal);
+                var menuToolWin = new OleMenuCommand((sender, e) => { QCPluginUtilities.ShowBacktestLocal(); }, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
 
                 toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCSaveLocal);

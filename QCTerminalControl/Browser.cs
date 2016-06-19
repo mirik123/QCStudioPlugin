@@ -17,10 +17,9 @@ using System.IO;
 using System.Security;
 using Microsoft.Win32;
 using System.Windows.Forms;
-using QuantConnect.QCStudioPlugin.Properties;
-using QuantConnect.QCStudioPlugin;
+using QCTerminalControl.Properties;
 
-namespace QuantConnect.Views
+namespace QCTerminalControl
 {
     public enum BrowserEmulationVersion
     {
@@ -73,12 +72,12 @@ namespace QuantConnect.Views
             }
             catch (SecurityException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                //QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 return -1;
             }
             catch (UnauthorizedAccessException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                //QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 return -1;
             }
 
@@ -104,12 +103,12 @@ namespace QuantConnect.Views
             }
             catch (SecurityException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                //QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 result = BrowserEmulationVersion.Error;
             }
             catch (UnauthorizedAccessException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                //QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 result = BrowserEmulationVersion.Error;
             }
 
@@ -149,12 +148,12 @@ namespace QuantConnect.Views
             }
             catch (SecurityException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                //QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 return false;
             }
             catch (UnauthorizedAccessException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                //QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
                 return false;
             }
         }

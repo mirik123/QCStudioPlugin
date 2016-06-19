@@ -5,6 +5,7 @@
 
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using QuantConnect.RestAPI.Models;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -20,7 +21,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
     public class QCClientPane : ToolWindowPane
     {
         // Control that will be hosted in the tool window
-        private QCClientControl _control = null;
+        private ChartControl _control = null;
 
         // Caching our output window pane
         //private IVsOutputWindowPane outputWindowPane = null;
@@ -33,11 +34,6 @@ namespace QuantConnect.QCStudioPlugin.Forms
         public QCClientPane()
             : base(null)
         {
-            Trace.WriteLine(String.Format(CultureInfo.CurrentCulture, "Entering constructor for class {0}.", this.GetType().Name));
-
-            // Creating the user control that will be displayed in the window
-            _control = new QCClientControl();
-
             this.Caption = QCPluginUtilities.ChartTitle;
             this.BitmapResourceID = 700;
             this.BitmapIndex = 1;
@@ -97,7 +93,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
         /// <value>
         /// The <see cref="QCClientControl"/> control object.
         /// </value>
-        public QCClientControl control
+        public ChartControl control
         {
             get
             {

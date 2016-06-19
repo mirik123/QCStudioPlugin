@@ -62,12 +62,8 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
                 switch (sourceControl.Name)
                 {
-                    case "LoadBacktestJSMenu":
-                        QCPluginUtilities.ShowBacktestJSRemote(selbacktest.BacktestId);
-
-                        break;
-                    case "LoadBacktestZEDMenu":
-                        QCPluginUtilities.ShowBacktestZEDRemote(selbacktest.BacktestId);
+                    case "LoadBacktestMenu":
+                        QCPluginUtilities.ShowBacktestRemote(selbacktest.BacktestId);
 
                         break;
                     case "DeleteBacktestMenu":
@@ -214,7 +210,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
         private void dgrBacktests_DoubleClick(object sender, EventArgs e)
         {
-            LoadBacktestZEDMenu.PerformClick();
+            LoadBacktestMenu.PerformClick();
         }
 
         private void BacktestMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
