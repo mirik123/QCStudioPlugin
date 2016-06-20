@@ -44,7 +44,10 @@ namespace QCTerminalControl
         public override void Initialize(params string[] args)
         {
             if (WBEmulator.IsWindows)
+            {
+                WBEmulator.Logger = Logger;
                 WBEmulator.ValidateAndUpdateBrowserEmulation();
+            }
 
             url = GetTerminalUrl(args[0], args[1], args[2]);
             Browser.Navigate(string.Format(url, 0));
@@ -76,7 +79,7 @@ namespace QCTerminalControl
             }
             catch (Exception ex)
             {
-                //QCPluginUtilities.OutputCommandString(ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger(ex.ToString());
             }
         }
 
@@ -86,7 +89,7 @@ namespace QCTerminalControl
             Browser.Document.Window.Error += (object s2, HtmlElementErrorEventArgs e2) =>
             {
                 var err = string.Format("JS ERROR: Url=\"{0}\", Line={0}, Description=\"{0}\", ", e2.Url, e2.LineNumber, e2.Description);
-                //QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
+                Logger(err);
             };
 
             if (browserData == null) return;

@@ -6,8 +6,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using QuantConnect.Statistics;
-using QuantConnect.Util;
 /**********************************************************
 * USING NAMESPACES
 **********************************************************/
@@ -18,6 +16,7 @@ using System.Runtime.Serialization;
 
 namespace QuantConnect.RestAPI.Models
 {
+
     /// <summary>
     /// Result Class for Backtest:
     /// </summary>
@@ -53,12 +52,12 @@ namespace QuantConnect.RestAPI.Models
         /// <summary>
         /// Chart updates in this backtest since the last backtest result packet was sent.
         /// </summary>
-        public IDictionary<string, QCChart> Charts = new Dictionary<string, QCChart>();
+        public IDictionary<string, object> Charts = new Dictionary<string, object>();
 
         /// <summary>
         /// Order updates since the last backtest result packet was sent.
         /// </summary>
-        public IDictionary<int, dynamic> Orders = new Dictionary<int, dynamic>();
+        public IDictionary<int, object> Orders = new Dictionary<int, object>();
 
         /// <summary>
         /// Profit and loss results from closed trades.
@@ -79,133 +78,11 @@ namespace QuantConnect.RestAPI.Models
         /// <summary>
         /// Rolling window detailed statistics.
         /// </summary>
-        public Dictionary<string, AlgorithmPerformance> RollingWindow = new Dictionary<string, AlgorithmPerformance>();
+        public Dictionary<string, object> RollingWindow = new Dictionary<string, object>();
 
         /// <summary>
         /// Rolling window detailed statistics.
         /// </summary>
-        public AlgorithmPerformance TotalPerformance = null;
-    }
-
-    [JsonObject]
-    public class QCChart
-    {
-        /// Name of the Chart:
-        public string Name = "";
-
-        /// Type of the Chart, Overlayed or Stacked.
-        [Obsolete("ChartType is now obsolete. Please use Series indexes instead by setting index in the series constructor.")]
-        public ChartType ChartType = ChartType.Overlay;
-
-        /// List of Series Objects for this Chart:
-        public Dictionary<string, Series> Series = new Dictionary<string, Series>();
-    }
-
-    /// <summary>
-    /// Chart Series Object - Series data and properties for a chart:
-    /// </summary>
-    [JsonObject]
-    public class Series
-    {
-        /// <summary>
-        /// Name of the Series:
-        /// </summary>
-        public string Name = "";
-
-        /// <summary>
-        /// Axis for the chart series.
-        /// </summary>
-        public string Unit = "$";
-
-        /// <summary>
-        /// Index/position of the series on the chart.
-        /// </summary>
-        public int Index;
-
-        /// <summary>
-        ///  Values for the series plot:
-        /// These values are assumed to be in ascending time order (first points earliest, last points latest)
-        /// </summary>
-        public List<ChartPoint> Values = new List<ChartPoint>();
-
-        /// <summary>
-        /// Chart type for the series:
-        /// </summary>
-        public SeriesType SeriesType = SeriesType.Line;
-
-        /// <summary>
-        /// Color the series 
-        /// </summary>
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color Color = Color.Empty;
-
-        /// <summary>
-        /// Shape or symbol for the marker in a scatter plot
-        /// </summary>
-        public ScatterMarkerSymbol ScatterMarkerSymbol = ScatterMarkerSymbol.None;
-    }
-
-    [JsonObject]
-    public struct ChartPoint
-    {
-        /// Time of this chart point: lower case for javascript encoding simplicty
-        public long x;
-
-        /// Value of this chart point:  lower case for javascript encoding simplicty
-        public decimal y;
-    }
-
-    /// <summary>
-    /// Available types of charts
-    /// </summary>
-    public enum SeriesType
-    {
-        /// Line Plot for Value Types
-        Line,
-        /// Scatter Plot for Chart Distinct Types
-        Scatter,
-        /// Charts
-        Candle,
-        /// Bar chart.
-        Bar,
-        /// Flag indicators
-        Flag
-    }
-
-    /// <summary>
-    /// Type of chart - should we draw the series as overlayed or stacked
-    /// </summary>
-    public enum ChartType
-    {
-        /// Overlayed stacked
-        Overlay,
-        /// Stacked series on top of each other.
-        Stacked
-    }
-
-    /// <summary>
-    /// Shape or symbol for the marker in a scatter plot
-    /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum ScatterMarkerSymbol
-    {
-        /// Circle symbol
-        [EnumMember(Value = "none")]
-        None,
-        /// Circle symbol
-        [EnumMember(Value = "circle")]
-        Circle,
-        /// Square symbol
-        [EnumMember(Value = "square")]
-        Square,
-        /// Diamond symbol
-        [EnumMember(Value = "diamond")]
-        Diamond,
-        /// Triangle symbol
-        [EnumMember(Value = "triangle")]
-        Triangle,
-        /// Triangle-down symbol
-        [EnumMember(Value = "triangle-down")]
-        TriangleDown,
+        public object TotalPerformance = null;
     }
 }

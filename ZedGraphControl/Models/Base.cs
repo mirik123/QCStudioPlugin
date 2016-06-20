@@ -39,10 +39,4 @@ namespace QuantConnect.RestAPI.Models
 
         public PacketBase() { }
     }
-
-    public abstract class ChartControl: UserControl
-    {
-        public virtual void Initialize(params string[] args) { }
-        public virtual void Run(PacketBacktestResult _results) { }
-    }
 }

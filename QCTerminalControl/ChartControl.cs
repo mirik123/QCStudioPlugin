@@ -9,6 +9,7 @@ namespace QuantConnect.RestAPI.Models
 {
     public abstract class ChartControl : UserControl
     {
+        public Action<string> Logger;
         public virtual void Initialize(params string[] args) { }
         public virtual void Run(PacketBacktestResult _results) { }
     }

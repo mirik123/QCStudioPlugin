@@ -41,6 +41,7 @@ namespace QCTerminalControl
     /// </summary>
     public static class WBEmulator
     {
+        public static Action<string> Logger;
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
 
@@ -72,12 +73,12 @@ namespace QCTerminalControl
             }
             catch (SecurityException ex)
             {
-                //QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the permissions required to read from the registry key: " + ex.ToString());
                 return -1;
             }
             catch (UnauthorizedAccessException ex)
             {
-                //QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the necessary registry rights: " + ex.ToString());
                 return -1;
             }
 
@@ -103,12 +104,12 @@ namespace QCTerminalControl
             }
             catch (SecurityException ex)
             {
-                //QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the permissions required to read from the registry key: " + ex.ToString());
                 result = BrowserEmulationVersion.Error;
             }
             catch (UnauthorizedAccessException ex)
             {
-                //QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the necessary registry rights: " + ex.ToString());
                 result = BrowserEmulationVersion.Error;
             }
 
@@ -148,12 +149,12 @@ namespace QCTerminalControl
             }
             catch (SecurityException ex)
             {
-                //QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the permissions required to read from the registry key: " + ex.ToString());
                 return false;
             }
             catch (UnauthorizedAccessException ex)
             {
-                //QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the necessary registry rights: " + ex.ToString());
                 return false;
             }
         }

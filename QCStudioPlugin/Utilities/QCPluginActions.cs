@@ -34,13 +34,17 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
         public static void UpdateLeanAndComposer(string pluginsPath)
         {
+            QCPluginUtilities.OutputCommandString("Started UpdateLeanAndComposer...", QCPluginUtilities.Severity.Info);
+
             lean = new LeanProxy();
             if (!string.IsNullOrEmpty(pluginsPath))
             {
                 lean.LoadLibraries(pluginsPath);
                 lean.SetConfiguration("plugin-directory", pluginsPath);
             }
-            composer = lean.CreateComposer();          
+            composer = lean.CreateComposer();
+
+            QCPluginUtilities.OutputCommandString("Finished UpdateLeanAndComposer", QCPluginUtilities.Severity.Info);
         }
 
         public static void Initialize()
@@ -368,8 +372,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 QCPluginUtilities.OutputCommandString("getting backtest results...", QCPluginUtilities.Severity.Info);
 
                 var results = await api.BacktestResults(backtestId);
-                CalcPeriods(results);
-
                 return results;
             }
             catch (Exception ex)
@@ -378,29 +380,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
 
             return null;
-        }
-
-        private static void CalcPeriods(PacketBacktestResult packet)
-        {
-            long _startDate = long.MaxValue, _endDate = -1;
-
-            foreach (var chart in packet.Results.Charts.Values)
-            {
-                foreach (var series in chart.Series.Values)
-                {
-                    if (series.Values.Count == 0) continue;
-
-                    var mindt = series.Values.Min(x => x.x);
-                    var maxdt = series.Values.Max(x => x.x);
-                    if (_startDate > mindt) _startDate = mindt;
-                    if (_endDate < maxdt) _endDate = maxdt;
-                }
-            }
-
-            if (_endDate < 0) return;
-
-            packet.PeriodStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_startDate);
-            packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
         }
 
         public async static Task DeleteProject(int ProjectID)

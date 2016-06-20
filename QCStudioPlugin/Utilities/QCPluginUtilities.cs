@@ -64,15 +64,17 @@ namespace QuantConnect.QCStudioPlugin
             ErrorHandler.ThrowOnFailure(frame.Show());
 
             await QCStudioPluginActions.Authenticate();
-            chartWindowFrame.control.Initialize(backtestId, QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
 
+            chartWindowFrame.control.Logger = (msg) => {
+                QCPluginUtilities.OutputCommandString(msg, QCPluginUtilities.Severity.Error);
+            };
+
+            chartWindowFrame.control.Initialize(backtestId, QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
             var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
 
             QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
             foreach (var err in _results.Errors)
-            {
                 QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
-            }
 
             chartWindowFrame.control.Run(_results);
         }
@@ -91,16 +93,18 @@ namespace QuantConnect.QCStudioPlugin
                 ErrorHandler.ThrowOnFailure(frame.Show());            
 
                 await QCStudioPluginActions.Authenticate();
-                chartWindowFrame.control.Initialize(Path.GetFileNameWithoutExtension(dlg.FileName), QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
 
+                chartWindowFrame.control.Logger = (msg) => {
+                    QCPluginUtilities.OutputCommandString(msg, QCPluginUtilities.Severity.Error);
+                };
+
+                chartWindowFrame.control.Initialize(Path.GetFileNameWithoutExtension(dlg.FileName), QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
                 var _results = await QCStudioPluginActions.LoadLocalBacktest(dlg.FileName);
 
                 QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
                 foreach (var err in _results.Errors)
-                {
                     QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
-                }
-
+                
                 chartWindowFrame.control.Run(_results);
             }           
         }
@@ -308,7 +312,7 @@ namespace QuantConnect.QCStudioPlugin
             return dlg;
         }
 
-        public static void UpdateLocalProject(List<QuantConnect.RestAPI.Models.QCFile> projectFiles, string ProjectName)
+        public static void UpdateLocalProject(List<QCFile> projectFiles, string ProjectName)
         {
             var proj = dte.Solution.Projects.Cast<EnvDTE.Project>().FirstOrDefault(x => x.Name == ProjectName);
             if (proj == null)

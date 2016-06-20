@@ -6,10 +6,10 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using System;
+/**********************************************************
+* USING NAMESPACES
+**********************************************************/
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace QuantConnect.RestAPI.Models
 {
@@ -38,11 +38,5 @@ namespace QuantConnect.RestAPI.Models
         public string Ip;
 
         public PacketBase() { }
-    }
-
-    public abstract class ChartControl : UserControl
-    {
-        public virtual void Initialize(params string[] args) { }
-        public virtual void Run(PacketBacktestResult _results) { }
     }
 }

@@ -23,14 +23,11 @@ namespace QuantConnect.QCStudioPlugin.Forms
             InitializeComponent();
         }
 
-        public override void Initialize(params string[] args)
-        { 
-        }
-
         public override void Run(PacketBacktestResult _results)
         {
             try
             {
+                CalcPeriods(_results);
                 dataGridViewTrades.DataSource = _results.Results.Orders.Select(itm => new
                 {
                     DateTime = itm.Value.Time,
@@ -63,8 +60,31 @@ namespace QuantConnect.QCStudioPlugin.Forms
             }
             catch (Exception ex)
             {
-                //QCPluginUtilities.OutputCommandString(ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger(ex.ToString());
             }                     
+        }
+
+        private static void CalcPeriods(PacketBacktestResult packet)
+        {
+            long _startDate = long.MaxValue, _endDate = -1;
+
+            foreach (var chart in packet.Results.Charts.Values)
+            {
+                foreach (var series in chart.Series.Values)
+                {
+                    if (series.Values.Count == 0) continue;
+
+                    var mindt = series.Values.Min(x => x.x);
+                    var maxdt = series.Values.Max(x => x.x);
+                    if (_startDate > mindt) _startDate = mindt;
+                    if (_endDate < maxdt) _endDate = maxdt;
+                }
+            }
+
+            if (_endDate < 0) return;
+
+            packet.PeriodStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_startDate);
+            packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
         }
     }
 }

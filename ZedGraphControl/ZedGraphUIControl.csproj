@@ -56,6 +56,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChartControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="DateTimePointsList.cs" />
     <Compile Include="DrawChartsFactory.cs" />
     <Compile Include="Models\AlgorithmPerformance.cs" />
