@@ -175,16 +175,12 @@
     <Compile Include="PkgCmdID.cs" />
     <Compile Include="RestAPI\RestAPI.cs" />
     <Compile Include="RestAPI\Models\Backtests.cs" />
-    <Compile Include="RestAPI\Models\Base.cs" />
     <Compile Include="RestAPI\Models\Compiler.cs" />
     <Compile Include="RestAPI\Models\Projects.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\LeanProxy.cs" />
     <Compile Include="Utilities\LeanProxyFactory.cs" />
-    <Compile Include="Utilities\ChartControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Utilities\QCPluginActions.cs" />
     <Compile Include="Utilities\QCPluginUtilities.cs" />
     <Compile Include="VSPackage.Designer.cs">
@@ -272,12 +268,17 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\QCInterfaces\QCInterfaces.csproj">
+      <Project>{ced3a407-0bee-4f69-9fb1-8b3b84bb0abe}</Project>
+      <Name>QCInterfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QCTerminalControl\QCTerminalControl.csproj">
       <Project>{840958DF-68DD-4109-884D-29BAEC73780F}</Project>
       <Name>QCTerminalControl</Name>
       <VSIXSubPath>extensions</VSIXSubPath>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+      <Aliases>qcterminal</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\ZedGraphControl\ZedGraphUIControl.csproj">
       <Project>{01A36B7C-AB4E-4BD4-9E2E-113E6A73526F}</Project>
@@ -285,7 +286,7 @@
       <VSIXSubPath>extensions</VSIXSubPath>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-      <Aliases>global</Aliases>
+      <Aliases>zetgraphui</Aliases>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

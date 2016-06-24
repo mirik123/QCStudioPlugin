@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QCTerminalControl", "QCTerm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraphUIControl", "ZedGraphControl\ZedGraphUIControl.csproj", "{01A36B7C-AB4E-4BD4-9E2E-113E6A73526F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QCInterfaces", "QCInterfaces\QCInterfaces.csproj", "{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,15 @@ Global
 		{01A36B7C-AB4E-4BD4-9E2E-113E6A73526F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01A36B7C-AB4E-4BD4-9E2E-113E6A73526F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{01A36B7C-AB4E-4BD4-9E2E-113E6A73526F}.Release|x64.ActiveCfg = Release|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Mono|Any CPU.ActiveCfg = Release|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Mono|Any CPU.Build.0 = Release|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Mono|x64.ActiveCfg = Release|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,5 +97,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{840958DF-68DD-4109-884D-29BAEC73780F} = {2B37EF7C-91BB-458B-831C-B948593CC957}
 		{01A36B7C-AB4E-4BD4-9E2E-113E6A73526F} = {2B37EF7C-91BB-458B-831C-B948593CC957}
+		{CED3A407-0BEE-4F69-9FB1-8B3B84BB0ABE} = {2B37EF7C-91BB-458B-831C-B948593CC957}
 	EndGlobalSection
 EndGlobal

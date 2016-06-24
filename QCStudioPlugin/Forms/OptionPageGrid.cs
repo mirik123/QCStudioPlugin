@@ -10,6 +10,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -19,7 +20,7 @@ namespace QuantConnect.QCStudioPlugin
     /// </summary>
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [CLSCompliant(false), ComVisible(true)]
-    public class OptionPageGrid : DialogPage
+    public class OptionPageGrid : DialogPage, INotifyPropertyChanged
     {
         private string _UIBinaries = "QCTerminalControl.dll";
         private string _UIClassName = "QCTerminalControl.JSChartControl";
@@ -28,7 +29,7 @@ namespace QuantConnect.QCStudioPlugin
         [Category("Lean")]
         [DisplayName("Path to Lean binaries")]
         [Editor("System.Windows.Forms.Design.FolderNameEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-        public string pathBinaries {
+        public string PathBinaries {
             get {
                 return _pathBinaries;
             }
@@ -36,7 +37,7 @@ namespace QuantConnect.QCStudioPlugin
                 if (_pathBinaries != value)
                 {
                     _pathBinaries = value;
-                    QCStudioPluginActions.UpdateLeanAndComposer(value);
+                    OnPropertyChanged("PathBinaries");
                 }
             }
         }
@@ -44,9 +45,9 @@ namespace QuantConnect.QCStudioPlugin
         [Category("Lean")]
         [DisplayName("Path to Lean Data")]
         [Editor("System.Windows.Forms.Design.FolderNameEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-        public string pathData { get; set;}
+        public string PathData { get; set;}
 
-        [Category("Lean")]
+        [Category("UI")]
         [DisplayName("Path to UI library")]
         [Editor("System.Windows.Forms.Design.FileNameEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
         public string UIBinaries {
@@ -54,27 +55,25 @@ namespace QuantConnect.QCStudioPlugin
                 return _UIBinaries;
             }
             set {
-                if (string.IsNullOrEmpty(value)) value = "QCTerminalControl.dll";
                 if (_UIBinaries != value)
                 {
                     _UIBinaries = value;
-                    UpdateChartControl();
+                    OnPropertyChanged("UIBinaries");
                 }
             } 
         }
 
-        [Category("Lean")]
+        [Category("UI")]
         [DisplayName("Full class name for UI library")]
         public string UIClassName {
             get {
                 return _UIClassName;
             }
             set {
-                if (string.IsNullOrEmpty(value)) value = "QCTerminalControl.JSChartControl";
                 if (_UIClassName != value)
                 {
                     _UIClassName = value;
-                    UpdateChartControl();
+                    OnPropertyChanged("UIClassName");
                 }
             } 
         }
@@ -87,12 +86,25 @@ namespace QuantConnect.QCStudioPlugin
         {
         }
 
-        private void UpdateChartControl()
+        /*protected override IWin32Window Window
         {
-            if (string.IsNullOrEmpty(_UIClassName) || string.IsNullOrEmpty(_UIBinaries))
-                QCPluginUtilities.chartWindowFrame.control = null;
-            else
-                QCPluginUtilities.chartWindowFrame.control = Activator.CreateInstanceFrom(_UIBinaries, _UIClassName).Unwrap() as ChartControl;
+            get
+            {
+                MyUserControl page = new MyUserControl();
+                page.optionsPage = this;
+                page.Initialize();
+                return page;
+            }
+        }*/
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
         }
     }
 }

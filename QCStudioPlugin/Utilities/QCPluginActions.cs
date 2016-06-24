@@ -25,16 +25,34 @@ namespace QuantConnect.QCStudioPlugin.Actions
 {
     public static class QCStudioPluginActions
     {
-        private static API api;
+        private static API api = new API();
         private static LeanProxy lean;
         private static object composer;
+        private static string _oldPluginsPath;
 
         public static string UserID { get { return api.UserID; } }
         public static string AuthToken { get { return api.AuthToken; } }
 
+        public static void ResetLeanAndComposer() 
+        {
+            lean = null;
+            composer = null;
+        }
+
         public static void UpdateLeanAndComposer(string pluginsPath)
         {
-            QCPluginUtilities.OutputCommandString("Started UpdateLeanAndComposer...", QCPluginUtilities.Severity.Info);
+            if (string.IsNullOrEmpty(pluginsPath))
+            {
+                QCPluginUtilities.OutputCommandString("Lean engine path is empty.", QCPluginUtilities.Severity.Error);               
+                composer = null;
+                lean = null;
+                return;
+            }
+
+            if (lean != null && composer != null && pluginsPath == _oldPluginsPath) return;
+
+            _oldPluginsPath = pluginsPath;
+            QCPluginUtilities.OutputCommandString("Started updating Lean engine and composer...", QCPluginUtilities.Severity.Info);
 
             lean = new LeanProxy();
             if (!string.IsNullOrEmpty(pluginsPath))
@@ -44,13 +62,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
             composer = lean.CreateComposer();
 
-            QCPluginUtilities.OutputCommandString("Finished UpdateLeanAndComposer", QCPluginUtilities.Severity.Info);
-        }
-
-        public static void Initialize()
-        {
-            QCStudioPluginActions.api = new API();
-            //Authenticate();
+            QCPluginUtilities.OutputCommandString("Finished updating Lean engine and composer...", QCPluginUtilities.Severity.Info);
         }
 
         public async static void Login()
@@ -463,7 +475,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
             var token = tokenSource.Token;
             var timer = DateTime.Now;
 
-            if (lean == null || composer == null) UpdateLeanAndComposer(pluginsPath);
+            UpdateLeanAndComposer(pluginsPath);
             if (lean == null || composer == null)
             {
                 QCPluginUtilities.OutputCommandString("Failed to generate Lean proxy", QCPluginUtilities.Severity.Warning);
@@ -529,7 +541,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 }, (packet) =>
                 {
                     var json = JObject.FromObject(packet);
-                    if (json.GetValue("oResults") == null)
+                    if (json.GetValue("oResults") == null && json.GetValue("Results") == null)
                     {
                         task.SetException(new Exception("No Backend Result!"));
                         return;
@@ -537,10 +549,11 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
                     var result = new PacketBacktestResult
                     {
-                        PeriodFinish = (json.GetValue("dtPeriodFinish") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        PeriodStart = (json.GetValue("dtPeriodStart") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        Results = JsonConvert.DeserializeObject<BacktestResult>(json.GetValue("oResults").ToString()),
-                        Progress = (json.GetValue("dProgress") ?? JToken.FromObject("0")).Value<string>()
+                        PeriodFinish = (json.GetValue("dtPeriodFinish") ?? json.GetValue("PeriodFinish") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
+                        PeriodStart = (json.GetValue("dtPeriodStart") ?? json.GetValue("PeriodStart") ??JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
+                        Results = JsonConvert.DeserializeObject<BacktestResult>((json.GetValue("oResults") ?? json.GetValue("Results")).ToString()),
+                        Progress = (json.GetValue("dProgress") ?? json.GetValue("Progress") ?? JToken.FromObject("0")).Value<string>(),
+                        ProcessingTime = DateTime.Now.Subtract(timer).TotalSeconds
                     };
 
                     QCPluginUtilities.OutputCommandString("Backtest progress: " + result.Progress, QCPluginUtilities.Severity.Info);
@@ -548,7 +561,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     if (result.Progress == "1")
                     {
                         result.Progress = "100%";
-                        result.ProcessingTime = DateTime.Now.Subtract(timer).TotalSeconds;
                         if (task.TrySetResult(result))
                         {                            
                             tokenSource.Cancel();
@@ -570,6 +582,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     {
                         //engine.Run(job, _algorithmPath); 
                         lean.RunEngine(engine, job, _algorithmPath);
+
+                        //task.Task.Result;
                     }
                     catch (Exception ex)
                     {
@@ -728,6 +742,9 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 json = await reader.ReadToEndAsync();
 
             var _results = JsonConvert.DeserializeObject<PacketBacktestResult>(json);
+            if (_results.Errors == null)
+                _results.Errors = new List<string>();
+
             return _results;               
         }
     }

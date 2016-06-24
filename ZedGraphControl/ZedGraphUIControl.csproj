@@ -56,21 +56,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChartControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="DateTimePointsList.cs" />
     <Compile Include="DrawChartsFactory.cs" />
-    <Compile Include="Models\AlgorithmPerformance.cs" />
-    <Compile Include="Models\Backtests.cs" />
-    <Compile Include="Models\Base.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Models\ColorJsonConverter.cs" />
-    <Compile Include="Models\OrderTypes.cs" />
-    <Compile Include="Models\PortfolioStatistics.cs" />
-    <Compile Include="Models\TradeStatistics.cs" />
-    <Compile Include="Models\TypeChangeJsonConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -85,7 +72,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Models\LICENSE" />
     <None Include="packages.config" />
     <None Include="ZedGraphControl.snk" />
   </ItemGroup>
@@ -100,6 +86,12 @@
     <EmbeddedResource Include="QCClientControl.resx">
       <DependentUpon>QCClientControl.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QCInterfaces\QCInterfaces.csproj">
+      <Project>{ced3a407-0bee-4f69-9fb1-8b3b84bb0abe}</Project>
+      <Name>QCInterfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

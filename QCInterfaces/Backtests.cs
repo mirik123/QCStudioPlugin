@@ -6,7 +6,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using QuantConnect.Statistics;
 using QuantConnect.Util;
 /**********************************************************
 * USING NAMESPACES
@@ -79,12 +78,12 @@ namespace QuantConnect.RestAPI.Models
         /// <summary>
         /// Rolling window detailed statistics.
         /// </summary>
-        public Dictionary<string, AlgorithmPerformance> RollingWindow = new Dictionary<string, AlgorithmPerformance>();
+        public Dictionary<string, object> RollingWindow = new Dictionary<string, object>();
 
         /// <summary>
         /// Rolling window detailed statistics.
         /// </summary>
-        public AlgorithmPerformance TotalPerformance = null;
+        public object TotalPerformance = null;
     }
 
     [JsonObject]

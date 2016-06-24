@@ -51,7 +51,9 @@ namespace QuantConnect.Util
             if (value.Length != 7)
             {
                 var message = string.Format("Unable to convert '{0}' to a Color. Requires string length of 7 including the leading hashtag.", value);
-                throw new FormatException(message);
+                //throw new FormatException(message);
+
+                return Color.FromName(value); 
             }
 
             var red = HexToInt(value.Substring(1, 2));

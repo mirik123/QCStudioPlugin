@@ -39,13 +39,28 @@ namespace QuantConnect.QCStudioPlugin.Forms
             this.BitmapIndex = 1;
         }
 
+        public void CustomInitialize() 
+        {
+            var dte = (EnvDTE80.DTE2)ServiceProvider.GlobalProvider.GetService(typeof(EnvDTE.DTE));
+            string UIBinaries = (string)dte.Properties["QuantConnect Client", "General"].Item("UIBinaries").Value;
+            string UIClassName = (string)dte.Properties["QuantConnect Client", "General"].Item("UIClassName").Value;
+
+            if (!string.IsNullOrEmpty(UIBinaries) && !string.IsNullOrEmpty(UIClassName))
+                control = (ChartControl)Activator.CreateInstanceFrom(UIBinaries, UIClassName).Unwrap();
+            else
+                control = null;
+        }
+
         /// <summary>
         /// This property returns the handle to the user control that should
         /// be hosted in the Tool Window.
         /// </summary>
         public override IWin32Window Window
         {
-            get { return (IWin32Window)_control; }
+            get {
+                if (_control == null) CustomInitialize();
+                return (IWin32Window)_control; 
+            }
         }
 
         /// <summary>
@@ -62,7 +77,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             ((IVsWindowFrame)this.Frame).SetProperty((int)__VSFPROPID.VSFPROPID_BitmapIndex, 1);
             ((IVsWindowFrame)this.Frame).SetProperty((int)__VSFPROPID.VSFPROPID_FrameMode, VSFRAMEMODE.VSFM_Dock);
 
-
+            
             // Display the pane as the first tab inside the VS IDE.
             //int result = ((IVsWindowFrame)this.Frame).SetProperty((int)__VSFPROPID.VSFPROPID_FrameMode, VSFRAMEMODE.VSFM_MdiChild);
             //if (result != VSConstants.S_OK)
@@ -97,6 +112,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
         {
             get
             {
+                if (_control == null) CustomInitialize();
                 return _control;
             }
             set

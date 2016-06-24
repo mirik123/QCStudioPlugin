@@ -45,38 +45,38 @@ namespace QuantConnect.QCStudioPlugin
         static internal IVsThreadedWaitDialogFactory dialogFactory;
         static internal IVsOutputWindow outputWindow;
         static internal string InstallPath;
-        static internal QCClientPane chartWindowFrame;
+        static internal Func<ChartControl> GetPaneWindow;
 
-        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, 
-                                        QCClientPane chartWindowFrame)
+        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, Func<ChartControl> getpanewindow)
         {
             QCPluginUtilities.AppTitle = AppTitle;
             QCPluginUtilities.dialogFactory = dialogFactory;
             QCPluginUtilities.dte = dte;
             QCPluginUtilities.outputWindow = outputWindow;
             QCPluginUtilities.InstallPath = RetrieveAssemblyDirectory();
-            QCPluginUtilities.chartWindowFrame = chartWindowFrame;
+            QCPluginUtilities.GetPaneWindow = getpanewindow;
         }
 
         public async static void ShowBacktestRemote(string backtestId)
         {
-            var frame = (IVsWindowFrame)chartWindowFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
+            var control = QCPluginUtilities.GetPaneWindow();
 
             await QCStudioPluginActions.Authenticate();
 
-            chartWindowFrame.control.Logger = (msg) => {
+            control.Logger = (msg) => {
                 QCPluginUtilities.OutputCommandString(msg, QCPluginUtilities.Severity.Error);
             };
 
-            chartWindowFrame.control.Initialize(backtestId, QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
+            control.Initialize(backtestId, QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
             var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
+            if (_results.Errors == null)
+                _results.Errors = new List<string>();
 
             QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
             foreach (var err in _results.Errors)
                 QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
 
-            chartWindowFrame.control.Run(_results);
+            control.Run(_results);
         }
 
         public async static void ShowBacktestLocal()
@@ -89,23 +89,22 @@ namespace QuantConnect.QCStudioPlugin
 
             if (DialogResult.OK == dlg.ShowDialog())
             {
-                var frame = (IVsWindowFrame)chartWindowFrame.Frame;
-                ErrorHandler.ThrowOnFailure(frame.Show());            
+                var control = QCPluginUtilities.GetPaneWindow();
 
                 await QCStudioPluginActions.Authenticate();
 
-                chartWindowFrame.control.Logger = (msg) => {
+                control.Logger = (msg) => {
                     QCPluginUtilities.OutputCommandString(msg, QCPluginUtilities.Severity.Error);
                 };
 
-                chartWindowFrame.control.Initialize(Path.GetFileNameWithoutExtension(dlg.FileName), QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
+                control.Initialize(Path.GetFileNameWithoutExtension(dlg.FileName), QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
                 var _results = await QCStudioPluginActions.LoadLocalBacktest(dlg.FileName);
 
                 QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
                 foreach (var err in _results.Errors)
                     QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
                 
-                chartWindowFrame.control.Run(_results);
+                control.Run(_results);
             }           
         }
 

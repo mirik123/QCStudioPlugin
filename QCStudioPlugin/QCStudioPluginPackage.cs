@@ -53,10 +53,35 @@ namespace QuantConnect.QCStudioPlugin
             var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
             var dialogFactory = GetService(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
             var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
-            var chartWindowFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
 
-            QCPluginUtilities.Initialize(AppTitle, dte, dialogFactory, outputWindow, chartWindowFrame);
-            QCStudioPluginActions.Initialize();
+            var page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+            page.PropertyChanged += page_PropertyChanged;
+
+            QCPluginUtilities.Initialize(AppTitle, dte, dialogFactory, outputWindow, this.GetPaneWindow);
+        }
+
+        void page_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "UIBinaries":
+                case "UIClassName":
+                    var chartWindowFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
+                    chartWindowFrame.control = null;
+                    break;
+                case "PathBinaries":
+                    QCStudioPluginActions.ResetLeanAndComposer();
+                    break;
+            }
+        }
+
+        internal ChartControl GetPaneWindow()
+        {
+            var chartWindowFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
+            var frame = (IVsWindowFrame)chartWindowFrame.Frame;
+            ErrorHandler.ThrowOnFailure(frame.Show());
+
+            return chartWindowFrame.control;
         }
 
 
@@ -81,10 +106,8 @@ namespace QuantConnect.QCStudioPlugin
                 toolwndCommandID = new CommandID(GuidList.guidQCStudioPluginCmdSet, (int)PkgCmdIDList.cmdidQCSaveLocal);
                 menuToolWin = new OleMenuCommand(async (sender, e) =>
                 {
-                    var dte = (DTE2)GetService(typeof(EnvDTE.DTE));
-                    string pluginsPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathBinaries").Value;
-                    string dataPath = (string)dte.Properties["QuantConnect Client", "General"].Item("pathData").Value;
-                    await QCStudioPluginActions.SaveLocalBacktest(pluginsPath, dataPath);
+                    OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                    await QCStudioPluginActions.SaveLocalBacktest(page.PathBinaries, page.PathData);
                 }, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
 
