@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace QuantConnect.RestAPI.Models
+namespace QCInterfaces
 {
     public abstract class ChartControl : UserControl
     {
         public Action<string> Logger;
         public virtual void Initialize(params string[] args) { }
-        public virtual void Run(PacketBacktestResult _results) { }
+        public virtual void Run(string json) { }
     }
 }

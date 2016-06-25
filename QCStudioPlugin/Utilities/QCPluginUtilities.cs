@@ -25,8 +25,11 @@ using Microsoft.CSharp;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
 using Newtonsoft.Json;
-using QuantConnect.RestAPI.Models;
+
 using System.Threading.Tasks;
+
+using QuantConnect.RestAPI.Models;
+using QCInterfaces;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -76,7 +79,7 @@ namespace QuantConnect.QCStudioPlugin
             foreach (var err in _results.Errors)
                 QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
 
-            control.Run(_results);
+            control.Run(_results.rawData);
         }
 
         public async static void ShowBacktestLocal()
@@ -104,7 +107,7 @@ namespace QuantConnect.QCStudioPlugin
                 foreach (var err in _results.Errors)
                     QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
                 
-                control.Run(_results);
+                control.Run(_results.rawData);
             }           
         }
 
@@ -260,10 +263,12 @@ namespace QuantConnect.QCStudioPlugin
         /// <param name="caption">The caption.</param>
         static internal void OutputCommandString(string text, string caption, Severity severity)
         {
+            var dt = DateTime.Now.ToShortTimeString();
+            
             // --- Get a reference to IVsOutputWindow. 
             if (outputWindow == null)
             {
-                Debug.WriteLine(string.Format("[{0}] {1}: {2} ", severity, caption, text));
+                Debug.WriteLine(string.Format("[{0} {1}] {2}: {3} ", dt, severity, caption, text));
                 return;
             }
 
@@ -273,13 +278,13 @@ namespace QuantConnect.QCStudioPlugin
 
             if (Microsoft.VisualStudio.ErrorHandler.Failed(outputWindow.GetPane(ref guidGeneral, out windowPane)))
             {
-                Debug.WriteLine(string.Format("[{0}] {1}: {2} ", severity, caption, text));
+                Debug.WriteLine(string.Format("[{0} {1}] {2}: {3} ", dt, severity, caption, text));
                 return;
             }
 
             // --- As the last step, write to the output window pane 
             windowPane.SetName(AppTitle);
-            windowPane.OutputString(string.Format("[{0}] {1} " + Environment.NewLine, severity, text));
+            windowPane.OutputString(string.Format("[{0} {1}] {2} " + Environment.NewLine, dt, severity, text));
             windowPane.Activate();
         }
 

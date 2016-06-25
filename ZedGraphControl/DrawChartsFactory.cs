@@ -4,7 +4,8 @@
 */
 
 
-using QuantConnect.RestAPI.Models;
+
+using QCInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

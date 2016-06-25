@@ -18,7 +18,7 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace QuantConnect.Util
+namespace QCInterfaces
 {
     /// <summary>
     /// Provides a base class for a <see cref="JsonConverter"/> that serializes a

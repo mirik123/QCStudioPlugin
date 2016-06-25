@@ -5,7 +5,7 @@
 
 using Microsoft.VisualStudio.Shell;
 using QuantConnect.QCStudioPlugin.Actions;
-using QuantConnect.RestAPI.Models;
+
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -24,12 +24,12 @@ namespace QuantConnect.QCStudioPlugin
     {
         private string _UIBinaries = "QCTerminalControl.dll";
         private string _UIClassName = "QCTerminalControl.JSChartControl";
-        public string _pathBinaries;
+        public string _pathBinaries = "";
         
         [Category("Lean")]
         [DisplayName("Path to Lean binaries")]
-        [Editor("System.Windows.Forms.Design.FolderNameEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-        public string PathBinaries {
+        [Editor("QuantConnect.QCStudioPlugin.VistaFolderBrowserEditor", typeof(UITypeEditor))]
+        public string PathBinaries2 {
             get {
                 return _pathBinaries;
             }
@@ -44,8 +44,8 @@ namespace QuantConnect.QCStudioPlugin
 
         [Category("Lean")]
         [DisplayName("Path to Lean Data")]
-        [Editor("System.Windows.Forms.Design.FolderNameEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-        public string PathData { get; set;}
+        [Editor("QuantConnect.QCStudioPlugin.VistaFolderBrowserEditor", typeof(UITypeEditor))]
+        public string PathData2 { get; set;}
 
         [Category("UI")]
         [DisplayName("Path to UI library")]

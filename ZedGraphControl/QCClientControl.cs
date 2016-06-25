@@ -3,9 +3,10 @@
 * QuantConnect Visual Studio Plugin
 */
 
-using QuantConnect.Orders;
+
+using Newtonsoft.Json;
+using QCInterfaces;
 using QuantConnect.QCPlugin;
-using QuantConnect.RestAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -23,10 +24,11 @@ namespace QuantConnect.QCStudioPlugin.Forms
             InitializeComponent();
         }
 
-        public override void Run(PacketBacktestResult _results)
+        public override void Run(string rawData)
         {
             try
             {
+                var _results = JsonConvert.DeserializeObject<BacktestResultPacket>(rawData);
                 CalcPeriods(_results);
                 dataGridViewTrades.DataSource = _results.Results.Orders.Select(itm => new
                 {
@@ -64,7 +66,7 @@ namespace QuantConnect.QCStudioPlugin.Forms
             }                     
         }
 
-        private static void CalcPeriods(PacketBacktestResult packet)
+        private static void CalcPeriods(BacktestResultPacket packet)
         {
             long _startDate = long.MaxValue, _endDate = -1;
 

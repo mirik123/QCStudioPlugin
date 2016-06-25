@@ -6,7 +6,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using QuantConnect.Util;
 /**********************************************************
 * USING NAMESPACES
 **********************************************************/
@@ -15,12 +14,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.Serialization;
 
-namespace QuantConnect.RestAPI.Models
+namespace QCInterfaces
 {
     /// <summary>
     /// Result Class for Backtest:
     /// </summary>
-    public class PacketBacktestResult : PacketBase
+    public class BacktestResultPacket : PacketBase
     {
         [JsonProperty(PropertyName = "progress")]
         public string Progress = "";
@@ -43,7 +42,7 @@ namespace QuantConnect.RestAPI.Models
         [JsonProperty(PropertyName = "dtPeriodFinish")]
         public DateTime PeriodFinish = DateTime.Now;
 
-        public PacketBacktestResult()
+        public BacktestResultPacket()
         { }
     }
 

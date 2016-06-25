@@ -14,8 +14,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using QuantConnect.RestAPI.Models;
+
 using QCTerminalControl.Properties;
+using QCInterfaces;
 
 namespace QCTerminalControl
 {
@@ -53,12 +54,13 @@ namespace QCTerminalControl
             Browser.Navigate(string.Format(url, 0));
         }
 
-        public override void Run(PacketBacktestResult _results)
+        public override void Run(string rawData)
         {
             var dateFormat = "yyyy-MM-dd HH:mm:ss";
 
             try
             {
+                var _results = JsonConvert.DeserializeObject<BacktestResultPacket>(rawData);
                 dynamic final = new
                 {
                     dtPeriodStart = _results.PeriodStart.ToString(dateFormat),

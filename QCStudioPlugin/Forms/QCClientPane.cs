@@ -5,7 +5,7 @@
 
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using QuantConnect.RestAPI.Models;
+using QCInterfaces;
 using System;
 using System.Diagnostics;
 using System.Globalization;

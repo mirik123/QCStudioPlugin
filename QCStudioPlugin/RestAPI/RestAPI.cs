@@ -7,6 +7,7 @@
 * USING NAMESPACES
 **********************************************************/
 using Newtonsoft.Json;
+
 using QuantConnect.RestAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -85,6 +86,7 @@ namespace QuantConnect.RestAPI
                     {
                         string jsonresp = reader.ReadToEnd();
                         res = JsonConvert.DeserializeObject<T>(jsonresp);
+                        res.rawData = jsonresp;
                         if (res.Errors == null || res.Errors.Count > 0)
                         {
                             var ex = res.Errors.Aggregate("", (x, y) => x + Environment.NewLine + y);
@@ -226,9 +228,9 @@ namespace QuantConnect.RestAPI
         /// <summary>
         /// Read this backtest result back:
         /// </summary>
-        public Task<PacketBacktestResult> BacktestResults(string backtestId)
+        public Task<PacketBase> BacktestResults(string backtestId)
         {
-            return Execute<PacketBacktestResult>("backtests/read", new { backtestId = backtestId });
+            return Execute<PacketBase>("backtests/read", new { backtestId = backtestId });
         }
 
 

@@ -11,7 +11,7 @@ using Newtonsoft.Json.Serialization;
 **********************************************************/
 using System.Collections.Generic;
 
-namespace QuantConnect.RestAPI.Models
+namespace QCInterfaces
 {
 
     /// <summary>
@@ -36,6 +36,8 @@ namespace QuantConnect.RestAPI.Models
         /// </summary>
         [JsonProperty(PropertyName = "ip")]
         public string Ip;
+
+        public string rawData;
 
         public PacketBase() { }
     }

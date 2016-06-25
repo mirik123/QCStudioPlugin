@@ -7,7 +7,7 @@ using QuantConnect.QCStudioPlugin.Forms;
 using Newtonsoft.Json;
 using QuantConnect.QCPlugin;
 using QuantConnect.RestAPI;
-using QuantConnect.RestAPI.Models;
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,6 +19,8 @@ using System.Windows.Forms;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using QuantConnect.QCStudioPlugin.Properties;
+using QuantConnect.RestAPI.Models;
+
 
 
 namespace QuantConnect.QCStudioPlugin.Actions
@@ -377,7 +379,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        public async static Task<PacketBacktestResult> GetBacktestResults(string backtestId)
+        public async static Task<PacketBase> GetBacktestResults(string backtestId)
         {
             try
             {
@@ -466,10 +468,10 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        public static Task<PacketBacktestResult> RunLocalBacktest(string algorithmPath, string fileName, string pluginsPath, string dataPath)
+        public static Task<string> RunLocalBacktest(string algorithmPath, string fileName, string pluginsPath, string dataPath)
         {
             var statistics = new Dictionary<string, string>();
-            var task = new TaskCompletionSource<PacketBacktestResult>();
+            var task = new TaskCompletionSource<string>();
 
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
@@ -514,8 +516,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 lean.SetLogHandler(composer, (packet) =>
                 {
                     var json = JObject.FromObject(packet);
-                    var message = (json.GetValue("sMessage") ?? json.GetValue("Message") ?? JToken.FromObject("")).Value<string>();
-                    var hstack = (json.GetValue("sStackTrace") ?? json.GetValue("StackTrace") ?? JToken.FromObject("")).Value<string>();
+                    var message = (json["sMessage"] ?? json["Message"] ?? JToken.FromObject("")).Value<string>();
+                    var hstack = (json["sStackTrace"] ?? json["StackTrace"] ?? JToken.FromObject("")).Value<string>();
                     var msgtype = string.IsNullOrEmpty(hstack) ? QCPluginUtilities.Severity.Info : QCPluginUtilities.Severity.Error;
 
                     QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
@@ -533,35 +535,28 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 lean.AddMessagingEvents(systemHandlers, algorithmHandlers, (packet) =>
                 {
                     var json = JObject.FromObject(packet);
-                    var message = (json.GetValue("sMessage") ?? json.GetValue("Message") ?? JToken.FromObject("")).Value<string>();
-                    var hstack = (json.GetValue("sStackTrace") ?? json.GetValue("StackTrace") ?? JToken.FromObject("")).Value<string>();
+                    var message = (json["sMessage"] ?? json["Message"] ?? JToken.FromObject("")).Value<string>();
+                    var hstack = (json["sStackTrace"] ?? json["StackTrace"] ?? JToken.FromObject("")).Value<string>();
                     var msgtype = string.IsNullOrEmpty(hstack) ? QCPluginUtilities.Severity.Info : QCPluginUtilities.Severity.Error;
 
                     QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
                 }, (packet) =>
                 {
                     var json = JObject.FromObject(packet);
-                    if (json.GetValue("oResults") == null && json.GetValue("Results") == null)
+                    if (json["oResults"] == null && json["Results"] == null)
                     {
                         task.SetException(new Exception("No Backend Result!"));
                         return;
                     }
 
-                    var result = new PacketBacktestResult
-                    {
-                        PeriodFinish = (json.GetValue("dtPeriodFinish") ?? json.GetValue("PeriodFinish") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        PeriodStart = (json.GetValue("dtPeriodStart") ?? json.GetValue("PeriodStart") ??JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        Results = JsonConvert.DeserializeObject<BacktestResult>((json.GetValue("oResults") ?? json.GetValue("Results")).ToString()),
-                        Progress = (json.GetValue("dProgress") ?? json.GetValue("Progress") ?? JToken.FromObject("0")).Value<string>(),
-                        ProcessingTime = DateTime.Now.Subtract(timer).TotalSeconds
-                    };
+                    var progress = (json["dProgress"] ?? json["Progress"] ?? JToken.FromObject("0")).Value<string>();
+                    QCPluginUtilities.OutputCommandString("Backtest progress: " + progress, QCPluginUtilities.Severity.Info);
 
-                    QCPluginUtilities.OutputCommandString("Backtest progress: " + result.Progress, QCPluginUtilities.Severity.Info);
-
-                    if (result.Progress == "1")
+                    if (progress == "1")
                     {
-                        result.Progress = "100%";
-                        if (task.TrySetResult(result))
+                        //result.Progress = "100%";
+                        var strjson = json.ToString(Formatting.None);
+                        if (task.TrySetResult(strjson))
                         {                            
                             tokenSource.Cancel();
                             (systemHandlers as IDisposable).Dispose();
@@ -583,7 +578,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                         //engine.Run(job, _algorithmPath); 
                         lean.RunEngine(engine, job, _algorithmPath);
 
-                        //task.Task.Result;
+                        QCPluginUtilities.OutputCommandString("Finished runnig backtest.", QCPluginUtilities.Severity.Info);
                     }
                     catch (Exception ex)
                     {
@@ -706,8 +701,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
             QCPluginUtilities.GetSelectedItem(out algorithmPath, out className);
             if (algorithmPath == null || className == null) return;
 
-            var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
-            if (_results != null)
+            var json = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
+            if (json != null)
             {
                 var dlg = new SaveFileDialog
                 {
@@ -719,7 +714,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 if (DialogResult.OK == dlg.ShowDialog())
                 {
                     if (string.IsNullOrEmpty(dlg.FileName)) return;
-                    var json = JsonConvert.SerializeObject(_results);
                     File.Delete(dlg.FileName);
                     File.WriteAllText(dlg.FileName, json);
                 }
@@ -728,7 +722,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 QCPluginUtilities.OutputCommandString("No backtest results for: " + className, QCPluginUtilities.Severity.Error);
         }
 
-        public async static Task<PacketBacktestResult> LoadLocalBacktest(string FileName)
+        public async static Task<PacketBase> LoadLocalBacktest(string FileName)
         {
             if (string.IsNullOrEmpty(FileName)) return null;
             if (!File.Exists(FileName))
@@ -741,7 +735,8 @@ namespace QuantConnect.QCStudioPlugin.Actions
             using (var reader = File.OpenText(FileName))
                 json = await reader.ReadToEndAsync();
 
-            var _results = JsonConvert.DeserializeObject<PacketBacktestResult>(json);
+            var _results = JsonConvert.DeserializeObject<PacketBase>(json);
+            _results.rawData = json;
             if (_results.Errors == null)
                 _results.Errors = new List<string>();
 

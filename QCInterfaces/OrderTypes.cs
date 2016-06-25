@@ -13,7 +13,7 @@
  * limitations under the License.
 */
 
-namespace QuantConnect.Orders
+namespace QCInterfaces
 {
     /// <summary>
     /// Type of the order: market, limit or stop

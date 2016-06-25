@@ -19,7 +19,7 @@ using System.Drawing;
 using System.Globalization;
 using Newtonsoft.Json;
 
-namespace QuantConnect.Util
+namespace QCInterfaces
 {
     /// <summary>
     /// A <see cref="JsonConverter" /> implementation that serializes a <see cref="Color" /> as a string.
@@ -48,9 +48,9 @@ namespace QuantConnect.Util
             {
                 return Color.Empty;
             }
-            if (value.Length != 7)
+            if (!value.StartsWith("#"))
             {
-                var message = string.Format("Unable to convert '{0}' to a Color. Requires string length of 7 including the leading hashtag.", value);
+                //var message = string.Format("Unable to convert '{0}' to a Color. Requires string length of 7 including the leading hashtag.", value);
                 //throw new FormatException(message);
 
                 return Color.FromName(value); 

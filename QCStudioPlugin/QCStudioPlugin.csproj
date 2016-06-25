@@ -163,6 +163,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Forms\QCClientPane.cs" />
+    <Compile Include="Forms\VistaFolderBrowser.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -234,8 +235,6 @@
     <None Include="Resources\Images.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\runlocal2.png" />
-    <Resource Include="Resources\runremote2.png" />
     <Resource Include="Resources\runlocal.png" />
     <Resource Include="Resources\runremote.png" />
     <Resource Include="Resources\BacktestsMenu.png" />

@@ -17,7 +17,9 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using QuantConnect.RestAPI.Models;
+using QCInterfaces;
+
+
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -69,7 +71,7 @@ namespace QuantConnect.QCStudioPlugin
                     var chartWindowFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
                     chartWindowFrame.control = null;
                     break;
-                case "PathBinaries":
+                case "PathBinaries2":
                     QCStudioPluginActions.ResetLeanAndComposer();
                     break;
             }
@@ -107,7 +109,7 @@ namespace QuantConnect.QCStudioPlugin
                 menuToolWin = new OleMenuCommand(async (sender, e) =>
                 {
                     OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
-                    await QCStudioPluginActions.SaveLocalBacktest(page.PathBinaries, page.PathData);
+                    await QCStudioPluginActions.SaveLocalBacktest(page.PathBinaries2, page.PathData2);
                 }, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
 
