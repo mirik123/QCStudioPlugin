@@ -23,7 +23,7 @@
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Icon guid="guidlocbt" id="bmpPic1" />
         <Strings>
-          <ButtonText>Show bacltest results</ButtonText>
+          <ButtonText>Show backtest results</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidQCStudioPluginCmdSet" id="cmdidQCSaveLocal" priority="0x0100" type="Button">

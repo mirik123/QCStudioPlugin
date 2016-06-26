@@ -14,13 +14,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-
 using QCTerminalControl.Properties;
-using QCInterfaces;
 
 namespace QCTerminalControl
 {
-    public partial class JSChartControl : ChartControl
+    public partial class JSChartControl : QCInterfaces.ChartControl
     {        
         private string browserData = null;
         private string url;
@@ -60,22 +58,20 @@ namespace QCTerminalControl
 
             try
             {
-                var _results = JsonConvert.DeserializeObject<BacktestResultPacket>(rawData);
-                dynamic final = new
-                {
-                    dtPeriodStart = _results.PeriodStart.ToString(dateFormat),
-                    dtPeriodFinished = _results.PeriodFinish.AddDays(1).ToString(dateFormat),
-                    oResultData = new
-                    {
-                        version = "3",
-                        results = _results.Results,
-                        statistics = _results.Results.Statistics,
-                        iTradeableDates = 1,
-                        ranking = (object)null
-                    }
-                };
+                var _results = JObject.Parse(rawData);
+                var final = new JObject(
+                    new JProperty("dtPeriodStart", _results["dtPeriodStart"].Value<DateTime>().ToString(dateFormat)),
+                    new JProperty("dtPeriodFinished", _results["dtPeriodFinish"].Value<DateTime>().AddDays(1).ToString(dateFormat)),
+                    new JProperty("oResultData", new JObject (                   
+                        new JProperty("version", "3"),
+                        new JProperty("results", _results["results"]),
+                        new JProperty("statistics", _results["results"]["Statistics"]),
+                        new JProperty("iTradeableDates", 1),
+                        new JProperty("ranking", (object)null)
+                    ))
+                );
 
-                browserData = JsonConvert.SerializeObject(final);
+                browserData = final.ToString(Formatting.None);
 
                 Browser.Navigate(string.Format(url, 1));
             }

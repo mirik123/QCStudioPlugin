@@ -542,14 +542,34 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
                 }, (packet) =>
                 {
-                    var json = JObject.FromObject(packet);
-                    if (json["oResults"] == null && json["Results"] == null)
+                    var json = JObject.FromObject(packet, new JsonSerializer { 
+                        PreserveReferencesHandling = PreserveReferencesHandling.None,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                        //NullValueHandling = NullValueHandling.Ignore,
+                        ContractResolver = new CustomResolver()
+                    });
+
+                    json.Property("Results").Replace(new JProperty("results", json["Results"]));
+                    json.Property("PeriodStart").Replace(new JProperty("dtPeriodStart", json["PeriodStart"]));
+                    json.Property("PeriodFinish").Replace(new JProperty("dtPeriodFinish", json["PeriodFinish"]));
+                    json.Property("Progress").Replace(new JProperty("progress", json["Progress"]));
+                    json.Property("ProcessingTime").Replace(new JProperty("processingTime", json["ProcessingTime"]));
+
+                    /*var strjson = JsonConvert.SerializeObject(packet, typeof(QCInterfaces.BacktestResultPacket), new JsonSerializerSettings {
+                        PreserveReferencesHandling = PreserveReferencesHandling.None,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                        NullValueHandling = NullValueHandling.Ignore,
+                        ContractResolver = new CustomResolver()
+                    });*/
+                    //var json = JObject.Parse(strjson);
+
+                    if (json["results"] == null && json["Results"] == null)
                     {
                         task.SetException(new Exception("No Backend Result!"));
                         return;
                     }
 
-                    var progress = (json["dProgress"] ?? json["Progress"] ?? JToken.FromObject("0")).Value<string>();
+                    var progress = (json["progress"] ?? json["Progress"] ?? JToken.FromObject("0")).Value<string>();
                     QCPluginUtilities.OutputCommandString("Backtest progress: " + progress, QCPluginUtilities.Severity.Info);
 
                     if (progress == "1")

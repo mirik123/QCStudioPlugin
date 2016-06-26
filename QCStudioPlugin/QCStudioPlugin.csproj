@@ -244,6 +244,10 @@
     <Resource Include="Resources\adminpane.png" />
     <Resource Include="Resources\QCChart.png" />
     <Resource Include="Resources\QCChart2.png" />
+    <Content Include="License-LGPL.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\QCClient.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
