@@ -477,6 +477,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
             var token = tokenSource.Token;
             var timer = DateTime.Now;
 
+            //lean.LoadLibraries(pluginsPath);
             UpdateLeanAndComposer(pluginsPath);
             if (lean == null || composer == null)
             {
@@ -487,8 +488,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
 
             try
             {
-                //lean.LoadLibraries(pluginsPath);
-
+                //Config.Set("environment", "");
                 lean.SetConfiguration("environment", "");   //"backtesting-desktop"
                 lean.SetConfiguration("plugin-directory", pluginsPath);
                 lean.SetConfiguration("data-folder", dataPath);
@@ -498,19 +498,20 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 //lean.SetConfiguration("api-access-token", "");
                 //lean.SetConfiguration("job-user-id", "0");
 
-                lean.SetConfiguration("algorithm-language", "CSharp");
-                lean.SetConfiguration("live-mode", "false");
-                lean.SetConfiguration("debug-mode", "true");
+                var dte = QCPluginUtilities.dte;
+                lean.SetConfiguration("algorithm-language", (string)dte.Properties["QuantConnect Client", "General"].Item("AlgorithmLanguage").Value);
+                lean.SetConfiguration("live-mode", ((bool)dte.Properties["QuantConnect Client", "General"].Item("LiveMode").Value).ToString().ToLower());
+                lean.SetConfiguration("debug-mode", ((bool)dte.Properties["QuantConnect Client", "General"].Item("DebugMode").Value).ToString().ToLower());
 
-                lean.SetConfiguration("messaging-handler", "QuantConnect.Messaging.EventMessagingHandler");
-                lean.SetConfiguration("job-queue-handler", "QuantConnect.Queues.JobQueue");
-                lean.SetConfiguration("api-handler", "QuantConnect.Api.Api");
-                lean.SetConfiguration("result-handler", "QuantConnect.Lean.Engine.Results.BacktestingResultHandler");
-                lean.SetConfiguration("setup-handler", "QuantConnect.Lean.Engine.Setup.ConsoleSetupHandler");
-                lean.SetConfiguration("data-feed-handler", "QuantConnect.Lean.Engine.DataFeeds.FileSystemDataFeed");
-                lean.SetConfiguration("real-time-handler", "QuantConnect.Lean.Engine.RealTime.BacktestingRealTimeHandler");
-                lean.SetConfiguration("transaction-handler", "QuantConnect.Lean.Engine.TransactionHandlers.BacktestingTransactionHandler");
-                lean.SetConfiguration("log-handler", "QuantConnect.Logging.QueueLogHandler");
+                lean.SetConfiguration("messaging-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("MessagingHandler").Value);
+                lean.SetConfiguration("job-queue-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("JobQueueHandler").Value);
+                lean.SetConfiguration("api-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("ApiHandler").Value);
+                lean.SetConfiguration("result-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("ResultHandler").Value);
+                lean.SetConfiguration("setup-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("SetupHandler").Value);
+                lean.SetConfiguration("data-feed-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("DataFeedHandler").Value);
+                lean.SetConfiguration("real-time-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("RealTimeHandler").Value);
+                lean.SetConfiguration("transaction-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("TransactionHandler").Value);
+                lean.SetConfiguration("log-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("LogHandler").Value);
 
                 //Log.LogHandler = Composer.Instance.GetExportedValueByTypeName<ILogHandler>("QuantConnect.Logging.QueueLogHandler");
                 lean.SetLogHandler(composer, (packet) =>
@@ -542,27 +543,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
                 }, (packet) =>
                 {
-                    var json = JObject.FromObject(packet, new JsonSerializer { 
-                        PreserveReferencesHandling = PreserveReferencesHandling.None,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                        //NullValueHandling = NullValueHandling.Ignore,
-                        ContractResolver = new CustomResolver()
-                    });
-
-                    json.Property("Results").Replace(new JProperty("results", json["Results"]));
-                    json.Property("PeriodStart").Replace(new JProperty("dtPeriodStart", json["PeriodStart"]));
-                    json.Property("PeriodFinish").Replace(new JProperty("dtPeriodFinish", json["PeriodFinish"]));
-                    json.Property("Progress").Replace(new JProperty("progress", json["Progress"]));
-                    json.Property("ProcessingTime").Replace(new JProperty("processingTime", json["ProcessingTime"]));
-
-                    /*var strjson = JsonConvert.SerializeObject(packet, typeof(QCInterfaces.BacktestResultPacket), new JsonSerializerSettings {
-                        PreserveReferencesHandling = PreserveReferencesHandling.None,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                        NullValueHandling = NullValueHandling.Ignore,
-                        ContractResolver = new CustomResolver()
-                    });*/
-                    //var json = JObject.Parse(strjson);
-
+                    var json = SerializeBacktestPacket(packet);
                     if (json["results"] == null && json["Results"] == null)
                     {
                         task.SetException(new Exception("No Backend Result!"));
@@ -614,6 +595,37 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
 
             return task.Task;
+        }
+
+        public static JObject SerializeBacktestPacket(object packet)
+        {
+            var json = JObject.FromObject(packet, new JsonSerializer { 
+                PreserveReferencesHandling = PreserveReferencesHandling.None,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                TypeNameHandling = TypeNameHandling.Auto,
+                //NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CustomResolver()
+            });
+
+            json.Property("Results").Replace(new JProperty("results", json["Results"]));
+            json.Property("PeriodStart").Replace(new JProperty("dtPeriodStart", json["PeriodStart"]));
+            json.Property("PeriodFinish").Replace(new JProperty("dtPeriodFinish", json["PeriodFinish"]));
+            json.Property("Progress").Replace(new JProperty("progress", json["Progress"]));
+            json.Property("ProcessingTime").Replace(new JProperty("processingTime", json["ProcessingTime"]));
+            
+
+            /*var strjson = JsonConvert.SerializeObject(packet, new JsonSerializerSettings
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.None,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,                
+                //NullValueHandling = NullValueHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto,
+                ContractResolver = new CustomResolver()
+            });
+            json = JObject.Parse(strjson);
+            */
+
+            return json;
         }
 
         /*public static Task<BacktestResultPacket> RunLocalBacktest(string algorithmPath, string fileName)
