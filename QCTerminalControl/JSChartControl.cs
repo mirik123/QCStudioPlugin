@@ -64,8 +64,8 @@ namespace QCTerminalControl
                     new JProperty("dtPeriodFinished", _results["dtPeriodFinish"].Value<DateTime>().AddDays(1).ToString(dateFormat)),
                     new JProperty("oResultData", new JObject (                   
                         new JProperty("version", "3"),
-                        new JProperty("results", _results["results"]),
-                        new JProperty("statistics", _results["results"]["Statistics"]),
+                        new JProperty("results", _results["oResults"]),
+                        new JProperty("statistics", _results["oResults"]["Statistics"]),
                         new JProperty("iTradeableDates", 1),
                         new JProperty("ranking", (object)null)
                     ))

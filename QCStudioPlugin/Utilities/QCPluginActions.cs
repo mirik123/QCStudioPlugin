@@ -537,14 +537,14 @@ namespace QuantConnect.QCStudioPlugin.Actions
                     QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
                 }, (packet) =>
                 {
-                    var json = SerializeBacktestPacket(packet);
-                    if (json["results"] == null && json["Results"] == null)
+                    var json = JObject.FromObject(packet);
+                    if (json["oResults"] == null && json["Results"] == null)
                     {
                         task.SetException(new Exception("No Backend Result!"));
                         return;
                     }
 
-                    var progress = (json["progress"] ?? json["Progress"] ?? JToken.FromObject("0")).Value<string>();
+                    var progress = (json["dProgress"] ?? json["Progress"] ?? JToken.FromObject("0")).Value<string>();
                     QCPluginUtilities.OutputCommandString("Backtest progress: " + progress, QCPluginUtilities.Severity.Info);
 
                     if (progress == "1")
@@ -598,8 +598,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                 TypeNameHandling = TypeNameHandling.All,
                 //NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CustomResolver(),
-                
+                ContractResolver = new CustomResolver()                
             });
 
             json.Property("Results").Replace(new JProperty("results", json["Results"]));

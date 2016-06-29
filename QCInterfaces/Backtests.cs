@@ -21,13 +21,13 @@ namespace QCInterfaces
     /// </summary>
     public class BacktestResultPacket : PacketBase
     {
-        [JsonProperty(PropertyName = "progress")]
+        [JsonProperty(PropertyName = "dProgress")]
         public string Progress = "";
 
-        [JsonProperty(PropertyName = "processingTime")]
+        [JsonProperty(PropertyName = "dProcessingTime")]
         public double ProcessingTime = 0;
 
-        [JsonProperty(PropertyName = "results")]
+        [JsonProperty(PropertyName = "oResults")]
         public BacktestResult Results;
 
         // <summary>

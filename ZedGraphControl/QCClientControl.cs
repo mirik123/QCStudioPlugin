@@ -6,7 +6,6 @@
 
 using Newtonsoft.Json;
 using QCInterfaces;
-using QuantConnect.QCPlugin;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,7 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace QuantConnect.QCStudioPlugin.Forms
+namespace ZedGraphUIControl
 {
     public partial class QCClientControl : ChartControl
     {
@@ -32,13 +31,13 @@ namespace QuantConnect.QCStudioPlugin.Forms
                 CalcPeriods(_results);
                 dataGridViewTrades.DataSource = _results.Results.Orders.Select(itm => new
                 {
-                    DateTime = itm.Value.Time,
-                    Symbol = itm.Value.Symbol.Value,
-                    Price = itm.Value.Price,
-                    Type = (OrderType)itm.Value.Type,
-                    Quantity = itm.Value.Quantity,
-                    Operation = itm.Value.Quantity > 0 ? OrderDirection.Buy : itm.Value.Quantity < 0 ? OrderDirection.Sell : OrderDirection.Hold,
-                    Status = (OrderStatus)itm.Value.Status
+                    DateTime = itm.Value.Time.Value,
+                    Symbol = itm.Value.Symbol.Value.Value,
+                    Price = itm.Value.Price.Value,
+                    Type = (OrderType)itm.Value.Type.Value,
+                    Quantity = itm.Value.Quantity.Value,
+                    Operation = itm.Value.Quantity.Value > 0 ? OrderDirection.Buy : itm.Value.Quantity.Value < 0 ? OrderDirection.Sell : OrderDirection.Hold,
+                    Status = (OrderStatus)itm.Value.Status.Value
                 }).ToArray();
 
                 dataGridViewStats.DataSource = _results.Results.Statistics.Select(itm => new
@@ -68,8 +67,9 @@ namespace QuantConnect.QCStudioPlugin.Forms
 
         private static void CalcPeriods(BacktestResultPacket packet)
         {
+            if (packet.PeriodStart > DateTime.MinValue && packet.PeriodFinish > DateTime.MinValue) return;
+            
             long _startDate = long.MaxValue, _endDate = -1;
-
             foreach (var chart in packet.Results.Charts.Values)
             {
                 foreach (var series in chart.Series.Values)

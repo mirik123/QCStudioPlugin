@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace QCInterfaces
 {
-    public abstract class ChartControl : UserControl
+    public class ChartControl : UserControl
     {
         public Action<string> Logger;
         public virtual void Initialize(params string[] args) { }

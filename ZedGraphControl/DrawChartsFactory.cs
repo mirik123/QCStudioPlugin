@@ -13,7 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ZedGraph;
 
-namespace QuantConnect.QCPlugin
+namespace ZedGraphUIControl
 {
     public class DrawChartsFactory
     {

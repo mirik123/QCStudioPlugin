@@ -68,8 +68,8 @@ namespace QuantConnect.QCStudioPlugin
             {
                 case "UIBinaries":
                 case "UIClassName":
-                    var chartWindowFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, true);
-                    chartWindowFrame.control = null;
+                    var chartWindowFrame = (QCClientPane)this.FindToolWindow(typeof(QCClientPane), 0, false);
+                    if (chartWindowFrame != null) chartWindowFrame.control = null;
                     break;
                 case "PathBinaries2":
                     QCStudioPluginActions.ResetLeanAndComposer();
