@@ -31,7 +31,7 @@ namespace QuantConnect.QCPlugin
         /// Draw the charts from a result packet:
         /// </summary>
         /// <param name="charts"></param>
-        public Dictionary<string, ZedGraphControl> DrawCharts(IDictionary<string, QCChart> charts, DateTime PeriodStart, DateTime PeriodFinish)
+        public Dictionary<string, ZedGraphControl> DrawCharts(IDictionary<string, QCInterfaces.Chart> charts, DateTime PeriodStart, DateTime PeriodFinish)
         {
             this.PeriodStart = PeriodStart;
             this.PeriodFinish = PeriodFinish;
@@ -61,7 +61,7 @@ namespace QuantConnect.QCPlugin
         /// Add the data to the empty chart:
         /// </summary>
         /// <param name="chart"></param>
-        private void DrawChart(QCChart chart)
+        private void DrawChart(QCInterfaces.Chart chart)
         {
             //Setting up this chart for the first time:
             if (!_initialized.ContainsKey(chart.Name))

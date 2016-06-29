@@ -20,6 +20,7 @@ using System.Threading;
 using Newtonsoft.Json.Linq;
 using QuantConnect.QCStudioPlugin.Properties;
 using QuantConnect.RestAPI.Models;
+using System.ComponentModel;
 
 
 
@@ -498,20 +499,13 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 //lean.SetConfiguration("api-access-token", "");
                 //lean.SetConfiguration("job-user-id", "0");
 
-                var dte = QCPluginUtilities.dte;
-                lean.SetConfiguration("algorithm-language", (string)dte.Properties["QuantConnect Client", "General"].Item("AlgorithmLanguage").Value);
-                lean.SetConfiguration("live-mode", ((bool)dte.Properties["QuantConnect Client", "General"].Item("LiveMode").Value).ToString().ToLower());
-                lean.SetConfiguration("debug-mode", ((bool)dte.Properties["QuantConnect Client", "General"].Item("DebugMode").Value).ToString().ToLower());
-
-                lean.SetConfiguration("messaging-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("MessagingHandler").Value);
-                lean.SetConfiguration("job-queue-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("JobQueueHandler").Value);
-                lean.SetConfiguration("api-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("ApiHandler").Value);
-                lean.SetConfiguration("result-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("ResultHandler").Value);
-                lean.SetConfiguration("setup-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("SetupHandler").Value);
-                lean.SetConfiguration("data-feed-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("DataFeedHandler").Value);
-                lean.SetConfiguration("real-time-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("RealTimeHandler").Value);
-                lean.SetConfiguration("transaction-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("TransactionHandler").Value);
-                lean.SetConfiguration("log-handler", (string)dte.Properties["QuantConnect Client", "General"].Item("LogHandler").Value);
+                var props = TypeDescriptor.GetProperties(typeof(OptionPageGrid)).Cast<PropertyDescriptor>().Where(x => x.Category == "Configuration");
+                foreach (var prop in props)
+                {
+                    var objVal = QCPluginUtilities.dte.Properties["QuantConnect Client", "General"].Item(prop.Name).Value;
+                    var strVal = objVal is bool ? ((bool)objVal).ToString().ToLower() : (string)objVal;
+                    lean.SetConfiguration(prop.DisplayName, strVal);
+                }
 
                 //Log.LogHandler = Composer.Instance.GetExportedValueByTypeName<ILogHandler>("QuantConnect.Logging.QueueLogHandler");
                 lean.SetLogHandler(composer, (packet) =>
@@ -602,9 +596,10 @@ namespace QuantConnect.QCStudioPlugin.Actions
             var json = JObject.FromObject(packet, new JsonSerializer { 
                 PreserveReferencesHandling = PreserveReferencesHandling.None,
                 ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                TypeNameHandling = TypeNameHandling.Auto,
+                TypeNameHandling = TypeNameHandling.All,
                 //NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CustomResolver()
+                ContractResolver = new CustomResolver(),
+                
             });
 
             json.Property("Results").Replace(new JProperty("results", json["Results"]));

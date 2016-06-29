@@ -263,7 +263,7 @@ namespace QuantConnect.QCStudioPlugin
         /// <param name="caption">The caption.</param>
         static internal void OutputCommandString(string text, string caption, Severity severity)
         {
-            var dt = DateTime.Now.ToString("HH:mm:ss zzz");
+            var dt = DateTime.Now.ToString("HH:mm:ss.FFF");
             
             // --- Get a reference to IVsOutputWindow. 
             if (outputWindow == null)

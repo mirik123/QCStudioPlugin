@@ -281,7 +281,7 @@
       <VSIXSubPath>extensions</VSIXSubPath>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-      <Aliases>qcterminal</Aliases>
+      <Aliases>global</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\ZedGraphControl\ZedGraphUIControl.csproj">
       <Project>{01A36B7C-AB4E-4BD4-9E2E-113E6A73526F}</Project>
@@ -289,7 +289,7 @@
       <VSIXSubPath>extensions</VSIXSubPath>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-      <Aliases>zetgraphui</Aliases>
+      <Aliases>global</Aliases>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

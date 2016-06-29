@@ -51,7 +51,7 @@ namespace QCInterfaces
         /// <summary>
         /// Chart updates in this backtest since the last backtest result packet was sent.
         /// </summary>
-        public IDictionary<string, QCChart> Charts = new Dictionary<string, QCChart>();
+        public IDictionary<string, Chart> Charts = new Dictionary<string, Chart>();
 
         /// <summary>
         /// Order updates since the last backtest result packet was sent.
@@ -83,10 +83,32 @@ namespace QCInterfaces
         /// Rolling window detailed statistics.
         /// </summary>
         public object TotalPerformance = null;
+
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
+        public BacktestResult()
+        {
+
+        }
+
+        /// <summary>
+        /// Constructor for the result class using dictionary objects.
+        /// </summary>
+        public BacktestResult(IDictionary<string, Chart> charts, IDictionary<int, dynamic> orders, IDictionary<DateTime, decimal> profitLoss, IDictionary<string, string> statistics, IDictionary<string, string> runtimeStatistics, Dictionary<string, object> rollingWindow, object totalPerformance = null)
+        {
+            Charts = charts;
+            Orders = orders;
+            ProfitLoss = profitLoss;
+            Statistics = statistics;
+            RuntimeStatistics = runtimeStatistics;
+            RollingWindow = rollingWindow;
+            TotalPerformance = totalPerformance;
+        }
     }
 
     [JsonObject]
-    public class QCChart
+    public class Chart
     {
         /// Name of the Chart:
         public string Name = "";
