@@ -21,7 +21,7 @@ namespace QuantConnect.QCStudioPlugin
         private Dictionary<string, Assembly> assemblies = new Dictionary<string, Assembly>();
 
         public LeanProxy()
-        {
+        {           
             AppDomain.CurrentDomain.AssemblyResolve -= AssemblyResolveHandler;
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolveHandler;
         }

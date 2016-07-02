@@ -57,11 +57,18 @@ namespace QuantConnect.QCStudioPlugin.Actions
             _oldPluginsPath = pluginsPath;
             QCPluginUtilities.OutputCommandString("Started updating Lean engine and composer...", QCPluginUtilities.Severity.Info);
 
+            AppDomain.CurrentDomain.SetData("APPBASE", pluginsPath);
+            Environment.CurrentDirectory = pluginsPath; 
+
+            QCPluginUtilities.OutputCommandString("Using ApplicationDomain: " + AppDomain.CurrentDomain.BaseDirectory, QCPluginUtilities.Severity.Info);
+
             lean = new LeanProxy();
             if (!string.IsNullOrEmpty(pluginsPath))
             {
                 lean.LoadLibraries(pluginsPath);
-                lean.SetConfiguration("plugin-directory", pluginsPath);
+
+                var objVal = QCPluginUtilities.dte.Properties["QuantConnect Client", "General"].Item("PluginDirectory").Value;
+                lean.SetConfiguration("plugin-directory", (string)objVal);
             }
             composer = lean.CreateComposer();
 
@@ -491,7 +498,6 @@ namespace QuantConnect.QCStudioPlugin.Actions
             {
                 //Config.Set("environment", "");
                 lean.SetConfiguration("environment", "");   //"backtesting-desktop"
-                lean.SetConfiguration("plugin-directory", pluginsPath);
                 lean.SetConfiguration("data-folder", dataPath);
                 lean.SetConfiguration("data-directory", dataPath);                
                 lean.SetConfiguration("algorithm-location", algorithmPath);
@@ -503,7 +509,7 @@ namespace QuantConnect.QCStudioPlugin.Actions
                 foreach (var prop in props)
                 {
                     var objVal = QCPluginUtilities.dte.Properties["QuantConnect Client", "General"].Item(prop.Name).Value;
-                    var strVal = objVal is bool ? ((bool)objVal).ToString().ToLower() : (string)objVal;
+                    var strVal = objVal is bool ? ((bool)objVal).ToString().ToLower() : objVal.ToString();
                     lean.SetConfiguration(prop.DisplayName, strVal);
                 }
 

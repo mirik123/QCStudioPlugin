@@ -142,6 +142,58 @@ namespace QuantConnect.QCStudioPlugin
         [DefaultValue("QuantConnect.Logging.QueueLogHandler")]
         public string LogHandler { get; set; }
 
+        [Category("Configuration")]
+        [DisplayName("plugin-directory")]
+        [DefaultValue("")]
+        [Editor("QuantConnect.QCStudioPlugin.VistaFolderBrowserEditor", typeof(UITypeEditor))]
+        public string PluginDirectory { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("history-provider")]
+        [DefaultValue("SubscriptionDataReaderHistoryProvider")]
+        public string HistoryProvider { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("command-queue-handler")]
+        [DefaultValue("EmptyCommandQueueHandler")]
+        public string CommandQueueHandler { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("map-file-provider")]
+        [DefaultValue("LocalDiskMapFileProvider")]
+        public string MapFileProvider { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("factor-file-provider")]
+        [DefaultValue("LocalDiskFactorFileProvider")]
+        public string FactorFileProvider { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("version-id")]
+        [DefaultValue("")]
+        public string VersionId { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("algorithm-manager-time-loop-maximum")]
+        [DefaultValue(10)]
+        public int AlgorithmManagerTimeLoopMaximum { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("ironpython-location")]
+        [DefaultValue("../ironpython/Lib")]
+        [Editor("QuantConnect.QCStudioPlugin.VistaFolderBrowserEditor", typeof(UITypeEditor))]
+        public string IronpythonLocation { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("forward-console-messages")]
+        [DefaultValue(true)]
+        public bool ForwardConsoleMessages { get; set; }
+
+        [Category("Configuration")]
+        [DisplayName("send-via-api")]
+        [DefaultValue(false)]
+        public bool SendViaApi { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OptionPageGrid"/> class.
         /// </summary>
