@@ -31,7 +31,7 @@ The Administrative window pane opens with sections for managing projects and bac
 |Refresh|Reload the backtests list after selecting active project|
 |Load Backtest results|Load backtest results and show them in a chart window|
 |Delete Backtest|Delete active backtest|
-|Save Locally|Save loaded from Rest API becktest results to a local file|
+|Save Locally|Save loaded from Rest API backtest results to a local file|
 
 ### Managing projects
 ![Project menu](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/ProjectsMenu.png "Project menu")
@@ -67,7 +67,7 @@ The sample algorithm templates are available here: https://github.com/QuantConne
    6. Do **Backtest Results** to see chart, statistics and trades.
 
 ## Chart view extension points
-The QCStudioPlugin Options dialog allows setting extension classes for showing becktest results.<br/>
+The QCStudioPlugin Options dialog allows setting extension classes for showing backtest results.<br/>
 The default charting option uses QuantConnect terminal web site:<br/>
 **Path to UI library:**   C:\\...\QCTerminalControl.dll<br/>
 **Full class name for UI:** QCTerminalControl.JSChartControl<br/>
