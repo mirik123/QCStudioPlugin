@@ -67,11 +67,11 @@ The sample algorithm templates are available here: https://github.com/QuantConne
    6. Do **Backtest Results** to see chart, statistics and trades.
 
 ## Chart view extension points
-The Visual Studio options dialog allows setting extension class for showing becktest results.<br/>
+The QCStudioPlugin Options dialog allows setting extension classes for showing becktest results.<br/>
 The default charting option uses QuantConnect terminal web site:<br/>
-**DLL:**   QCTerminalControl.dll<br/>
-**Class:** QCTerminalControl.JSChartControl<br/>
+**Path to UI library:**   C:\\...\QCTerminalControl.dll<br/>
+**Full class name for UI:** QCTerminalControl.JSChartControl<br/>
 
 The alternative option uses opensource [ZedGraph](https://github.com/discomurray/ZedGraph) library and is provided only as example:<br/>
-**DLL:**   ZedGraphUIControl.dll<br/>
-**Class:** ZedGraphUIControl.QCClientControl<br/>
+**Path to UI library:**   C:\\...\ZedGraphUIControl.dll<br/>
+**Full class name for UI:** ZedGraphUIControl.QCClientControl<br/>
