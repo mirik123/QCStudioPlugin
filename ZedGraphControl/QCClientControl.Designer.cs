@@ -1,4 +1,4 @@
-﻿namespace QuantConnect.QCStudioPlugin.Forms
+﻿namespace ZedGraphUIControl
 {
     partial class QCClientControl
     {

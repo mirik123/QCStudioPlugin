@@ -4,25 +4,24 @@ New QuantConnect Visual Studio plugin
 This Visual Studio plugin allows running QuantConnect backtests either localy using local installation of the QuantConnect Lean engine or remotely by utilizing the QuantConnect REST API.  
 
 ## The main plugin window
-![QuantConnect client](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/QCClient.png "QuantConnect client")
+![QuantConnect client](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/QCChart2.png "QuantConnect client")
 
 ## Local Run
-### Specify QuantConnect Lean installation folders
+### QuantConnect Lean configuration
+Specify QuantConnect Lean configuration options and installation folders.
+The QuantConnect Lean libraries will be loaded from folder defined in "Path to Lean binaries".
 ![VisualStudio Options Page](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/optionspage.png "VisualStudio Options Page")
 
-### Run workflow
+### Local run workflow
 To run backtest locally go to the selected C# file context menu<br/>
 ![Local run workflow](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/runlocal.png "Local run workflow")
-
-And than choose to show results by ZedGraph or by the WebBrowser control.
 
 ## Remote Run
 To run backtest remotely go to the Visual Studio menu: VIEW -> Other Windows -> QuantConnect Client
 ![Local run workflow](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/runremote.png "Local run workflow")
 
-Then Administrative window pane is opened with sections for managing projects and backtests
+The Administrative window pane opens with sections for managing projects and backtests
 ![Admin widow](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/adminpane.png "Admin widow")
-
 
 ### Managing backtests
 ![Backtest menu](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/BacktestsMenu.png "Backtest menu")
@@ -30,9 +29,9 @@ Then Administrative window pane is opened with sections for managing projects an
 |Menu item name|Menu item description|
 |---|---|
 |Refresh|Reload the backtests list after selecting active project|
-|Load Backtest JS|Load backtest results to chart window (JavaScript WebBrowser)|
-|Load Backtest ZED|Load backtest results to chart window (ZedGraph)|
+|Load Backtest results|Load backtest results and show them in a chart window|
 |Delete Backtest|Delete active backtest|
+|Save Locally|Save loaded from Rest API backtest results to a local file|
 
 ### Managing projects
 ![Project menu](https://github.com/mirik123/QCStudioPlugin/raw/master/QCStudioPlugin/Resources/ProjectsMenu.png "Project menu")
@@ -66,3 +65,13 @@ The sample algorithm templates are available here: https://github.com/QuantConne
    4. Double click on some project or select a project and do **Refresh backtests**.
    5. Select backtest and do **Load Backtest**.
    6. Do **Backtest Results** to see chart, statistics and trades.
+
+## Chart view extension points
+The QCStudioPlugin Options dialog allows setting extension classes for showing backtest results.<br/>
+The default charting option uses QuantConnect terminal web site:<br/>
+**Path to UI library:**   C:\\...\QCTerminalControl.dll<br/>
+**Full class name for UI:** QCTerminalControl.JSChartControl<br/>
+
+The alternative option uses opensource [ZedGraph](https://github.com/discomurray/ZedGraph) library and is provided only as example:<br/>
+**Path to UI library:**   C:\\...\ZedGraphUIControl.dll<br/>
+**Full class name for UI:** ZedGraphUIControl.QCClientControl<br/>

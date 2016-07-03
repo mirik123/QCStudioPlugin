@@ -3,12 +3,15 @@
 * QuantConnect Visual Studio Plugin
 */
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 /**********************************************************
 * USING NAMESPACES
 **********************************************************/
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -68,6 +71,43 @@ namespace QuantConnect.QCPlugin
             box.AppendText(text + Environment.NewLine);
             box.SelectionColor = box.ForeColor;
             box.ScrollToCaret();
+        }
+    }
+
+    //http:// stackoverflow.com/questions/20962316/ignoring-class-members-that-throw-exceptions-when-serializing-to-json
+    class CustomResolver : DefaultContractResolver
+    {
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            JsonProperty property = base.CreateProperty(member, memberSerialization);
+
+            property.ShouldSerialize = instance =>
+            {
+                try
+                {
+                    if (member is PropertyInfo)
+                    {
+                        PropertyInfo prop = (PropertyInfo)member;
+                        if (prop.CanRead)
+                        {
+                            if (",StrikePrice,OptionRight,OptionStyle,".Contains(","+prop.Name+","))
+                                return false;
+                            
+                            prop.GetValue(instance, null);
+                            return true;
+                        }
+
+                        return false;
+                    }
+                    
+                    return true;
+                }
+                catch {}
+
+                return false;
+            };
+
+            return property;
         }
     }
 }

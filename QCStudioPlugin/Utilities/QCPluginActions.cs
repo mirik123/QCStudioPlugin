@@ -7,7 +7,7 @@ using QuantConnect.QCStudioPlugin.Forms;
 using Newtonsoft.Json;
 using QuantConnect.QCPlugin;
 using QuantConnect.RestAPI;
-using QuantConnect.RestAPI.Models;
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,19 +19,19 @@ using System.Windows.Forms;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using QuantConnect.QCStudioPlugin.Properties;
+using QuantConnect.RestAPI.Models;
+using System.ComponentModel;
+
 
 
 namespace QuantConnect.QCStudioPlugin.Actions
 {
     public static class QCStudioPluginActions
     {
-        private static API api;
+        private static API api = new API();
 
-        public static void Initialize()
-        {
-            QCStudioPluginActions.api = new API();
-            //Authenticate();
-        }
+        public static string UserID { get { return api.UserID; } }
+        public static string AuthToken { get { return api.AuthToken; } }
 
         public async static void Login()
         {
@@ -345,16 +345,13 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        public async static Task<PacketBacktestResult> GetBacktestResults(string backtestId)
+        public async static Task<PacketBase> GetBacktestResults(string backtestId)
         {
             try
             {
                 QCPluginUtilities.OutputCommandString("getting backtest results...", QCPluginUtilities.Severity.Info);
 
                 var results = await api.BacktestResults(backtestId);
-                results.UserID = api.UserID;
-                results.AuthToken = api.AuthToken;
-
                 return results;
             }
             catch (Exception ex)
@@ -437,215 +434,84 @@ namespace QuantConnect.QCStudioPlugin.Actions
             }
         }
 
-        public static Task<PacketBacktestResult> RunLocalBacktest(string algorithmPath, string fileName, string pluginsPath, string dataPath)
+        public async static Task SaveRemoteBacktest(string backtestId)
         {
-            var statistics = new Dictionary<string, string>();
-            var task = new TaskCompletionSource<PacketBacktestResult>();
+            await QCStudioPluginActions.Authenticate();
+            var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
 
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
-
-            var lean = new LeanProxy();
-            if (lean == null)
+            QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
+            foreach (var err in _results.Errors)
             {
-                QCPluginUtilities.OutputCommandString("Failed to generate Lean proxy", QCPluginUtilities.Severity.Warning);
-                task.SetException(new Exception("Failed to generate proxy"));
-                return task.Task;
+                QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
             }
 
-            try
+            if (_results != null)
             {
-                lean.LoadLibraries(pluginsPath);
-
-                lean.SetConfiguration("environment", "");   //"backtesting-desktop"
-                lean.SetConfiguration("plugin-directory", pluginsPath);
-                lean.SetConfiguration("data-folder", dataPath);
-                lean.SetConfiguration("data-directory", dataPath);                
-                lean.SetConfiguration("algorithm-location", algorithmPath);
-                lean.SetConfiguration("algorithm-type-name", fileName);
-                //lean.SetConfiguration("api-access-token", "");
-                //lean.SetConfiguration("job-user-id", "0");
-
-                lean.SetConfiguration("algorithm-language", "CSharp");
-                lean.SetConfiguration("live-mode", "false");
-                lean.SetConfiguration("debug-mode", "true");
-
-                lean.SetConfiguration("messaging-handler", "QuantConnect.Messaging.EventMessagingHandler");
-                lean.SetConfiguration("job-queue-handler", "QuantConnect.Queues.JobQueue");
-                lean.SetConfiguration("api-handler", "QuantConnect.Api.Api");
-                lean.SetConfiguration("result-handler", "QuantConnect.Lean.Engine.Results.BacktestingResultHandler");
-                lean.SetConfiguration("setup-handler", "QuantConnect.Lean.Engine.Setup.ConsoleSetupHandler");
-                lean.SetConfiguration("data-feed-handler", "QuantConnect.Lean.Engine.DataFeeds.FileSystemDataFeed");
-                lean.SetConfiguration("real-time-handler", "QuantConnect.Lean.Engine.RealTime.BacktestingRealTimeHandler");
-                lean.SetConfiguration("transaction-handler", "QuantConnect.Lean.Engine.TransactionHandlers.BacktestingTransactionHandler");
-                lean.SetConfiguration("log-handler", "QuantConnect.Logging.QueueLogHandler");
-
-
-                //Composer.Instance.Reset();
-                var composer = lean.CreateComposer();
-
-                //Log.LogHandler = Composer.Instance.GetExportedValueByTypeName<ILogHandler>("QuantConnect.Logging.QueueLogHandler");
-                lean.SetLogHandler(composer, (packet) =>
+                var dlg = new SaveFileDialog
                 {
-                    var json = JObject.FromObject(packet);
-                    var message = (json.GetValue("sMessage") ?? json.GetValue("Message") ?? JToken.FromObject("")).Value<string>();
-                    var hstack = (json.GetValue("sStackTrace") ?? json.GetValue("StackTrace") ?? JToken.FromObject("")).Value<string>();
-                    var msgtype = string.IsNullOrEmpty(hstack) ? QCPluginUtilities.Severity.Info : QCPluginUtilities.Severity.Error;
-
-                    QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
-                });
-
-                //var systemHandlers = LeanEngineSystemHandlers.FromConfiguration(Composer.Instance);
-                var systemHandlers = lean.CreateLeanEngineSystemHandlers(composer);
-
-                //var algorithmHandlers = LeanEngineAlgorithmHandlers.FromConfiguration(Composer.Instance);
-                var algorithmHandlers = lean.CreateLeanEngineAlgorithmHandlers(composer);
-
-                QCPluginUtilities.OutputCommandString("Running " + fileName + "...", QCPluginUtilities.Severity.Info);
-
-                //var _messaging = systemHandlers.Notify;
-                lean.AddMessagingEvents(systemHandlers, algorithmHandlers, (packet) =>
+                    AddExtension = true,
+                    Filter = "JSON file|*.json|All files|*.*",
+                    Title = "Save Backtest results to file"
+                };
+                
+                if(DialogResult.OK == dlg.ShowDialog()) 
                 {
-                    var json = JObject.FromObject(packet);
-                    var message = (json.GetValue("sMessage") ?? json.GetValue("Message") ?? JToken.FromObject("")).Value<string>();
-                    var hstack = (json.GetValue("sStackTrace") ?? json.GetValue("StackTrace") ?? JToken.FromObject("")).Value<string>();
-                    var msgtype = string.IsNullOrEmpty(hstack) ? QCPluginUtilities.Severity.Info : QCPluginUtilities.Severity.Error;
-
-                    QCPluginUtilities.OutputCommandString(message + ", " + hstack, msgtype);
-                }, (packet) =>
-                {
-                    var json = JObject.FromObject(packet);
-                    if (json.GetValue("oResults") == null)
-                    {
-                        task.SetException(new Exception("No Backend Result!"));
-                        return;
-                    }
-
-                    var result = new PacketBacktestResult
-                    {
-                        PeriodFinish = (json.GetValue("dtPeriodFinish") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        PeriodStart = (json.GetValue("dtPeriodStart") ?? JToken.FromObject(DateTime.MinValue)).Value<DateTime>(),
-                        Results = JsonConvert.DeserializeObject<BacktestResult>(json.GetValue("oResults").ToString()),
-                        Progress = (json.GetValue("dProgress") ?? JToken.FromObject("0")).Value<string>()
-                    };
-
-                    QCPluginUtilities.OutputCommandString("Backtest progress: " + result.Progress, QCPluginUtilities.Severity.Info);
-
-                    if (result.Progress == "1")
-                    {
-                        task.TrySetResult(result);
-                        tokenSource.Cancel();
-                        (systemHandlers as IDisposable).Dispose();
-                        (algorithmHandlers as IDisposable).Dispose();
-                    }
-                });
-
-                string _algorithmPath;
-                var job = lean.GetNextJob(systemHandlers, out _algorithmPath);
-
-                //var engine = new Lean.Engine.Engine(systemHandlers, algorithmHandlers, false);
-                var engine = lean.CreateEngine(systemHandlers, algorithmHandlers, false);
-
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        //engine.Run(job, _algorithmPath); 
-                        lean.RunEngine(engine, job, _algorithmPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.ToString(), ex.StackTrace), QCPluginUtilities.Severity.Error);
-                        task.SetException(ex);
-                    }
-                }, token);
+                    if (string.IsNullOrEmpty(dlg.FileName)) return;
+                    var json = JsonConvert.SerializeObject(_results);
+                    File.Delete(dlg.FileName);
+                    File.WriteAllText(dlg.FileName, json);
+                }
             }
-            catch (Exception ex)
-            {
-                QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.ToString(), ex.StackTrace), QCPluginUtilities.Severity.Error);
-                task.SetException(ex);
-            }
-
-            return task.Task;
+            else
+                QCPluginUtilities.OutputCommandString("No backtest results for: " + backtestId, QCPluginUtilities.Severity.Error);
         }
 
-        /*public static Task<BacktestResultPacket> RunLocalBacktest(string algorithmPath, string fileName)
+        public async static Task SaveLocalBacktest(string pluginsPath, string dataPath)
         {
-            var statistics = new Dictionary<string, string>();
-            var task = new TaskCompletionSource<BacktestResultPacket>();
+            string algorithmPath, className;
+            QCPluginUtilities.GetSelectedItem(out algorithmPath, out className);
+            if (algorithmPath == null || className == null) return;
 
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
-
-            try
+            var json = await LeanActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
+            if (json != null)
             {
-                Composer.Instance.Reset();
-
-                // set the configuration up
-                Config.Set("algorithm-type-name", fileName);
-                Config.Set("live-mode", "false");
-                Config.Set("environment", "");
-                Config.Set("messaging-handler", "QuantConnect.Messaging.EventMessagingHandler");
-                Config.Set("job-queue-handler", "QuantConnect.Queues.JobQueue");
-                Config.Set("api-handler", "QuantConnect.Api.Api");
-                Config.Set("result-handler", "QuantConnect.Lean.Engine.Results.BacktestingResultHandler");
-                Config.Set("algorithm-language", "CSharp");
-                Config.Set("algorithm-location", algorithmPath);
-
-                Task enginetask = null;
-                var algorithmHandlers = LeanEngineAlgorithmHandlers.FromConfiguration(Composer.Instance);
-                var systemHandlers = LeanEngineSystemHandlers.FromConfiguration(Composer.Instance);
-                
-                QCPluginUtilities.OutputCommandString("{0}: Running " + fileName + "...", QCPluginUtilities.Severity.Info);
-
-                var _messaging = (EventMessagingHandler)systemHandlers.Notify;
-                _messaging.DebugEvent += (DebugPacket packet) => {
-                    QCPluginUtilities.OutputCommandString(packet.Message, QCPluginUtilities.Severity.Info);
-                };
-                _messaging.LogEvent += (LogPacket packet) => {
-                    QCPluginUtilities.OutputCommandString(packet.Message, QCPluginUtilities.Severity.Info);
-                };
-                _messaging.RuntimeErrorEvent += (RuntimeErrorPacket packet) => {
-                    var hstack = !string.IsNullOrEmpty(packet.StackTrace) ? packet.StackTrace : string.Empty;
-                    QCPluginUtilities.OutputCommandString(packet.Message + hstack, QCPluginUtilities.Severity.Error);
-                };
-                _messaging.HandledErrorEvent += (HandledErrorPacket packet) => {
-                    var hstack = !string.IsNullOrEmpty(packet.StackTrace) ? packet.StackTrace : string.Empty;
-                    QCPluginUtilities.OutputCommandString(packet.Message + hstack, QCPluginUtilities.Severity.Error);
-                };
-                _messaging.BacktestResultEvent += (BacktestResultPacket packet) => {
-                    systemHandlers.Dispose();
-                    algorithmHandlers.Dispose();
-                    tokenSource.Cancel();
-                    tokenSource.Dispose();
-
-                    task.SetResult(packet);
+                var dlg = new SaveFileDialog
+                {
+                    AddExtension = true,
+                    Filter = "JSON file|*.json|All files|*.*",
+                    Title = "Save Backtest results to file"
                 };
 
-                string _algorithmPath;
-                var job = systemHandlers.JobQueue.NextJob(out _algorithmPath);
-                var engine = new Lean.Engine.Engine(systemHandlers, algorithmHandlers, false);
-                enginetask = Task.Factory.StartNew(() => { engine.Run(job, algorithmPath); }, token);                            
+                if (DialogResult.OK == dlg.ShowDialog())
+                {
+                    if (string.IsNullOrEmpty(dlg.FileName)) return;
+                    File.Delete(dlg.FileName);
+                    File.WriteAllText(dlg.FileName, json);
+                }
             }
-            catch (Exception ex)
+            else
+                QCPluginUtilities.OutputCommandString("No backtest results for: " + className, QCPluginUtilities.Severity.Error);
+        }
+
+        public async static Task<PacketBase> LoadLocalBacktest(string FileName)
+        {
+            if (string.IsNullOrEmpty(FileName)) return null;
+            if (!File.Exists(FileName))
             {
-                QCPluginUtilities.OutputCommandString(string.Format("{0} {1}", ex.ToString(), ex.StackTrace), QCPluginUtilities.Severity.Error);
-                task.SetException(ex);
+                QCPluginUtilities.OutputCommandString("Backtest file doesn't exist " + FileName, QCPluginUtilities.Severity.Error);
+                return null;
             }
 
-            return task.Task;
-        }*/
+            string json = null;
+            using (var reader = File.OpenText(FileName))
+                json = await reader.ReadToEndAsync();
 
-        public static string GetTerminalUrl(string backtestId, int ProjectId = 0, bool liveMode = false)
-        {
-            var url = "";
-            var embedPage = liveMode ? "embeddedLive" : "embedded";
+            var _results = JsonConvert.DeserializeObject<PacketBase>(json);
+            _results.rawData = json;
+            if (_results.Errors == null)
+                _results.Errors = new List<string>();
 
-            url = string.Format(
-                "https://www.quantconnect.com/terminal/{0}?user={1}&token={2}&pid={3}&version={4}&holdReady={5}&bid={6}",
-                embedPage, api.UserID, api.AuthToken, ProjectId, Resources.QuantConnectVersion, "{0}", backtestId);
-
-            return url;
+            return _results;               
         }
     }
 

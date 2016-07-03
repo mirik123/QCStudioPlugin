@@ -17,10 +17,9 @@ using System.IO;
 using System.Security;
 using Microsoft.Win32;
 using System.Windows.Forms;
-using QuantConnect.QCStudioPlugin.Properties;
-using QuantConnect.QCStudioPlugin;
+using QCTerminalControl.Properties;
 
-namespace QuantConnect.Views
+namespace QCTerminalControl
 {
     public enum BrowserEmulationVersion
     {
@@ -42,6 +41,7 @@ namespace QuantConnect.Views
     /// </summary>
     public static class WBEmulator
     {
+        public static Action<string> Logger;
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
 
@@ -73,12 +73,12 @@ namespace QuantConnect.Views
             }
             catch (SecurityException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the permissions required to read from the registry key: " + ex.ToString());
                 return -1;
             }
             catch (UnauthorizedAccessException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the necessary registry rights: " + ex.ToString());
                 return -1;
             }
 
@@ -104,12 +104,12 @@ namespace QuantConnect.Views
             }
             catch (SecurityException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the permissions required to read from the registry key: " + ex.ToString());
                 result = BrowserEmulationVersion.Error;
             }
             catch (UnauthorizedAccessException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the necessary registry rights: " + ex.ToString());
                 result = BrowserEmulationVersion.Error;
             }
 
@@ -149,12 +149,12 @@ namespace QuantConnect.Views
             }
             catch (SecurityException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the permissions required to read from the registry key: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the permissions required to read from the registry key: " + ex.ToString());
                 return false;
             }
             catch (UnauthorizedAccessException ex)
             {
-                QCPluginUtilities.OutputCommandString("The user does not have the necessary registry rights: " + ex.ToString(), QCPluginUtilities.Severity.Error);
+                Logger("The user does not have the necessary registry rights: " + ex.ToString());
                 return false;
             }
         }
@@ -204,10 +204,12 @@ namespace QuantConnect.Views
             string msg = "";
 
             if (emulationRegCode == BrowserEmulationVersion.Default)
-                msg = "Currently no Visual Studio Browser emulation is set in the registry. Do you want to set it to the latest Internet Explorer version: " + ieVersion + "?";
+                msg = "No Visual Studio Browser emulation is set in the registry. Do you want to set it to the latest Internet Explorer version: " + ieVersion + 
+                        "? The results will be enabled after restarting VisualStudio.";
             else if (emulationRegCode != emulationIECode)
                 msg = "The Visual Studio Browser emulation is set to the version: " + emulationRegCode.ToString().Replace("Version", "") +
-                        ". Do you want to set it to the latest Internet Explorer version: " + ieVersion + "?";
+                        ". Do you want to set it to the latest Internet Explorer version: " + ieVersion +
+                        "? The results will be enabled after restarting VisualStudio.";
             else return;
 
             if (DialogResult.Yes == MessageBox.Show(msg, Resources.ToolWindowTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1))

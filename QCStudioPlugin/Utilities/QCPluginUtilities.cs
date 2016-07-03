@@ -24,6 +24,12 @@ using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
+using Newtonsoft.Json;
+
+using System.Threading.Tasks;
+
+using QuantConnect.RestAPI.Models;
+using QCInterfaces;
 
 namespace QuantConnect.QCStudioPlugin
 {
@@ -42,136 +48,67 @@ namespace QuantConnect.QCStudioPlugin
         static internal IVsThreadedWaitDialogFactory dialogFactory;
         static internal IVsOutputWindow outputWindow;
         static internal string InstallPath;
-        static internal ChartPane chartWindowJSFrame;
-        static internal QCClientPane chartWindowZedFrame;
+        static internal Func<ChartControl> GetPaneWindow;
 
-        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, 
-                                        ChartPane chartWindowJSFrame, QCClientPane chartWindowZedFrame)
+        public static void Initialize(string AppTitle, DTE2 dte, IVsThreadedWaitDialogFactory dialogFactory, IVsOutputWindow outputWindow, Func<ChartControl> getpanewindow)
         {
             QCPluginUtilities.AppTitle = AppTitle;
             QCPluginUtilities.dialogFactory = dialogFactory;
             QCPluginUtilities.dte = dte;
             QCPluginUtilities.outputWindow = outputWindow;
             QCPluginUtilities.InstallPath = RetrieveAssemblyDirectory();
-            QCPluginUtilities.chartWindowJSFrame = chartWindowJSFrame;
-            QCPluginUtilities.chartWindowZedFrame = chartWindowZedFrame;
+            QCPluginUtilities.GetPaneWindow = getpanewindow;
         }
 
-        private static void CalcPeriods(QuantConnect.RestAPI.Models.PacketBacktestResult packet)
+        public async static void ShowBacktestRemote(string backtestId)
         {
-            long _startDate = long.MaxValue, _endDate = -1;
+            var control = QCPluginUtilities.GetPaneWindow();
 
-            foreach (var chart in packet.Results.Charts.Values)
-            {
-                foreach (var series in chart.Series.Values)
-                {
-                    if (series.Values.Count == 0) continue;
+            await QCStudioPluginActions.Authenticate();
 
-                    var mindt = series.Values.Min(x => x.x);
-                    var maxdt = series.Values.Max(x => x.x);
-                    if (_startDate > mindt) _startDate = mindt;
-                    if (_endDate < maxdt) _endDate = maxdt;
-                }
-            }
+            control.Logger = (msg) => {
+                QCPluginUtilities.OutputCommandString(msg, QCPluginUtilities.Severity.Error);
+            };
 
-            if (_endDate < 0) return;
+            control.Initialize(backtestId, QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
+            var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
+            if (_results.Errors == null)
+                _results.Errors = new List<string>();
 
-            packet.PeriodStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_startDate);
-            packet.PeriodFinish = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(_endDate);
+            QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
+            foreach (var err in _results.Errors)
+                QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
+
+            control.Run(_results.rawData);
         }
 
-        public async static void ShowBacktestJSRemote(string backtestId)
+        public async static void ShowBacktestLocal()
         {
-            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
-            chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
+            var dlg = new OpenFileDialog
             {
-                var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
-                CalcPeriods(_results);
+                Filter = "JSON file|*.json|All files|*.*",
+                Title = "Open Backtest results from file"
+            };
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                var control = QCPluginUtilities.GetPaneWindow();
+
+                await QCStudioPluginActions.Authenticate();
+
+                control.Logger = (msg) => {
+                    QCPluginUtilities.OutputCommandString(msg, QCPluginUtilities.Severity.Error);
+                };
+
+                control.Initialize(Path.GetFileNameWithoutExtension(dlg.FileName), QCStudioPluginActions.UserID, QCStudioPluginActions.AuthToken);
+                var _results = await QCStudioPluginActions.LoadLocalBacktest(dlg.FileName);
 
                 QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
                 foreach (var err in _results.Errors)
-                {
                     QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
-                }
-
-                return _results;
-            };
-
-            await QCStudioPluginActions.Authenticate();
-
-            string url = QCStudioPluginActions.GetTerminalUrl(backtestId);
-            chartWindowJSFrame.control.Run(url);
-        }
-
-        public async static void ShowBacktestZEDRemote(string backtestId)
-        {
-            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
-            chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
-            {
-                var _results = await QCStudioPluginActions.GetBacktestResults(backtestId);
-                CalcPeriods(_results);
-
-                QCPluginUtilities.OutputCommandString("GetBacktestResults succeded: " + _results.Success, QCPluginUtilities.Severity.Info);
-                foreach (var err in _results.Errors)
-                {
-                    QCPluginUtilities.OutputCommandString(err, QCPluginUtilities.Severity.Error);
-                }
-
-                return _results;
-            };
-
-            await QCStudioPluginActions.Authenticate();
-
-            chartWindowZedFrame.control.Run();
-        }
-
-        public async static void ShowBacktestJSLocal(string pluginsPath, string dataPath)
-        {
-            string algorithmPath, className;
-            GetSelectedItem(out algorithmPath, out className);
-            if (algorithmPath == null || className == null) return;
-            
-            var frame = (IVsWindowFrame)chartWindowJSFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
-            chartWindowJSFrame.control.GetBacktestResultsCallback = async () =>
-            {
-                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
-
-                foreach (var pair in _results.Results.Statistics)
-                {
-                    QCPluginUtilities.OutputCommandString("STATISTICS:: " + pair.Key + " " + pair.Value, QCPluginUtilities.Severity.Info);
-                }
-
-                return _results;
-            };
-
-            await QCStudioPluginActions.Authenticate();
-
-            string url = QCStudioPluginActions.GetTerminalUrl(className);
-            chartWindowJSFrame.control.Run(url);
-        }
-
-        public static void ShowBacktestZEDLocal(string pluginsPath, string dataPath)
-        {
-            string algorithmPath, className;
-            GetSelectedItem(out algorithmPath, out className);
-            if (algorithmPath == null || className == null) return;
-            
-            var frame = (IVsWindowFrame)chartWindowZedFrame.Frame;
-            ErrorHandler.ThrowOnFailure(frame.Show());
-
-            chartWindowZedFrame.control.GetBacktestResultsCallback = async () =>
-            {
-                var _results = await QCStudioPluginActions.RunLocalBacktest(algorithmPath, className, pluginsPath, dataPath);
-                return _results;
-            };
-
-            chartWindowZedFrame.control.Run();
+                
+                control.Run(_results.rawData);
+            }           
         }
 
         public static string[] GetAlgorithmsList(string filePath, string classDll)
@@ -249,7 +186,7 @@ namespace QuantConnect.QCStudioPlugin
 
         public static IEnumerable<dynamic> GetAllProjects()
         {
-            foreach(Project prj in dte.Solution.Projects)
+            foreach(EnvDTE.Project prj in dte.Solution.Projects)
             {
                 yield return new {
                     Id = GetProjectID(prj.UniqueName),
@@ -326,10 +263,12 @@ namespace QuantConnect.QCStudioPlugin
         /// <param name="caption">The caption.</param>
         static internal void OutputCommandString(string text, string caption, Severity severity)
         {
+            var dt = DateTime.Now.ToString("HH:mm:ss.FFF");
+            
             // --- Get a reference to IVsOutputWindow. 
             if (outputWindow == null)
             {
-                Debug.WriteLine(string.Format("[{0}] {1}: {2} ", severity, caption, text));
+                Debug.WriteLine(string.Format("[{0} {1}] {2}: {3} ", dt, severity, caption, text));
                 return;
             }
 
@@ -339,13 +278,13 @@ namespace QuantConnect.QCStudioPlugin
 
             if (Microsoft.VisualStudio.ErrorHandler.Failed(outputWindow.GetPane(ref guidGeneral, out windowPane)))
             {
-                Debug.WriteLine(string.Format("[{0}] {1}: {2} ", severity, caption, text));
+                Debug.WriteLine(string.Format("[{0} {1}] {2}: {3} ", dt, severity, caption, text));
                 return;
             }
 
             // --- As the last step, write to the output window pane 
             windowPane.SetName(AppTitle);
-            windowPane.OutputString(string.Format("[{0}] {1} " + Environment.NewLine, severity, text));
+            windowPane.OutputString(string.Format("[{0} {1}] {2} " + Environment.NewLine, dt, severity, text));
             windowPane.Activate();
         }
 
@@ -377,9 +316,9 @@ namespace QuantConnect.QCStudioPlugin
             return dlg;
         }
 
-        public static void UpdateLocalProject(List<QuantConnect.RestAPI.Models.QCFile> projectFiles, string ProjectName)
+        public static void UpdateLocalProject(List<QCFile> projectFiles, string ProjectName)
         {
-            var proj = dte.Solution.Projects.Cast<Project>().FirstOrDefault(x => x.Name == ProjectName);
+            var proj = dte.Solution.Projects.Cast<EnvDTE.Project>().FirstOrDefault(x => x.Name == ProjectName);
             if (proj == null)
                 throw new Exception("Loacal project not found for name: " + ProjectName);
 
@@ -485,6 +424,22 @@ namespace QuantConnect.QCStudioPlugin
                 select new Tuple<K, dynamic, dynamic>(key, xa.Value, xb.Value);
 
             return combproj.ToList();
+        }
+
+        private static string GetVSIXInstalledLocation()
+        {
+            //return "";
+
+            // get ExtensionManager
+            IVsExtensionManager manager = ServiceProvider.GlobalProvider.GetService(typeof(SVsExtensionManager)) as IVsExtensionManager;
+            //foreach (IInstalledExtension extension in manager.GetInstalledExtensions())
+            //    if(extension.Header.Name == "MyExtensionName")
+            //        return extension.InstallPath;
+
+            // get your extension by Product Id
+            IInstalledExtension myExtension = manager.GetInstalledExtension(GuidList.guidQCStudioPluginPkgString);
+            // get current version
+            return myExtension.InstallPath;
         }
     }
 }
