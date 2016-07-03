@@ -166,6 +166,7 @@
     </Compile>
     <Compile Include="Forms\QCClientPane.cs" />
     <Compile Include="Forms\VistaFolderBrowser.cs" />
+    <Compile Include="Lean\LeanActions.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -182,8 +183,8 @@
     <Compile Include="RestAPI\Models\Projects.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\LeanProxy.cs" />
-    <Compile Include="Utilities\LeanProxyFactory.cs" />
+    <Compile Include="Lean\LeanProxy.cs" />
+    <Compile Include="Lean\LeanProxyFactory.cs" />
     <Compile Include="Utilities\QCPluginActions.cs" />
     <Compile Include="Utilities\QCPluginUtilities.cs" />
     <Compile Include="VSPackage.Designer.cs">

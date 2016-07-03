@@ -72,7 +72,7 @@ namespace QuantConnect.QCStudioPlugin
                     if (chartWindowFrame != null) chartWindowFrame.control = null;
                     break;
                 case "PathBinaries2":
-                    QCStudioPluginActions.ResetLeanAndComposer();
+                    LeanActions.ResetLeanAndComposer();
                     break;
             }
         }
