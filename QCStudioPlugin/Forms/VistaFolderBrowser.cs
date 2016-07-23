@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Shell;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -7,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
 
 //http:// stackoverflow.com/questions/15368771/show-detailed-folder-browser-from-a-propertygrid
 //http:// stackoverflow.com/users/403671/simon-mourier
@@ -30,6 +32,33 @@ namespace QuantConnect.QCStudioPlugin
             if (browser.ShowDialog(null) == DialogResult.OK)
                 return browser.DirectoryPath;
 
+            return value;
+        }
+    }
+
+    public class ClassListEditor : UITypeEditor
+    {
+        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+        {
+            return UITypeEditorEditStyle.DropDown;
+        }
+
+        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+        {
+            IWindowsFormsEditorService wfes = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
+            if (wfes != null)
+            {
+                var dte = (EnvDTE80.DTE2)ServiceProvider.GlobalProvider.GetService(typeof(EnvDTE.DTE));
+                string UIBinaries = (string)dte.Properties["QuantConnect Client", "General"].Item("UIBinaries").Value;
+                var items = QuantConnect.QCStudioPlugin.QCPluginUtilities.GetClassesList(UIBinaries, "QCInterfaces.ChartControl");
+                
+                var lbc = new ListBox();
+                lbc.Items.AddRange(items);
+                lbc.SelectedIndexChanged += (sender, e) => wfes.CloseDropDown();
+
+                wfes.DropDownControl(lbc);
+                value = lbc.SelectedItem as string ?? value as string ?? string.Empty;
+            }
             return value;
         }
     }

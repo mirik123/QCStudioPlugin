@@ -125,6 +125,17 @@ namespace QuantConnect.QCStudioPlugin
             return algorithms;
         }
 
+        public static string[] GetClassesList(string classDll, string parentClass)
+        {
+            var algoass = Assembly.LoadFrom(classDll);
+            var algorithms = algoass.GetTypes()
+                .Where(x => x.BaseType.FullName == parentClass)
+                .Select(x => x.FullName)
+                .ToArray();
+
+            return algorithms;
+        }
+
         private static string RetrieveAssemblyDirectory()
         {
             string codeBase = Assembly.GetExecutingAssembly().CodeBase;

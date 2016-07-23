@@ -69,6 +69,7 @@ namespace QuantConnect.QCStudioPlugin
         [Category("UI")]
         [DefaultValue("QCTerminalControl.JSChartControl")]
         [DisplayName("Full class name for UI library")]
+        [Editor("QuantConnect.QCStudioPlugin.ClassListEditor", typeof(UITypeEditor))]
         public string UIClassName {
             get {
                 return _UIClassName;
